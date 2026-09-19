@@ -1,6 +1,6 @@
-# specs/002-chat-roommate/spec.md
+# specs/005-chat-roommate/spec.md
 # Feature: ติดต่อ/แชทกับรูมเมท (Chat with Roommate)
-Spec ID: SPEC-CHAT-002 | Source: SRS ข้อ ... (FR-CHAT) | Use case: UC-02
+Spec ID: SPEC-CHAT-005 | Source: SRS ข้อ ... (FR-CHAT) | Use case: UC-05
 Owner: ทีม vista and friend | Status: Draft v1 | Updated: 2569-09-09
 
 ## Goal
@@ -98,13 +98,13 @@ Owner: ทีม vista and friend | Status: Draft v1 | Updated: 2569-09-09
 ## Traceability
 | SRS | spec.md | AC |
 |---|---|---|
-| UC-02 ขั้น 1 | FR-CHAT-01 | AC-CHAT-01 |
-| UC-02 ขั้น 2 | FR-CHAT-02 | AC-CHAT-01 |
-| UC-02 ขั้น 3 | FR-CHAT-03 | AC-CHAT-02 |
-| UC-02 ขั้น 4 | FR-CHAT-04 | AC-CHAT-02 |
-| UC-02 ขั้น 5 | FR-CHAT-05 | AC-CHAT-03 |
-| UC-02 ขั้น 6 | FR-CHAT-06 | AC-CHAT-03 |
-| UC-02 Exception | FR-CHAT-07 | AC-CHAT-04 |
-| UC-02 ขั้น 6-7 | FR-CHAT-08 | AC-CHAT-05 |
+| UC-05 ขั้น 1 | FR-CHAT-01 | AC-CHAT-01 |
+| UC-05 ขั้น 2 | FR-CHAT-02 | AC-CHAT-01 |
+| UC-05 ขั้น 3 | FR-CHAT-03 | AC-CHAT-02 |
+| UC-05 ขั้น 4 | FR-CHAT-04 | AC-CHAT-02 |
+| UC-05 ขั้น 5 | FR-CHAT-05 | AC-CHAT-03 |
+| UC-05 ขั้น 6 | FR-CHAT-06 | AC-CHAT-03 |
+| UC-05 Exception | FR-CHAT-07 | AC-CHAT-04 |
+| UC-05 ขั้น 6-7 | FR-CHAT-08 | AC-CHAT-05 |
 | CON-PRIV-01 | NFR-SEC-01 | AC-CHAT-06 |
 | CON-REL-01 | NFR-REL-01 | AC-CHAT-05 |
