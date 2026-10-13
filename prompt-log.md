@@ -1,0 +1,107 @@
+## 2026-10-13
+- คำสั่ง: `/testcases AC-RMP-01 specs/001-roommate-profile/`
+- โหมด: ร่าง
+- TC ID: TC-RMP-01-1, TC-RMP-01-2, TC-RMP-01-3
+- ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
+- ประเด็นที่ spec ไม่ได้บอก: กรณีนักศึกษายังไม่ได้เข้าสู่ระบบ ไม่ได้ระบุว่าหน้าจอต้องแสดงหรือซ่อนแบบฟอร์ม หรือแสดงข้อความใด
+
+## 2026-10-13
+- คำสั่ง: `/testcases AC-RMP-01, AC-RMP-01A, AC-RMP-02, AC-RMP-02A, AC-RMP-03, AC-RMP-04, AC-RMP-04A, AC-RMP-05, AC-RMP-05A, AC-RMP-05B, AC-RMP-06, AC-RMP-07, AC-RMP-08 specs/001-roommate-profile/`
+- โหมด: ร่าง (ครอบคลุมทุก AC ใน SPEC-RMP-001)
+- TC ID ที่เพิ่ม: TC-RMP-01A-1, TC-RMP-01A-2, TC-RMP-01A-3, TC-RMP-02-1, TC-RMP-02-2, TC-RMP-02-3, TC-RMP-02A-1, TC-RMP-02A-2, TC-RMP-02A-3, TC-RMP-03-1, TC-RMP-03-2, TC-RMP-03-3, TC-RMP-04-1, TC-RMP-04-2, TC-RMP-04-3, TC-RMP-04A-1, TC-RMP-04A-2, TC-RMP-04A-3, TC-RMP-05-1, TC-RMP-05-2, TC-RMP-05-3, TC-RMP-05A-1, TC-RMP-05A-2, TC-RMP-05A-3, TC-RMP-05B-1, TC-RMP-05B-2, TC-RMP-05B-3, TC-RMP-06-1, TC-RMP-06-2, TC-RMP-06-3, TC-RMP-07-1, TC-RMP-07-2, TC-RMP-07-3, TC-RMP-07-4, TC-RMP-08-1, TC-RMP-08-2, TC-RMP-08-3
+- ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
+- ประเด็นที่ spec ไม่ได้บอก: ผลเมื่อไม่ได้อยู่ในหน้าแบบฟอร์มสำหรับ AC-RMP-02, 02A, 03, 04 และ 04A; สถานะ/การค้นพบเมื่อสร้างโปรไฟล์ไม่สำเร็จสำหรับ AC-RMP-05B; ผลลองใหม่หรือข้อมูลบางส่วนเมื่อ validation ไม่ผ่านสำหรับ AC-RMP-05A; การเปิดสถานะ/ผลค้นหาเมื่อไม่มีโปรไฟล์สำหรับ AC-RMP-06; เกณฑ์ประเมินผู้ทดสอบที่เคยใช้ฟังก์ชันหรือมีผู้ทดสอบไม่ครบ 5 คนสำหรับ AC-RMP-07; ผลค้นหาเมื่อไม่มีโปรไฟล์สำหรับ AC-RMP-08
+
+## 2026-10-13
+- คำสั่ง: `/testcases AC-ERP-01 specs/002-edit-roommate-profile/`
+- โหมด: ร่าง
+- TC ID: TC-ERP-01-1, TC-ERP-01-2, TC-ERP-01-3, TC-ERP-01-4
+- ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
+- ประเด็นที่ spec ไม่ได้บอก: พฤติกรรมเมื่อยังไม่ได้เข้าสู่ระบบและเลือกเมนู "โปรไฟล์" ว่าต้องแสดงหรือปฏิเสธการแสดงข้อมูลโปรไฟล์
+
+## 2026-10-13
+- คำสั่ง: `/testcases AC-ERP-01, AC-ERP-02, AC-ERP-02A, AC-ERP-02B, AC-ERP-03, AC-ERP-04, AC-ERP-04A, AC-ERP-05, AC-ERP-06, AC-ERP-07, AC-ERP-07A, AC-ERP-08 specs/002-edit-roommate-profile/`
+- โหมด: ร่าง (ครอบคลุมทุก AC ใน SPEC-ERP-002)
+- TC ID ที่เพิ่ม: TC-ERP-02-1, TC-ERP-02-2, TC-ERP-02-3, TC-ERP-02A-1, TC-ERP-02A-2, TC-ERP-02A-3, TC-ERP-02B-1, TC-ERP-02B-2, TC-ERP-02B-3, TC-ERP-03-1, TC-ERP-03-2, TC-ERP-03-3, TC-ERP-04-1, TC-ERP-04-2, TC-ERP-04-3, TC-ERP-04A-1, TC-ERP-04A-2, TC-ERP-04A-3, TC-ERP-04A-4, TC-ERP-05-1, TC-ERP-05-2, TC-ERP-05-3, TC-ERP-06-1, TC-ERP-06-2, TC-ERP-06-3, TC-ERP-07-1, TC-ERP-07-2, TC-ERP-07-3, TC-ERP-07A-1, TC-ERP-07A-2, TC-ERP-07A-3, TC-ERP-08-1, TC-ERP-08-2, TC-ERP-08-3, TC-ERP-08-4, TC-ERP-08-5
+- ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
+- ประเด็นที่ spec ไม่ได้บอก: ผลการยืนยันนอก flow แก้ไขโปรไฟล์สำหรับ AC-ERP-03; ข้อความ/การลองใหม่เมื่อข้อมูลไม่ครบหรือไม่ถูกต้องและการบันทึกล้มเหลวสำหรับ AC-ERP-04A; การเข้าเมนูโดยไม่เข้าสู่ระบบสำหรับ AC-ERP-06; ผลค้นหาหลังถูกปฏิเสธการแก้ไขโปรไฟล์ผู้อื่นสำหรับ AC-ERP-07; ผลค้นหาเมื่อการแก้ไขไม่สำเร็จสำหรับ AC-ERP-07A; เกณฑ์ประเมินผู้ทดสอบที่เคยใช้ฟังก์ชันหรือมีผู้ทดสอบไม่ครบ 5 คนสำหรับ AC-ERP-08
+
+## 2026-10-13
+- คำสั่ง: `/testcases AC-RPS-01, AC-RPS-02, AC-RPS-02A, AC-RPS-02B, AC-RPS-02C, AC-RPS-03, AC-RPS-04, AC-RPS-04A, AC-RPS-04B, AC-RPS-05, AC-RPS-06, AC-RPS-07, AC-RPS-08 specs/003-roommate-preference/`
+- โหมด: ร่าง (ครอบคลุมทุก AC ใน SPEC-RPS-003)
+- TC ID ที่เสนอ: TC-RPS-01-1, TC-RPS-01-2, TC-RPS-01-3, TC-RPS-01-4, TC-RPS-02-1, TC-RPS-02-2, TC-RPS-02-3, TC-RPS-02A-1, TC-RPS-02A-2, TC-RPS-02A-3, TC-RPS-02B-1, TC-RPS-02B-2, TC-RPS-02B-3, TC-RPS-02C-1, TC-RPS-02C-2, TC-RPS-02C-3, TC-RPS-02C-4, TC-RPS-03-1, TC-RPS-03-2, TC-RPS-03-3, TC-RPS-04-1, TC-RPS-04-2, TC-RPS-04-3, TC-RPS-04-4, TC-RPS-04A-1, TC-RPS-04A-2, TC-RPS-04A-3, TC-RPS-04B-1, TC-RPS-04B-2, TC-RPS-04B-3, TC-RPS-05-1, TC-RPS-05-2, TC-RPS-05-3, TC-RPS-06-1, TC-RPS-06-2, TC-RPS-06-3, TC-RPS-07-1, TC-RPS-07-2, TC-RPS-07-3, TC-RPS-08-1, TC-RPS-08-2, TC-RPS-08-3, TC-RPS-08-4, TC-RPS-08-5
+- ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
+- ประเด็นที่ spec ไม่ได้บอก: การเข้าถึงเมนูโดยไม่เข้าสู่ระบบสำหรับ AC-RPS-01 และ AC-RPS-07; การเลือก/บันทึกข้อมูลนอกหน้าความต้องการสำหรับ AC-RPS-02, 02A, 02B, 02C และ 03; การแก้ไขเมื่อไม่มีข้อมูลความต้องการเดิมสำหรับ AC-RPS-04A; ข้อความและการลองใหม่เมื่อ validation ไม่ผ่านพร้อมกับการบันทึกล้มเหลวสำหรับ AC-RPS-04B; การใช้ข้อมูลที่ยังบันทึกไม่สำเร็จในการค้นหาสำหรับ AC-RPS-05; เกณฑ์ประเมินผู้ทดสอบที่เคยใช้ฟังก์ชันหรือมีผู้ทดสอบไม่ครบ 5 คนสำหรับ AC-RPS-08
+
+## 2026-10-13
+- คำสั่ง: `/testcases AC-SRS-01, AC-SRS-02, AC-SRS-03, AC-SRS-03A, AC-SRS-03B, AC-SRS-03C, AC-SRS-03D, AC-SRS-03E, AC-SRS-04, AC-SRS-05, AC-SRS-06, AC-SRS-07, AC-SRS-08 specs/004-search-roommate/`
+- โหมด: ร่าง (ครอบคลุมทุก AC ใน SPEC-SRS-004)
+- TC ID ที่เสนอ: TC-SRS-01-1, TC-SRS-01-2, TC-SRS-01-3, TC-SRS-01-4, TC-SRS-02-1, TC-SRS-02-2, TC-SRS-02-3, TC-SRS-03-1, TC-SRS-03-2, TC-SRS-03-3, TC-SRS-03A-1, TC-SRS-03A-2, TC-SRS-03A-3, TC-SRS-03B-1, TC-SRS-03B-2, TC-SRS-03B-3, TC-SRS-03C-1, TC-SRS-03C-2, TC-SRS-03C-3, TC-SRS-03D-1, TC-SRS-03D-2, TC-SRS-03D-3, TC-SRS-03E-1, TC-SRS-03E-2, TC-SRS-03E-3, TC-SRS-03E-4, TC-SRS-04-1, TC-SRS-04-2, TC-SRS-04-3, TC-SRS-05-1, TC-SRS-05-2, TC-SRS-05-3, TC-SRS-06-1, TC-SRS-06-2, TC-SRS-06-3, TC-SRS-07-1, TC-SRS-07-2, TC-SRS-07-3, TC-SRS-08-1, TC-SRS-08-2, TC-SRS-08-3, TC-SRS-08-4, TC-SRS-08-5
+- ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
+- ประเด็นที่ spec ไม่ได้บอก: การรับ/ปฏิเสธตัวกรองนอกหน้าค้นหาสำหรับ AC-SRS-02; ผลเมื่อตั้งหลายตัวกรองแต่ไม่เลือก AND/OR สำหรับ AC-SRS-03C; การเลือกโปรไฟล์นอกผลค้นหาสำหรับ AC-SRS-04; การแสดงข้อความไม่พบผลเมื่อมีรายการตรงเงื่อนไขสำหรับ AC-SRS-05; การแจ้งกรณีไม่มีโปรไฟล์ก่อนเข้าสู่ระบบสำหรับ AC-SRS-07; เกณฑ์ประเมินผู้ทดสอบที่เคยใช้การค้นหาหรือมีผู้ทดสอบไม่ครบ 5 คนสำหรับ AC-SRS-08
+
+## 2026-10-13
+- คำสั่ง: `/testcases AC-CHAT-01, AC-CHAT-02, AC-CHAT-02C, AC-CHAT-02A, AC-CHAT-02B, AC-CHAT-03, AC-CHAT-03A, AC-CHAT-03B, AC-CHAT-04, AC-CHAT-05, AC-CHAT-06, AC-CHAT-07, AC-CHAT-07A, AC-CHAT-07B, AC-CHAT-04A, AC-CHAT-03C, AC-CHAT-03D, AC-CHAT-08, AC-CHAT-09 specs/005-chat-roommate/`
+- โหมด: ร่าง (ครอบคลุมทุก AC ใน SPEC-CHAT-005)
+- TC ID ที่เสนอ: TC-CHAT-01-1, TC-CHAT-01-2, TC-CHAT-01-3, TC-CHAT-01-4, TC-CHAT-02-1, TC-CHAT-02-2, TC-CHAT-02-3, TC-CHAT-02C-1, TC-CHAT-02C-2, TC-CHAT-02C-3, TC-CHAT-02C-4, TC-CHAT-02A-1, TC-CHAT-02A-2, TC-CHAT-02A-3, TC-CHAT-02B-1, TC-CHAT-02B-2, TC-CHAT-02B-3, TC-CHAT-03-1, TC-CHAT-03-2, TC-CHAT-03-3, TC-CHAT-03A-1, TC-CHAT-03A-2, TC-CHAT-03A-3, TC-CHAT-03B-1, TC-CHAT-03B-2, TC-CHAT-03B-3, TC-CHAT-04-1, TC-CHAT-04-2, TC-CHAT-04-3, TC-CHAT-05-1, TC-CHAT-05-2, TC-CHAT-05-3, TC-CHAT-06-1, TC-CHAT-06-2, TC-CHAT-06-3, TC-CHAT-07-1, TC-CHAT-07-2, TC-CHAT-07-3, TC-CHAT-07A-1, TC-CHAT-07A-2, TC-CHAT-07A-3, TC-CHAT-07A-4, TC-CHAT-07A-5, TC-CHAT-07B-1, TC-CHAT-07B-2, TC-CHAT-07B-3, TC-CHAT-07B-4, TC-CHAT-04A-1, TC-CHAT-04A-2, TC-CHAT-04A-3, TC-CHAT-03C-1, TC-CHAT-03C-2, TC-CHAT-03C-3, TC-CHAT-03D-1, TC-CHAT-03D-2, TC-CHAT-03D-3, TC-CHAT-08-1, TC-CHAT-08-2, TC-CHAT-08-3, TC-CHAT-09-1, TC-CHAT-09-2, TC-CHAT-09-3, TC-CHAT-09-4, TC-CHAT-09-5
+- ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
+- ประเด็นที่ spec ไม่ได้บอก: การส่งข้อความ/ไฟล์โดยไม่มีหน้าต่างแชทเปิดสำหรับ AC-CHAT-02, 02C, 02A และ 02B; การแสดงข้อความที่ไม่มีไฟล์แนบในประวัติสำหรับ AC-CHAT-03A; สถานะ Read ของข้อความที่อยู่นอกหน้าจอสำหรับ AC-CHAT-03B; การเปิดแชทเมื่อไม่มีประวัติเดิมสำหรับ AC-CHAT-05; การแสดงหน้าต่าง/แจ้งเตือนเมื่อไม่ล็อกอินสำหรับ AC-CHAT-01 และ 07A; การกลับมาอนุญาตส่งข้อความในแชทเดิมเมื่อทั้งสองฝ่ายพร้อมอีกครั้งสำหรับ AC-CHAT-07B; การแสดง retry เมื่อส่งครั้งแรกสำเร็จสำหรับ AC-CHAT-04A; เกณฑ์ประเมินผู้ทดสอบที่เคยใช้แชทหรือมีผู้ทดสอบไม่ครบ 5 คนสำหรับ AC-CHAT-09
+
+## 2026-10-13
+- คำสั่ง: `/testcases AC-RRS-01, AC-RRS-02, AC-RRS-03, AC-RRS-04, AC-RRS-04A, AC-RRS-05, AC-RRS-06, AC-RRS-06A, AC-RRS-07, AC-RRS-08, AC-RRS-09, AC-RRS-10, AC-RRS-11, AC-RRS-12, AC-RRS-13, AC-RRS-13A, AC-RRS-04B, AC-RRS-11A, AC-RRS-15, AC-RRS-14 specs/006-request-roommate/`
+- โหมด: ร่าง (ครอบคลุมทุก AC ใน SPEC-RRS-006)
+- TC ID ที่เสนอ: TC-RRS-01-1, TC-RRS-01-2, TC-RRS-01-3, TC-RRS-01-4, TC-RRS-02-1, TC-RRS-02-2, TC-RRS-02-3, TC-RRS-03-1, TC-RRS-03-2, TC-RRS-03-3, TC-RRS-04-1, TC-RRS-04-2, TC-RRS-04-3, TC-RRS-04-4, TC-RRS-04A-1, TC-RRS-04A-2, TC-RRS-04A-3, TC-RRS-04A-4, TC-RRS-05-1, TC-RRS-05-2, TC-RRS-05-3, TC-RRS-06-1, TC-RRS-06-2, TC-RRS-06-3, TC-RRS-06-4, TC-RRS-06A-1, TC-RRS-06A-2, TC-RRS-06A-3, TC-RRS-06A-4, TC-RRS-07-1, TC-RRS-07-2, TC-RRS-07-3, TC-RRS-08-1, TC-RRS-08-2, TC-RRS-08-3, TC-RRS-08-4, TC-RRS-09-1, TC-RRS-09-2, TC-RRS-09-3, TC-RRS-10-1, TC-RRS-10-2, TC-RRS-10-3, TC-RRS-10-4, TC-RRS-10-5, TC-RRS-10-6, TC-RRS-11-1, TC-RRS-11-2, TC-RRS-11-3, TC-RRS-11-4, TC-RRS-12-1, TC-RRS-12-2, TC-RRS-12-3, TC-RRS-12-4, TC-RRS-13-1, TC-RRS-13-2, TC-RRS-13-3, TC-RRS-13-4, TC-RRS-13A-1, TC-RRS-13A-2, TC-RRS-13A-3, TC-RRS-04B-1, TC-RRS-04B-2, TC-RRS-04B-3, TC-RRS-04B-4, TC-RRS-11A-1, TC-RRS-11A-2, TC-RRS-11A-3, TC-RRS-11A-4, TC-RRS-15-1, TC-RRS-15-2, TC-RRS-15-3, TC-RRS-14-1, TC-RRS-14-2, TC-RRS-14-3, TC-RRS-14-4, TC-RRS-14-5
+- ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
+- ประเด็นที่ spec ไม่ได้บอก: การตรวจคำขอเดิมหลังผู้รับไม่ active สำหรับ AC-RRS-03; สถานะการแจ้งเตือนเมื่อคำขอไม่ถูกบันทึกสำหรับ AC-RRS-04A; ความหมายของ retry เมื่อสำเร็จระหว่างรอบและกรณีไม่เริ่ม retry สำหรับ AC-RRS-11A; รายการแจ้งเตือนเมื่อไม่มีคำขอใหม่สำหรับ AC-RRS-11; การจัดการรายการคำขอว่างสำหรับ AC-RRS-10; การไม่หมดอายุของคำขอที่ไม่ pending สำหรับ AC-RRS-15; เกณฑ์ประเมินผู้ทดสอบที่เคยใช้ฟังก์ชันหรือมีผู้ทดสอบไม่ครบ 5 คนสำหรับ AC-RRS-14
+
+## 2026-10-13
+- คำสั่ง: `/testcases AAC-SRR /007-respond-roommate-request testcase จาก ac ทั้งหมด`
+- โหมด: ร่าง (ครอบคลุม AC-SRR ทั้ง 16 ข้อใน SPEC-SRR-007)
+- TC ID ที่เสนอ: TC-SRR-01-1, TC-SRR-01-2, TC-SRR-01-3, TC-SRR-01-4, TC-SRR-02-1, TC-SRR-02-2, TC-SRR-02-3, TC-SRR-03-1, TC-SRR-03-2, TC-SRR-03-3, TC-SRR-03-4, TC-SRR-03A-1, TC-SRR-03A-2, TC-SRR-03A-3, TC-SRR-04-1, TC-SRR-04-2, TC-SRR-04-3, TC-SRR-04-4, TC-SRR-05-1, TC-SRR-05-2, TC-SRR-05-3, TC-SRR-05A-1, TC-SRR-05A-2, TC-SRR-05A-3, TC-SRR-06-1, TC-SRR-06-2, TC-SRR-06-3, TC-SRR-07-1, TC-SRR-07-2, TC-SRR-07-3, TC-SRR-08-1, TC-SRR-08-2, TC-SRR-08-3, TC-SRR-08-4, TC-SRR-08A-1, TC-SRR-08A-2, TC-SRR-08A-3, TC-SRR-08B-1, TC-SRR-08B-2, TC-SRR-08B-3, TC-SRR-08C-1, TC-SRR-08C-2, TC-SRR-08C-3, TC-SRR-09-1, TC-SRR-09-2, TC-SRR-09-3, TC-SRR-10-1, TC-SRR-10-2, TC-SRR-10-3, TC-SRR-11-1, TC-SRR-11-2, TC-SRR-11-3
+- ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
+- ประเด็นที่ spec ไม่ได้บอก: การแสดงหน้าคำขอเมื่อยังไม่เข้าสู่ระบบหรือไม่มีคำขอรอสำหรับ AC-SRR-01; การเลือกผลนอกหน้ารายละเอียดสำหรับ AC-SRR-02; พฤติกรรมเมื่อยังไม่เข้าสู่ระบบและเมื่อผลยังไม่สำเร็จสำหรับ AC-SRR-03, AC-SRR-04, AC-SRR-07; การแจ้งเตือนเมื่อยังไม่ตอบสำเร็จหรือไม่มีการเปลี่ยนแปลงสำหรับ AC-SRR-05, AC-SRR-05A; การทำซ้ำผลเดิมสำหรับ AC-SRR-08; ลำดับ atomic เมื่อผู้กระทำไม่ใช่ผู้รับสำหรับ AC-SRR-08A; รายละเอียดกฎ UC-09 ที่ต้องตรวจใน AC-SRR-08B; เกณฑ์หรือการจัดการผลทดสอบที่ไม่ผ่านสำหรับ AC-SRR-09; ความหมายของจำนวน retry ว่านับรวมการส่งครั้งแรกหรือไม่และการแจ้งเมื่อ retry สำเร็จสำหรับ AC-SRR-11
+
+## 2026-10-13
+- คำสั่ง: `/testcases AC-MSS /008-match-status ทำ testcase จาก ac ทั้งหมด`
+- โหมด: ร่าง (ครอบคลุม AC-MSS-01, AC-MSS-02, AC-MSS-02A, AC-MSS-03, AC-MSS-04, AC-MSS-05, AC-MSS-06, AC-MSS-07, AC-MSS-07A และ AC-MSS-08 ใน SPEC-MSS-008)
+- TC ID ที่เสนอ: TC-MSS-01-1, TC-MSS-01-2, TC-MSS-01-3, TC-MSS-02-1, TC-MSS-02-2, TC-MSS-02-3, TC-MSS-02A-1, TC-MSS-02A-2, TC-MSS-02A-3, TC-MSS-03-1, TC-MSS-03-2, TC-MSS-03-3, TC-MSS-04-1, TC-MSS-04-2, TC-MSS-04-3, TC-MSS-05-1, TC-MSS-05-2, TC-MSS-05-3, TC-MSS-06-1, TC-MSS-06-2, TC-MSS-06-3, TC-MSS-06-4, TC-MSS-06-5, TC-MSS-07-1, TC-MSS-07-2, TC-MSS-07-3, TC-MSS-07-4, TC-MSS-07A-1, TC-MSS-07A-2, TC-MSS-07A-3, TC-MSS-08-1, TC-MSS-08-2, TC-MSS-08-3, TC-MSS-08-4, TC-MSS-08-5
+- ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
+- ประเด็นที่ spec ไม่ได้บอก: พฤติกรรม/ข้อความเมื่อดึงข้อมูลนอกหน้าสถานะ (AC-MSS-02, AC-MSS-06); เงื่อนไขขอบเขตช่วงหลังเข้าสู่ระบบ (AC-MSS-01); การตรวจลำดับเมื่อมีคำขอเดียว (AC-MSS-02A); การเลือกคำขอที่ไม่แสดงเพื่อดูรายละเอียด (AC-MSS-03); รายละเอียดการปฏิเสธกรณีไม่มีข้อมูลเดิมเมื่อดึงล้มเหลว (AC-MSS-06); วิธีปฏิเสธ/ข้อความเมื่อผู้ที่ไม่ใช่ผู้ส่งหรือคำขอที่ไม่รอการตอบรับพยายามยกเลิก (AC-MSS-07); ข้อความเมื่อพยายามดำเนินการกับรายการของผู้อื่น (AC-MSS-07A); การใช้เกณฑ์กับผู้ที่เคยใช้หน้าสถานะแล้วหรือกลุ่มไม่ครบ 5 คน (AC-MSS-08)
+- หมายเหตุ: ไม่พบ tasks.md และ plan.md ไม่มีหัวข้อแผนทดสอบข้อ 6; ไม่มี specs/000-shared/ หรือ mockup สำหรับฟีเจอร์นี้
+## 2026-10-13
+- คำสั่ง: `/testcases AC-CCM /009-cancle-match จาก ac ทั้งหมด`
+- โหมด: ร่าง (ครอบคลุม AC-CCM-01, AC-CCM-02, AC-CCM-03, AC-CCM-03D, AC-CCM-03A, AC-CCM-03B, AC-CCM-03C, AC-CCM-03E, AC-CCM-04, AC-CCM-05, AC-CCM-05A, AC-CCM-05B, AC-CCM-06 และ AC-CCM-07 ใน SPEC-CCM-009)
+- TC ID ที่เสนอ: TC-CCM-01-1, TC-CCM-01-2, TC-CCM-01-3, TC-CCM-01-4, TC-CCM-02-1, TC-CCM-02-2, TC-CCM-02-3, TC-CCM-03-1, TC-CCM-03-2, TC-CCM-03-3, TC-CCM-03D-1, TC-CCM-03D-2, TC-CCM-03D-3, TC-CCM-03A-1, TC-CCM-03A-2, TC-CCM-03A-3, TC-CCM-03B-1, TC-CCM-03B-2, TC-CCM-03B-3, TC-CCM-03C-1, TC-CCM-03C-2, TC-CCM-03C-3, TC-CCM-03C-4, TC-CCM-03E-1, TC-CCM-03E-2, TC-CCM-03E-3, TC-CCM-04-1, TC-CCM-04-2, TC-CCM-04-3, TC-CCM-05-1, TC-CCM-05-2, TC-CCM-05-3, TC-CCM-05A-1, TC-CCM-05A-2, TC-CCM-05A-3, TC-CCM-05B-1, TC-CCM-05B-2, TC-CCM-05B-3, TC-CCM-06-1, TC-CCM-06-2, TC-CCM-06-3, TC-CCM-06-4, TC-CCM-07-1, TC-CCM-07-2, TC-CCM-07-3, TC-CCM-07-4, TC-CCM-07-5
+- ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
+- ประเด็นที่ spec ไม่ได้บอก: ผลการเปิดหน้าเมื่อยังไม่เข้าสู่ระบบหรือไม่มีสถานะจับคู่สำเร็จ (AC-CCM-01); การเลือกยกเลิกโดยยังไม่เลือกคู่ (AC-CCM-02); การยืนยันโดยไม่มีข้อความยืนยัน (AC-CCM-03); ผลแสดงเมื่อสถานะเปลี่ยนระหว่างตรวจแบบ atomic และข้อความปฏิเสธกรณีไม่ใช่สมาชิก (AC-CCM-03D); การแจ้งเตือนเมื่อบันทึกไม่สำเร็จและรายละเอียด/ระยะเวลาการแสดงสถานะ (AC-CCM-03A); รายละเอียดการลองใหม่เมื่อบันทึกล้มเหลว (AC-CCM-03B); ผลเมื่อ retry การแจ้งเตือนสำเร็จและการแจ้งผลสำเร็จหลัง retry (AC-CCM-03C); การเปิดแชทโดยไม่มีประวัติ (AC-CCM-03E); การไม่ยืนยันโดยไม่มีข้อความยืนยัน (AC-CCM-04); การค้นหาก่อนยกเลิกสำเร็จ (AC-CCM-05); ผลค้นหาเมื่อฝ่ายหนึ่งไม่เปิดสถานะให้ค้นหา (AC-CCM-05A); การส่งคำขอเมื่อฝ่ายหนึ่งไม่เปิดสถานะให้ค้นหา (AC-CCM-05B); รายละเอียดการปฏิเสธเมื่อผู้ใช้ไม่ได้เข้าสู่ระบบหรือสถานะไม่ใช่จับคู่สำเร็จ (AC-CCM-06); การใช้เกณฑ์กับผู้มีประสบการณ์หรือจำนวนผู้ทดสอบไม่ครบ 5 คน (AC-CCM-07)
+- หมายเหตุ: ไม่พบ tasks.md, test-cases.md เดิม, specs/000-shared/ หรือ mockup; plan.md ไม่มีหัวข้อแผนทดสอบข้อ 6
+
+## 2026-10-13
+- คำสั่ง: `/testcases AC-RMP-04A specs/001-roommate-profile` (รอบแรก: ตรวจ/ทบทวน test cases)
+- AC ที่เลือก: AC-RMP-04A จาก task T-01 สถานะ "เสร็จ รอทีมตรวจ"
+- TC ที่ทบทวน: TC-RMP-04A-1, TC-RMP-04A-2, TC-RMP-04A-3
+- สถานะ: TC-RMP-04A-1 และ TC-RMP-04A-2 เป็น "ใช้ได้"; TC-RMP-04A-3 รอ Q-04 เพราะ spec ไม่ได้ระบุพฤติกรรมเมื่อเลือกข้อมูลนอกหน้าแบบฟอร์ม
+- ผลทดสอบ mutation: เปลี่ยนขีดจำกัดห้องพัดลมจาก 3 เป็น 4 ชั่วคราว; test เดิม `test_AC_RMP_04_and_04A_reject_invalid_profile_values` จับได้ (ล้มเหลวเพราะพบตัวเลือก 4); คืนค่าโดย `git restore --worktree` จาก staged baseline เฉพาะไฟล์ แล้ว unstage ให้สถานะไฟล์เดิมเป็น untracked
+- ผล test เพิ่มจาก test cases v1: test_TC_RMP_04A_1_rejects_fan_room_over_capacity และ test_TC_RMP_04A_2_accepts_fan_room_capacity_limit ผ่าน; frontend รวม 7 tests ผ่าน
+
+## 2026-10-13
+- คำสั่ง: `/tasks specs/001-roommate-profile`
+- โหมด/ขอบเขต: แตก plan.md เป็น tasks.md สำหรับงานปรับ spec ตามที่ทีมเลือก; ไม่แตก task implement frontend/backend และไม่แก้ spec.md
+- ผลลัพธ์: สร้าง specs/001-roommate-profile/tasks.md มี 5 เฟส 5 task และ 0 task รอ Q; Q-01 ถึง Q-03 ตอบแล้ว
+- ข้อจำกัดที่บันทึกใน tasks.md: plan v1 เป็นแผนปรับเอกสาร spec ไม่มีเทคโนโลยี/โครงไฟล์พัฒนา ไม่มีคำสั่งเปิดระบบ และไม่มีงานที่ทำให้ลอง frontend/backend ได้จริง; จุดตรวจจึงเป็นการตรวจเอกสาร ไม่ใช่การยืนยัน AC ในระบบ
+- ผล validation: ตรวจว่าตาราง AC ครบ 13 ข้อ, FR-RMP-01 ถึง FR-RMP-11 ครบ, Constraint เฉพาะฟีเจอร์ทั้ง 7 ข้อมี task รองรับ
+
+## 2026-10-13
+- คำสั่ง: `/implement T-01 specs/001-roommate-profile`
+- ไฟล์ที่แก้: specs/001-roommate-profile/spec.md, specs/001-roommate-profile/tasks.md
+- ผลงาน: แยกพฤติกรรมการนอนของเจ้าของโปรไฟล์ออกจากความต้องการพฤติกรรมการนอนของเมทที่ต้องการ โดยเทียบกับ UC-02 และ UC-03; เปลี่ยนคำตอบ Q-02 ตามการตัดสินใจของทีม; ทำเครื่องหมาย T-01 เป็น "เสร็จ รอทีมตรวจ"
+- การถามทีม: ถามเพื่อยืนยันกรณี Q-02 ใน UC-01 ขัดกับคำอธิบายใน UC-03; ทีมยืนยันให้ยึด UC-03 และแก้ Q-02 ให้สอดคล้อง
+- ผลตรวจ: ตรวจเอกสารเทียบฟิลด์ที่แก้ไขได้/validation ใน UC-02 และความหมายข้อมูลพฤติกรรมการนอนใน UC-03; ไม่มี code test สำหรับ task เอกสารนี้ จึงไม่ได้รันทดสอบ frontend/backend
+
+## 2026-10-13
+- คำสั่ง: `/testcases AC-CRS/010-close-roommate-status จาก ac ทั้งหมด`
+- โหมด: ร่าง (ครอบคลุม AC-CRS-01, AC-CRS-02, AC-CRS-02A, AC-CRS-02B, AC-CRS-02C, AC-CRS-03, AC-CRS-04, AC-CRS-05, AC-CRS-06, AC-CRS-07, AC-CRS-08, AC-CRS-08A, AC-CRS-08B, AC-CRS-09, AC-CRS-10 และ AC-CRS-11 ใน SPEC-CRS-010)
+- TC ID ที่เสนอ: TC-CRS-01-1 ถึง TC-CRS-01-4, TC-CRS-02-1 ถึง TC-CRS-02-3, TC-CRS-02A-1 ถึง TC-CRS-02A-3, TC-CRS-02B-1 ถึง TC-CRS-02B-3, TC-CRS-02C-1 ถึง TC-CRS-02C-3, TC-CRS-03-1 ถึง TC-CRS-03-3, TC-CRS-04-1 ถึง TC-CRS-04-3, TC-CRS-05-1 ถึง TC-CRS-05-3, TC-CRS-06-1 ถึง TC-CRS-06-3, TC-CRS-07-1 ถึง TC-CRS-07-3, TC-CRS-08-1 ถึง TC-CRS-08-3, TC-CRS-08A-1 ถึง TC-CRS-08A-3, TC-CRS-08B-1 ถึง TC-CRS-08B-3, TC-CRS-09-1 ถึง TC-CRS-09-3, TC-CRS-10-1 ถึง TC-CRS-10-4, TC-CRS-11-1 ถึง TC-CRS-11-5
+- ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
+- ประเด็นที่ spec ไม่ได้บอก: การปิดสถานะโดยไม่มี session/profile (AC-CRS-01); การยืนยันโดยไม่มีข้อความยืนยัน (AC-CRS-02); การปิดสถานะเมื่อไม่มีคำขอรอ (AC-CRS-02A); ผลกรณีไม่มีคู่ที่จับคู่สำเร็จ (AC-CRS-02B); รายละเอียดการล้มเหลวที่ไม่ใช่ atomic operation (AC-CRS-02C); การแสดงโปรไฟล์เมื่อสถานะยังเปิด (AC-CRS-03); การส่งคำขอเมื่อเป้าหมายยังเปิดสถานะ (AC-CRS-04); การไม่ยืนยันเมื่อไม่มีข้อความยืนยัน (AC-CRS-05); การเปลี่ยนสถานะของเจ้าของโปรไฟล์และการเข้าถึงโดยไม่เข้าสู่ระบบ (AC-CRS-06); การเปิดสถานะซ้ำหรือไม่ยืนยันการเปิด (AC-CRS-07); แจ้งเตือนเมื่อไม่มีคำขอถูกปฏิเสธ (AC-CRS-08); ผลเมื่อแจ้งเตือนสำเร็จระหว่าง retry (AC-CRS-08A); พฤติกรรมแชทก่อนปิดสถานะ (AC-CRS-08B); ผลค้นหาเมื่อเปิดสถานะบันทึกไม่สำเร็จ (AC-CRS-09); ผลเมื่อบันทึกสำเร็จ (AC-CRS-10); การประเมินผู้มีประสบการณ์หรือกลุ่มผู้ทดสอบไม่ครบ 5 คน (AC-CRS-11)
+- หมายเหตุ: ไม่พบ tasks.md, test-cases.md เดิม, specs/000-shared/ หรือ mockup; plan.md ไม่มีหัวข้อแผนทดสอบข้อ 6
