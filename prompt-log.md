@@ -85,6 +85,21 @@
 - ผล test เพิ่มจาก test cases v1: test_TC_RMP_04A_1_rejects_fan_room_over_capacity และ test_TC_RMP_04A_2_accepts_fan_room_capacity_limit ผ่าน; frontend รวม 7 tests ผ่าน
 
 ## 2026-10-13
+- คำสั่ง: `/verify specs/001-roommate-profile`
+- ผล test: `cd frontend && npm test` ผ่าน 7 tests; `cd backend && pytest -v` ไม่พบ test (0 collected, exit code 5); ไม่มีไฟล์ใน `backend/app/` หรือ `backend/tests/`
+- ผลตามรอยไปข้างหน้า: 21 แถว — ครบ 0, ยังไม่ถึง 8, รอ Q 0, ช่องโหว่ 13
+- ข้อค้นพบใหม่: F-01 test AC-RMP-02 ตรวจเพียงว่ามี fields; F-02 tests ไม่ยืนยันข้อมูลว่าไม่มีการบันทึกเมื่อ validation ไม่ผ่าน; F-03 ไม่มี login/existing-profile guard; F-04 API client มี endpoints booking ที่ไม่เกี่ยวกับ roommate; F-05 TC-RMP-04A-3 อ้าง Q-04 ซึ่งยังไม่มีใน spec
+- ข้อจำกัดการตรวจ: ไม่แก้โค้ด, tests, spec, plan หรือ tasks; สร้างเฉพาะ `specs/001-roommate-profile/rtm.md` และเพิ่มบันทึกนี้
+
+### คำตัดสินของทีมหลังตรวจ
+- F-01: แก้ test ให้กรอกข้อมูลและ assert ค่าที่รับจริง
+- F-02: แก้โค้ด/เพิ่ม persistence และทดสอบว่าไม่มีการบันทึกเมื่อ validation ไม่ผ่าน
+- F-03: ไม่ใช่ปัญหาใน prototype ที่ยังไม่เปิดใช้งานจริง; รอ task implement
+- F-04: แยก/ลบออกจากขอบเขต roommate และ trace ให้ feature ที่ถูกต้อง
+- F-05: ยกเลิก TC-RMP-04A-3 เพราะอยู่นอกพฤติกรรมที่ AC ระบุ; ต้องปรับตาราง test cases ในงานแยก เนื่องจาก /verify ห้ามแก้ไฟล์ดังกล่าว
+- สถานะ RTM หลังคำตัดสิน: 21 แถว — ครบ 0, ยังไม่ถึง 11, รอ Q 0, ช่องโหว่ 10
+
+## 2026-10-13
 - คำสั่ง: `/tasks specs/001-roommate-profile`
 - โหมด/ขอบเขต: แตก plan.md เป็น tasks.md สำหรับงานปรับ spec ตามที่ทีมเลือก; ไม่แตก task implement frontend/backend และไม่แก้ spec.md
 - ผลลัพธ์: สร้าง specs/001-roommate-profile/tasks.md มี 5 เฟส 5 task และ 0 task รอ Q; Q-01 ถึง Q-03 ตอบแล้ว
