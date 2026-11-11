@@ -350,3 +350,10 @@
   - หาก match count เท่ากัน ให้เรียงตาม updated_at ล่าสุดก่อน
   - หน้า detail เปิดเผยเฉพาะโซเชียลและข้อมูลที่อนุญาตเท่านั้น โดยซ่อนเบอร์โทรศัพท์และข้อมูลอื่นที่ไม่ได้ระบุไว้
 - สรุป: คำสั่ง clarify ได้ปิดความกำกวมหลักด้วยการยอมรับ assumptions ที่ได้กำหนดไว้แล้ว โดยไม่มีการตัดสินใจเพิ่มเติมหรือการแก้ไขโค้ด
+
+## 2026-11-11
+- คำสั่ง: `/edit specs/004-search-roommate/plan.md`
+- โหมด: manual edit (ปรับเฉพาะหัวข้อ 4 ตาม spec UI section)
+- ไฟล์ที่แก้: specs/004-search-roommate/plan.md
+- ผลตรวจ: `cd /workspaces/Vistaandfriend-swreqspec- && git --no-pager diff --check` -> ไม่มีปัญหา whitespace / formatting
+- สรุป: ปรับเฉพาะหัวข้อ 4 ใน plan.md เท่านั้น โดยเพิ่มรายการ UI ID และ mockup file สำหรับหน้าจอแต่ละหน้าให้ตรงกับหมวด "หน้าจอ (UI)" ใน spec.md: UI-SRS-01 ถึง UI-SRS-05 พร้อมระบุไฟล์ mockup .html และ .png สำหรับแต่ละหน้า โดยไม่แตะหัวข้ออื่นใน plan.md
