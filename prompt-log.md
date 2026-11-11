@@ -236,6 +236,11 @@
 - ผลลัพธ์: เพิ่ม mapping ในหัวข้อ 4 ของแผนเท่านั้น โดยระบุ `UI-ERP-01` -> `mockups/UI-ERP-01-profile.html` และ `UI-ERP-02` -> `mockups/UI-ERP-02-edit.html` และไม่แตะหัวข้ออื่นของแผน
 
 ## 2026-11-11
+- คำสั่ง: เพิ่มช่อง `แบบหน้าจอ` ใต้ `ไฟล์ที่แตะ` ให้ทุก task ใน `specs/002-edit-roommate-profile/tasks.md` และคงสถานะ/ช่องอื่นไว้เหมือนเดิม
+- ขอบเขต: เปลี่ยนเฉพาะค่าในช่อง `แบบหน้าจอ` ตาม UI ID และ mockup ที่สัมพันธ์กับ task ของหน้าจอ; task ที่ไม่ใช่หน้าจอให้เป็น `ไม่มี`
+- ผลลัพธ์: T-03 -> `UI-ERP-01: mockups/UI-ERP-01-profile.html`; T-05/T-07 -> `UI-ERP-02: mockups/UI-ERP-02-edit.html`; T-09 -> `UI-ERP-01: mockups/UI-ERP-01-profile.html; UI-ERP-02: mockups/UI-ERP-02-edit.html`; task อื่น ๆ คงเป็น `ไม่มี`; ไม่เปลี่ยนสถานะหรือช่องอื่นใด
+
+## 2026-11-11
 - คำสั่ง: `/implement T-10 specs/002-edit-roommate-profile/tasks.md`
 - ไฟล์ที่สร้าง/แก้: `specs/002-edit-roommate-profile/test-cases.md`, `docs/qa/edit-profile-ux-checklist.md`
 - ผล test: ไม่มีการรัน test แบบโค้ด เนื่องจาก T-10 เป็น task ดำเนินการทดสอบ UX ของผู้ใช้จริงตาม NFR-ERP-03 และ AC-ERP-08; ไฟล์ checklist ถูกจัดทำพร้อมสคริปต์/เกณฑ์ผ่านสำหรับผู้เข้าร่วม 5 คน
