@@ -231,6 +231,11 @@
 - ผลลัพธ์: ปรับข้อความใน `specs/002-edit-roommate-profile/spec.md` ให้สอดคล้องกับคำตัดสิน ทีม และเพิ่มเติม ASM-ERP-06 ถึง ASM-ERP-09 เพื่อให้ข้อกำหนดชัดเจนและไม่มีการเดาเพิ่มเติม
 
 ## 2026-11-11
+- คำสั่ง: แก้ไขเฉพาะหัวข้อ 4 ใน `specs/002-edit-roommate-profile/plan.md`
+- ขอบเขต: เพิ่ม UI ID และไฟล์ mockup ให้หน้าจอแต่ละหน้า ตามหมวด "หน้าจอ (UI)" ใน `specs/002-edit-roommate-profile/spec.md` เท่านั้น
+- ผลลัพธ์: เพิ่ม mapping ในหัวข้อ 4 ของแผนเท่านั้น โดยระบุ `UI-ERP-01` -> `mockups/UI-ERP-01-profile.html` และ `UI-ERP-02` -> `mockups/UI-ERP-02-edit.html` และไม่แตะหัวข้ออื่นของแผน
+
+## 2026-11-11
 - คำสั่ง: `/implement T-10 specs/002-edit-roommate-profile/tasks.md`
 - ไฟล์ที่สร้าง/แก้: `specs/002-edit-roommate-profile/test-cases.md`, `docs/qa/edit-profile-ux-checklist.md`
 - ผล test: ไม่มีการรัน test แบบโค้ด เนื่องจาก T-10 เป็น task ดำเนินการทดสอบ UX ของผู้ใช้จริงตาม NFR-ERP-03 และ AC-ERP-08; ไฟล์ checklist ถูกจัดทำพร้อมสคริปต์/เกณฑ์ผ่านสำหรับผู้เข้าร่วม 5 คน
