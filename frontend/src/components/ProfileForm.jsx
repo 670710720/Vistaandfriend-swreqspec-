@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { PROFILE_CONFIG } from '../config.js'
 
 // รองรับ CON-ERP-06, CON-ERP-07, FR-ERP-03, FR-ERP-04, FR-ERP-09, NFR-ERP-01, AC-ERP-02, AC-ERP-02A, AC-ERP-02B
-export default function ProfileForm({ profile }) {
+export default function ProfileForm({ profile, onSubmit }) {
   const initialValues = useMemo(
     () => ({
       age: profile?.age ?? '',
@@ -14,6 +14,7 @@ export default function ProfileForm({ profile }) {
       sleepBehaviors: profile?.sleepBehaviors ?? profile?.sleep_behaviors ?? [],
       otherSleepBehavior: profile?.otherSleepBehavior ?? profile?.other_sleep_behavior ?? '',
       isSearchable: profile?.isSearchable ?? profile?.is_searchable ?? true,
+      social: profile?.social ?? Object.fromEntries(PROFILE_CONFIG.socialChannels.map((channel) => [channel, ''])),
     }),
     [profile],
   )
@@ -34,6 +35,16 @@ export default function ProfileForm({ profile }) {
           : [...current.sleepBehaviors, behavior],
       }
     })
+  }
+
+  function updateSocial(channel, value) {
+    setValues((current) => ({
+      ...current,
+      social: {
+        ...(current.social ?? {}),
+        [channel]: value,
+      },
+    }))
   }
 
   const showOccupantOptions = values.roomType ? PROFILE_CONFIG.roomOccupants[values.roomType] : null
@@ -153,6 +164,23 @@ export default function ProfileForm({ profile }) {
         />
       </label>
 
+      <fieldset className="space-y-4">
+        <legend className="text-base font-semibold text-slate-900">ช่องทางโซเชียล</legend>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {PROFILE_CONFIG.socialChannels.map((channel) => (
+            <label className="block text-sm font-medium text-slate-800" key={channel}>
+              {channel}
+              <input
+                className="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5"
+                onChange={(event) => updateSocial(channel, event.target.value)}
+                type="text"
+                value={values.social?.[channel] ?? ''}
+              />
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
       <label className="flex items-center gap-3 text-sm font-medium text-slate-800">
         <input
           checked={values.isSearchable}
@@ -164,6 +192,7 @@ export default function ProfileForm({ profile }) {
 
       <button
         className="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800"
+        onClick={onSubmit}
         type="button"
       >
         บันทึกการแก้ไข

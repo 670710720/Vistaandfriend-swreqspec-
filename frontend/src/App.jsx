@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { PROFILE_CONFIG } from './config.js'
 import ProfileEditPage from './pages/ProfileEditPage.jsx'
+import ProfilePage from './pages/ProfilePage.jsx'
 import { validateProfile } from './profileValidation.js'
 
 const initialValues = {
@@ -27,9 +28,29 @@ function FieldError({ id, errors }) {
 export default function App() {
   const [formOpen, setFormOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
+  const [profileViewOpen, setProfileViewOpen] = useState(false)
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState({})
   const [valid, setValid] = useState(false)
+  const [saveSuccess, setSaveSuccess] = useState(false)
+  const [profile, setProfile] = useState({
+    name: 'นักศึกษา A',
+    age: 22,
+    faculty: 'วิศวกรรมศาสตร์',
+    academicYear: '3',
+    phone: '0812345678',
+    roomType: 'airConditioned',
+    occupants: 2,
+    sleepBehaviors: ['กรน', 'นอนดิ้น'],
+    otherSleepBehavior: '',
+    isSearchable: true,
+    social: {
+      Facebook: 'studenta',
+      Instagram: 'studenta_ig',
+      LINE: 'studenta.line',
+      TikTok: 'studenta_tiktok',
+    },
+  })
 
   function update(field, value) {
     setValues((current) => ({ ...current, [field]: value }))
@@ -70,33 +91,39 @@ export default function App() {
       <nav aria-label="เมนูโปรไฟล์" className="mb-6 flex gap-3">
         <button
           className="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
-          onClick={() => setFormOpen(true)}
+          onClick={() => {
+            setFormOpen(true)
+            setEditOpen(false)
+            setProfileViewOpen(false)
+          }}
           type="button"
         >
           สร้างโปรไฟล์หาเมท
         </button>
         <button
           className="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-50"
-          onClick={() => setEditOpen(true)}
+          onClick={() => {
+            setEditOpen(true)
+            setFormOpen(false)
+            setProfileViewOpen(false)
+            setSaveSuccess(false)
+          }}
           type="button"
         >
           แก้ไขโปรไฟล์
         </button>
       </nav>
 
+      {profileViewOpen && <ProfilePage profile={profile} successMessage={saveSuccess ? 'แก้ไขโปรไฟล์สำเร็จ' : undefined} />}
+
       {editOpen && (
         <ProfileEditPage
-          profile={{
-            age: 22,
-            faculty: 'วิศวกรรมศาสตร์',
-            academicYear: '3',
-            phone: '0812345678',
-            roomType: 'airConditioned',
-            occupants: 2,
-            sleepBehaviors: ['กรน', 'นอนดิ้น'],
-            otherSleepBehavior: '',
-            isSearchable: true,
+          onSave={() => {
+            setEditOpen(false)
+            setProfileViewOpen(true)
+            setSaveSuccess(true)
           }}
+          profile={profile}
         />
       )}
 

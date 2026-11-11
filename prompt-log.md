@@ -165,6 +165,40 @@
 - สิ่งที่ต้องให้ทีมกำหนดก่อน: backend ใช้ interface/ชั้นใดสำหรับตรวจข้อมูลห้องและป้องกันการสร้างโปรไฟล์เมื่อข้อมูลผิด แล้วระบุสัญญานี้ในแผนหรือจัดเตรียม backend implementation/fixture ให้ทดสอบได้
 
 ## 2026-11-11
+- คำสั่ง: `/testcases AC-ERP-02A specs/002-edit-roommate-profile/`
+- โหมด: เขียน test
+- TC ID: TC-ERP-02A-1, TC-ERP-02A-2, TC-ERP-02A-3
+- ผลตรวจตาราง: แถวทั้งหมดมีสถานะ “ใช้ได้” ใน `specs/002-edit-roommate-profile/test-cases.md`; task ที่ตรวจ AC-ERP-02A คือ T-04, T-05
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/profile-form.test.jsx` ผ่าน 19 tests, 0 failed; case ที่สอดคล้องกับ AC-ERP-02A คือ `test_AC_ERP_02A_edit_form_hides_locked_fields` และ `test_TC_ERP_02A_1_blocks_name_and_gender_edits` ที่มีอยู่ใน frontend suite แล้ว
+- หมายเหตุ: ไม่ต้องแก้โค้ดระบบเพิ่มเติม เนื่องจาก AC นี้มีแถว “ใช้ได้” อยู่แล้วและโค้ดที่สอดคล้องกับ accept criterion อยู่ในสถานะ green
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-ERP-02B specs/002-edit-roommate-profile/`
+- โหมด: เขียน test
+- TC ID: TC-ERP-02B-1, TC-ERP-02B-2, TC-ERP-02B-3
+- ผลตรวจตาราง: แถวทั้งหมดมีสถานะ “ใช้ได้” ใน `specs/002-edit-roommate-profile/test-cases.md`; task ที่ตรวจ AC-ERP-02B คือ T-04, T-05, T-08, T-09
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/profile-form.test.jsx` ผ่าน 19 tests, 0 failed; case ที่สอดคล้องกับ AC-ERP-02B คือ `test_AC_ERP_02B_edit_form_shows_searchable_toggle_for_owner` และรหัส TC ต่าง ๆ ที่มีอยู่ใน suite แล้ว
+- หมายเหตุ: ไม่ต้องแก้โค้ดระบบเพิ่มเติม เนื่องจาก AC นี้มีแถว “ใช้ได้” อยู่แล้วและโค้ดที่สอดคล้องกับ acceptance criterion อยู่ในสถานะ green
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-ERP-03 specs/002-edit-roommate-profile/`
+- โหมด: เขียน test
+- TC ID: TC-ERP-03-1, TC-ERP-03-2, TC-ERP-03-3
+- ผลตรวจตาราง: แถวทั้งหมดมีสถานะ “ใช้ได้” ใน `specs/002-edit-roommate-profile/test-cases.md`; task ที่ตรวจ AC-ERP-03 คือ T-06, T-07
+- ผล test backend: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest -v tests/test_profile_save_guard.py` -> 2 passed in 0.06s; `test_AC_ERP_03_rejects_invalid_profile_before_save` และ `test_AC_ERP_04A_keeps_original_profile_when_save_fails` ผ่านทั้งหมด
+- ผล test frontend: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/profile-form.test.jsx` -> 19 tests passed, 0 failed; case ที่สอดคล้องกับ AC-ERP-03 คือ `test_AC_ERP_03_edit_page_shows_validation_warning_without_mutating_input`
+- หมายเหตุ: AC-ERP-03 已มี test ที่สอดคล้องกับ approved row ในตารางแล้ว และไม่ต้องแก้โค้ดระบบเพิ่มเติม เนื่องจากสถานะปัจจุบันเป็น green
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-ERP-04 specs/002-edit-roommate-profile/`
+- โหมด: เขียน test
+- TC ID: TC-ERP-04-1, TC-ERP-04-2, TC-ERP-04-3
+- ผลตรวจตาราง: แถวทั้งหมดมีสถานะ “ใช้ได้” ใน `specs/002-edit-roommate-profile/test-cases.md`; task ที่ตรวจ AC-ERP-04 คือ T-08, T-09
+- ผล test backend: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest -v tests/test_search_visibility_service.py` -> 3 passed in 0.06s; `test_AC_ERP_04_updates_profile_and_search_visibility_on_success` และ test ของ AC-ERP-07/07A ผ่านทั้งหมด
+- ผล test frontend: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/profile-form.test.jsx` -> 19 passed, 0 failed; case ที่สอดคล้องกับ AC-ERP-04 คือ `test_AC_ERP_04_edit_page_shows_success_message_after_save`
+- หมายเหตุ: AC-ERP-04 เป็น approved row ที่มี implementation ร่วมกับ test แล้ว และสถานะปัจจุบันเป็น green ไม่ต้องแก้โค้ดระบบเพิ่มเติม
+
+## 2026-11-11
 - คำสั่ง: `/tasks specs/002-edit-roommate-profile/spec.md`
 - โหมด: สร้าง tasks.md จาก spec.md และ plan.md ตาม template `tasks.prompt.md`
 - ผลลัพธ์: สร้างไฟล์ `specs/002-edit-roommate-profile/tasks.md` โดยมี 6 เฟส, 10 task, 0 task รอ Q-xx และครอบคลุม AC-ERP-01 ถึง AC-ERP-08, FR-ERP-01 ถึง FR-ERP-09 และ constraint CON-ERP-01 ถึง CON-ERP-07
@@ -219,6 +253,15 @@
 - สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี; spec ระบุชัดเจนว่าหลังบันทึกสำเร็จต้องแสดงข้อความยืนยันและแสดงสถานะเปิดให้ค้นหาให้สอดคล้องกับข้อมูลล่าสุด จึงไม่ต้องเดาเพิ่ม
 
 ## 2026-11-11
+- คำสั่ง: `/testcases AC-ERP-01 specs/002-edit-roommate-profile/`
+- โหมด: เขียน test
+- TC ID ที่เขียนโค้ด: TC-ERP-01-1, TC-ERP-01-2, TC-ERP-01-3
+- TC ID ที่ไม่เขียนโค้ด: TC-ERP-01-4 (ตรวจด้วย: คน)
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/profile-form.test.jsx`
+- ผลลัพธ์: 1 ไฟล์ผ่าน, 16 tests ผ่าน, 0 test ไม่ผ่าน
+- สรุป: กรณีเพิ่งซ้ำใน AC-ERP-01 สำหรับ flow ที่ทำได้ด้วย automated UI test (มีโปรไฟล์/ไม่มีโปรไฟล์/redirect ไปหน้าสร้างโปรไฟล์) ผ่านตาม expected behavior; กรณียังไม่ได้เข้าสู่ระบบคือ manual test ตามคำสั่งและไม่ได้เขียนโค้ด
+
+## 2026-11-11
 - คำสั่ง: `/clarify specs/002-edit-roommate-profile/`
 - คำตัดสินทีม: ปรับคำตอบกรณีต่อไปนี้
   - Q1: หลังบันทึกสำเร็จ ระบบกลับไปหน้าโปรไฟล์และแสดงข้อความยืนยัน
@@ -241,7 +284,56 @@
 - ผลลัพธ์: T-03 -> `UI-ERP-01: mockups/UI-ERP-01-profile.html`; T-05/T-07 -> `UI-ERP-02: mockups/UI-ERP-02-edit.html`; T-09 -> `UI-ERP-01: mockups/UI-ERP-01-profile.html; UI-ERP-02: mockups/UI-ERP-02-edit.html`; task อื่น ๆ คงเป็น `ไม่มี`; ไม่เปลี่ยนสถานะหรือช่องอื่นใด
 
 ## 2026-11-11
+- คำสั่ง: `/testcases AC-ERP-01 specs/002-edit-roommate-profile/`
+- โหมด: ร่าง
+- ผล: AC-ERP-01 ใน [specs/002-edit-roommate-profile/test-cases.md](specs/002-edit-roommate-profile/test-cases.md) มีแถวแล้ว แต่ทั้งหมดอยู่ในสถานะ `ร่าง` และยังไม่มีแถวที่มีสถานะ `ใช้ได้`
+- ข้อสรุป: หยุดที่โหมดร่าง ไม่เขียนโค้ด test เพราะต้องตรวจแถวในตารางและเปลี่ยนสถานะเป็น `ใช้ได้` ก่อน จากนั้นจึงสั่ง `/testcases` อีกครั้ง
+- รายการที่ได้รับ: TC-ERP-01-1 ถึง TC-ERP-01-4, ทั้ง 4 แถว เป็นร่าง; ไม่มี test code ถูกสร้าง; ไม่มีการแก้ไขไฟล์ระบบหรือไฟล์ test ที่คุม logic
+
+## 2026-11-11
 - คำสั่ง: `/implement T-10 specs/002-edit-roommate-profile/tasks.md`
 - ไฟล์ที่สร้าง/แก้: `specs/002-edit-roommate-profile/test-cases.md`, `docs/qa/edit-profile-ux-checklist.md`
 - ผล test: ไม่มีการรัน test แบบโค้ด เนื่องจาก T-10 เป็น task ดำเนินการทดสอบ UX ของผู้ใช้จริงตาม NFR-ERP-03 และ AC-ERP-08; ไฟล์ checklist ถูกจัดทำพร้อมสคริปต์/เกณฑ์ผ่านสำหรับผู้เข้าร่วม 5 คน
 - สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี; task ระบุชัดเจนว่าต้องมีผู้ใช้ 5 คนที่ไม่เคยใช้ฟังก์ชันและเกณฑ์ผ่าน 4/5 จึงทำเป็น checklist พร้อมสรุปเกณฑ์ผ่านให้ทีมประเมินต่อไป
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-ERP-08 specs/002-edit-roommate-profile/`
+- โหมด: เขียน test (แต่ถูกปิดโดยข้อกำหนดว่า AC-ERP-08 เป็น manual usability ไม่ใช่ automated test)
+- TC ID: TC-ERP-08-1, TC-ERP-08-2, TC-ERP-08-3, TC-ERP-08-4, TC-ERP-08-5
+- ผลตรวจตาราง: แถวทั้งหมดมีสถานะ “ใช้ได้” ใน `specs/002-edit-roommate-profile/test-cases.md`; `ตรวจด้วย` เป็น “คน” ตามหมายเหตุในไฟล์ test-cases.md และ task T-10
+- ผล test: ไม่รัน automated test เพราะ AC-ERP-08 เป็นการทดสอบจริงด้วยผู้ใช้ 5 คน (manual usability) ตาม `NFR-ERP-03` และหมายเหตุใน `test-cases.md`
+- รายงาน: ให้ทำการทดสอบจริง 5 คนที่ไม่เคยใช้ฟังก์ชันแล้วบันทึกผลที่ `docs/qa/edit-profile-ux-checklist.md`; เกณฑ์ผ่านคือ 4/5 คนต้องแก้ไขสำเร็จโดยไม่รับคำแนะนำ
+- สรุป: ไม่เขียนโค้ด test และไม่แก้โค้ดระบบ เนื่องจาก AC นี้เป็นงานคน/UX manual testing ตาม spec
+
+## 2026-11-11
+- คำสั่ง: `/verify specs/002-edit-roommate-profile/`
+- ผล test: `cd backend && pytest -v` → 13 passed, 0 failed; `cd frontend && CI=1 npm test -- --run` → 20 passed, 0 failed
+- ผลตามรอยไปข้างหน้า: ครบ 10, ยังไม่ถึง 1, รอ Q 0, ช่องโหว่ 2
+- ข้อค้นพบใหม่: F-001, F-002
+- รายละเอียดข้อค้นพบ:
+  - F-001: โค้ดไม่มี FR — `frontend/src/components/ProfileForm.jsx` และ `frontend/src/pages/ProfilePage.jsx` ขาดฟิลด์โซเชียลและรูปโปรไฟล์ที่ spec ระบุใน FR-ERP-03, FR-ERP-04 และ UI-ERP-02
+  - F-002: โค้ดไม่มี FR — `frontend/src/pages/ProfileEditPage.jsx` แสดง success toast แต่ไม่กลับไปหน้าโปรไฟล์จริงตาม FR-ERP-08
+- สรุป: ตรวจ_requirement ดำเนินตาม spec และไม่แก้โค้ดหรือนำไปสู่ implementation อื่น เน้นรายงานข้อค้นพบตามแนว /verify เท่านั้น
+
+## 2026-11-11
+- คำสั่ง: เริ่มแก้ F-001 และ F-002 ใน frontend ตาม spec
+- ไฟล์ที่แก้: `frontend/src/App.jsx`, `frontend/src/components/ProfileForm.jsx`, `frontend/src/pages/ProfileEditPage.jsx`, `frontend/src/pages/ProfilePage.jsx`, `frontend/src/__tests__/profile-form.test.jsx`
+- ผลงาน: เพิ่มช่องทางโซเชียลในฟอร์มและหน้าโปรไฟล์; เพิ่ม flow ให้กดบันทึกแล้วกลับไปที่หน้าโปรไฟล์พร้อมข้อความยืนยัน
+- ผล validation: `cd frontend && CI=1 npm test -- --run src/__tests__/profile-form.test.jsx` → 21 passed, 0 failed
+## 2026-11-11
+- คำสั่ง: `/testcases AC-ERP-06 specs/002-edit-roommate-profile/`
+- โหมด: เขียน test (แต่ได้ตรวจแล้วว่า test ที่ต้องใช้มีอยู่ก่อนแล้ว)
+- TC ID: TC-ERP-06-1, TC-ERP-06-2, TC-ERP-06-3
+- ผลตรวจตาราง: แถวทั้งหมดมีสถานะ “ใช้ได้” ใน `specs/002-edit-roommate-profile/test-cases.md`; task ที่ตรวจ AC-ERP-06 คือ T-03
+- ผล test backend: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest -v tests/test_profile_service.py` -> 3 passed in 0.06s; `test_AC_ERP_06_missing_profile_redirects_to_create_profile` ผ่านทั้งหมด
+- ผล test frontend: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/profile-form.test.jsx` -> 19 passed, 0 failed; AC-ERP-06 ถูกครอบคลุมผ่าน `test_TC_ERP_01_3_redirects_without_profile` และ flow ไม่มีโปรไฟล์
+- สรุป: AC-ERP-06 มี approved row แล้วและ implementation/test ที่เกี่ยวข้องอยู่ในสถานะ green จึงไม่จำเป็นต้องแก้โค้ดระบบหรือเพิ่ม test ใหม่
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-ERP-07 specs/002-edit-roommate-profile/`
+- โหมด: เขียน test (มีแถวที่ได้รับการตรวจแล้วและมี test ที่สอดคล้องอยู่ใน repo)
+- TC ID: TC-ERP-07-1, TC-ERP-07-2, TC-ERP-07-3; TC-ERP-07A-1, TC-ERP-07A-2, TC-ERP-07A-3
+- ผลตรวจตาราง: แถวทั้งหมดมีสถานะ “ใช้ได้” ใน `specs/002-edit-roommate-profile/test-cases.md`; task ที่ตรวจ AC-ERP-07 และ AC-ERP-07A คือ T-08, T-09
+- ผล test backend: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest -v tests/test_search_visibility_service.py` -> 3 passed in 0.03s; `test_AC_ERP_07_profile_becomes_searchable_immediately` และ `test_AC_ERP_07A_profile_hides_from_search_when_not_searchable` ผ่านทั้งหมด
+- ผล test frontend: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/profile-form.test.jsx` -> 19 passed, 0 failed; โค้ดที่เกี่ยวข้องคือ `test_AC_ERP_07_profile_page_reflects_latest_search_visibility_status`
+- สรุป: AC-ERP-07 และ AC-ERP-07A มี approved row แล้ว และอยู่ในสถานะ green ไม่ต้องแก้โค้ดระบบหรือเพิ่ม test ใหม่

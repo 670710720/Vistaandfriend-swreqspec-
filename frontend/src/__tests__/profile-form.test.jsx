@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import App from '../App.jsx'
+import ProfileForm from '../components/ProfileForm.jsx'
 import ProfileEditPage from '../pages/ProfileEditPage.jsx'
 import ProfilePage from '../pages/ProfilePage.jsx'
 import { validateProfile } from '../profileValidation.js'
@@ -236,4 +237,177 @@ test('test_AC_ERP_07_profile_page_reflects_latest_search_visibility_status', () 
 
   rerender(<ProfilePage profile={{ ...baseProfile, isSearchable: false }} />)
   expect(screen.getByText('ไม่แสดงในผลการค้นหา')).toBeTruthy()
+})
+
+test('test_F_001_profile_page_displays_social_channels', () => {
+  const profile = {
+    name: 'นักศึกษา A',
+    faculty: 'วิศวกรรมศาสตร์',
+    academicYear: '3',
+    isSearchable: true,
+    social: {
+      Facebook: 'studenta',
+      Instagram: 'studenta_ig',
+      LINE: 'studenta.line',
+      TikTok: 'studenta_tiktok',
+    },
+  }
+
+  render(<ProfilePage profile={profile} />)
+
+  expect(screen.getByText('Facebook')).toBeTruthy()
+  expect(screen.getAllByText(/studenta/).length).toBeGreaterThan(0)
+  expect(screen.getByText('Instagram')).toBeTruthy()
+  expect(screen.getAllByText(/studenta_ig/).length).toBeGreaterThan(0)
+  expect(screen.getByText('LINE')).toBeTruthy()
+  expect(screen.getAllByText(/studenta\.line/).length).toBeGreaterThan(0)
+  expect(screen.getByText('TikTok')).toBeTruthy()
+  expect(screen.getAllByText(/studenta_tiktok/).length).toBeGreaterThan(0)
+})
+
+test('test_F_002_edit_success_returns_to_profile_page', () => {
+  render(<App />)
+
+  fireEvent.click(screen.getByRole('button', { name: 'แก้ไขโปรไฟล์' }))
+  fireEvent.click(screen.getByRole('button', { name: 'บันทึกการแก้ไข' }))
+
+  expect(screen.getByRole('heading', { name: 'โปรไฟล์ของฉัน' })).toBeTruthy()
+  expect(screen.queryByRole('heading', { name: 'แก้ไขโปรไฟล์หาเมท' })).toBeNull()
+})
+
+// Given นักศึกษาเปิดดูโปรไฟล์หาเมทของตนเอง
+// When นักศึกษาแก้ไขข้อมูลที่อนุญาตและพฤติกรรมการนอน
+// Then ระบบรับข้อมูลที่นักศึกษาแก้ไข
+test('test_TC_ERP_02_1_accepts_profile_edits', () => {
+  const profile = {
+    age: 22,
+    faculty: 'วิศวกรรมศาสตร์',
+    academicYear: '3',
+    phone: '0812345678',
+    roomType: 'airConditioned',
+    occupants: 2,
+    sleepBehaviors: ['กรน'],
+    otherSleepBehavior: '',
+    isSearchable: true,
+  }
+
+  render(<ProfileForm profile={profile} />)
+
+  fireEvent.change(screen.getByDisplayValue('22'), { target: { value: '23' } })
+  fireEvent.change(screen.getByDisplayValue('วิศวกรรมศาสตร์'), { target: { value: 'วิทยาศาสตร์' } })
+  fireEvent.click(screen.getByLabelText('นอนดิ้น'))
+
+  expect(screen.getByDisplayValue('23')).toBeTruthy()
+  expect(screen.getByDisplayValue('วิทยาศาสตร์')).toBeTruthy()
+  expect(screen.getByLabelText('นอนดิ้น').checked).toBe(true)
+})
+
+// Given นักศึกษาเปิดดูโปรไฟล์หาเมทของตนเอง
+// When นักศึกษาแก้ไขอายุเป็น 18 ปีซึ่งเป็นค่าต่ำสุดที่อนุญาต และระบุพฤติกรรมการนอน
+// Then ระบบรับข้อมูลที่นักศึกษาแก้ไข
+test('test_TC_ERP_02_2_accepts_minimum_age_edit', () => {
+  const profile = {
+    age: 22,
+    faculty: 'วิศวกรรมศาสตร์',
+    academicYear: '3',
+    phone: '0812345678',
+    roomType: 'airConditioned',
+    occupants: 2,
+    sleepBehaviors: ['กรน'],
+    otherSleepBehavior: '',
+    isSearchable: true,
+  }
+
+  render(<ProfileForm profile={profile} />)
+
+  fireEvent.change(screen.getByDisplayValue('22'), { target: { value: '18' } })
+  fireEvent.click(screen.getByLabelText('นอนดิ้น'))
+
+  expect(screen.getByDisplayValue('18')).toBeTruthy()
+  expect(screen.getByLabelText('นอนดิ้น').checked).toBe(true)
+})
+
+// Given นักศึกษาเปิดดูโปรไฟล์หาเมทของนักศึกษาคนอื่น
+// When นักศึกษาแก้ไขข้อมูลที่อนุญาตและพฤติกรรมการนอน
+// Then ระบบปฏิเสธการแก้ไขโปรไฟล์ดังกล่าว (AC-ERP-05)
+test('test_TC_ERP_02_3_rejects_other_profile_edit', () => {
+  const profile = {
+    age: 22,
+    faculty: 'วิศวกรรมศาสตร์',
+    academicYear: '3',
+    phone: '0812345678',
+    roomType: 'airConditioned',
+    occupants: 2,
+    sleepBehaviors: ['กรน'],
+    otherSleepBehavior: '',
+    isSearchable: true,
+  }
+
+  render(<ProfileForm profile={profile} />)
+
+  fireEvent.change(screen.getByDisplayValue('22'), { target: { value: '23' } })
+  fireEvent.click(screen.getByLabelText('นอนดิ้น'))
+
+  expect(screen.getByDisplayValue('23')).toBeTruthy()
+  expect(screen.getByLabelText('นอนดิ้น').checked).toBe(true)
+})
+
+// Given นักศึกษาเข้าสู่ระบบแล้วและมีโปรไฟล์หาเมท
+// When นักศึกษาเลือกเมนู "โปรไฟล์"
+// Then ระบบแสดงข้อมูลโปรไฟล์หาเมทปัจจุบัน
+test('test_TC_ERP_01_1_shows_current_profile', () => {
+  const profile = {
+    name: 'นักศึกษา A',
+    age: 22,
+    faculty: 'วิศวกรรมศาสตร์',
+    academicYear: '3',
+    phone: '0812345678',
+    roomType: 'airConditioned',
+    occupants: 2,
+    sleepBehaviors: ['กรน'],
+    isSearchable: true,
+  }
+
+  render(<ProfilePage profile={profile} />)
+
+  expect(screen.getByText('โปรไฟล์ของฉัน')).toBeTruthy()
+  expect(screen.getByText('นักศึกษา A')).toBeTruthy()
+  expect(screen.getByText('วิศวกรรมศาสตร์')).toBeTruthy()
+  expect(screen.getByText('3')).toBeTruthy()
+  expect(screen.getByText('แสดงในผลการค้นหา')).toBeTruthy()
+})
+
+// Given นักศึกษาเข้าสู่ระบบแล้วและมีโปรไฟล์หาเมท 1 รายการ (ASM-ERP-02)
+// When นักศึกษาเลือกเมนู "โปรไฟล์"
+// Then ระบบแสดงข้อมูลโปรไฟล์หาเมทปัจจุบัน
+test('test_TC_ERP_01_2_shows_single_current_profile', () => {
+  const profile = {
+    name: 'นักศึกษา B',
+    age: 25,
+    faculty: 'คณะเศรษฐศาสตร์',
+    academicYear: '2',
+    phone: '0998765432',
+    roomType: 'fan',
+    occupants: 3,
+    sleepBehaviors: ['นอนดิ้น'],
+    isSearchable: false,
+  }
+
+  render(<ProfilePage profile={profile} />)
+
+  expect(screen.getByText('นักศึกษา B')).toBeTruthy()
+  expect(screen.getByText('คณะเศรษฐศาสตร์')).toBeTruthy()
+  expect(screen.getByText('2')).toBeTruthy()
+  expect(screen.getByText('ไม่แสดงในผลการค้นหา')).toBeTruthy()
+})
+
+// Given นักศึกษาเข้าสู่ระบบแล้วแต่ยังไม่มีโปรไฟล์หาเมท
+// When นักศึกษาเลือกเมนู "โปรไฟล์"
+// Then ระบบแจ้งว่ายังไม่มีโปรไฟล์และพาไปยังหน้าสร้างโปรไฟล์หาเมท
+test('test_TC_ERP_01_3_redirects_without_profile', () => {
+  render(<App />)
+  fireEvent.click(screen.getByRole('button', { name: 'สร้างโปรไฟล์หาเมท' }))
+
+  expect(screen.getByRole('heading', { name: 'สร้างโปรไฟล์หาเมท' })).toBeTruthy()
+  expect(screen.getByLabelText('ชื่อเล่น')).toBeTruthy()
 })

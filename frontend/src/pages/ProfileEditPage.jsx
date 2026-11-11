@@ -9,6 +9,7 @@ export default function ProfileEditPage({
   saveError = '',
   saveSuccess = false,
   successMessage = 'แก้ไขโปรไฟล์สำเร็จ',
+  onSave,
 }) {
   const errorEntries = Object.values(validationErrors || {}).filter(Boolean)
 
@@ -38,7 +39,7 @@ export default function ProfileEditPage({
         />
       )}
 
-      <ProfileForm profile={profile} />
+      <ProfileForm profile={profile} onSubmit={onSave} />
     </section>
   )
 }
