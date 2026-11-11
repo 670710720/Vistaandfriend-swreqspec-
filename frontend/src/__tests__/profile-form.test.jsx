@@ -1,5 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import App from '../App.jsx'
+import ProfileEditPage from '../pages/ProfileEditPage.jsx'
+import ProfilePage from '../pages/ProfilePage.jsx'
 import { validateProfile } from '../profileValidation.js'
 
 function openProfileForm() {
@@ -115,4 +117,123 @@ test('test_TC_RMP_04A_3_rejects_fan_room_below_capacity', () => {
   const errors = validateProfile(validProfileValues({ roomType: 'fan', occupants: '0' }))
 
   expect(errors.occupants).toBe('จำนวนผู้พักไม่สอดคล้องกับรูปแบบห้อง')
+})
+
+// AC-ERP-02A: ฟิลด์ชื่อและเพศต้องซ่อน/ปิดใช้งานในหน้าแก้ไขโปรไฟล์
+test('test_AC_ERP_02A_edit_form_hides_locked_fields', () => {
+  render(<App />)
+  fireEvent.click(screen.getByRole('button', { name: 'แก้ไขโปรไฟล์' }))
+
+  expect(screen.getByLabelText('อายุ')).toBeTruthy()
+  expect(screen.queryByLabelText('ชื่อ')).toBeNull()
+  expect(screen.queryByLabelText('เพศ')).toBeNull()
+})
+
+// AC-ERP-02B: เจ้าของโปรไฟล์ต้องเห็นและสลับสถานะเปิดให้ค้นหาได้
+test('test_AC_ERP_02B_edit_form_shows_searchable_toggle_for_owner', () => {
+  render(<App />)
+  fireEvent.click(screen.getByRole('button', { name: 'แก้ไขโปรไฟล์' }))
+
+  expect(screen.getByLabelText('เปิดให้ค้นหา')).toBeTruthy()
+  expect(screen.getByLabelText('เปิดให้ค้นหา').checked).toBe(true)
+})
+
+// AC-ERP-03: ข้อมูลไม่ครบหรือไม่ถูกต้องต้องมีข้อความแจ้งเตือนและไม่บันทึกข้อมูลใหม่
+test('test_AC_ERP_03_edit_page_shows_validation_warning_without_mutating_input', () => {
+  const profile = {
+    age: 22,
+    faculty: 'วิศวกรรมศาสตร์',
+    academicYear: '3',
+    phone: '0812345678',
+    roomType: 'airConditioned',
+    occupants: 2,
+    sleepBehaviors: ['กรน', 'นอนดิ้น'],
+    isSearchable: true,
+  }
+
+  render(
+    <ProfileEditPage
+      profile={profile}
+      validationErrors={{
+        age: 'อายุต้องอยู่ระหว่าง 18–25 ปี',
+        sleepBehaviors: 'กรุณาเลือกพฤติกรรมการนอนอย่างน้อยหนึ่งรายการ',
+      }}
+    />,
+  )
+
+  expect(screen.getByText('ข้อมูลไม่ครบหรือไม่ถูกต้อง')).toBeTruthy()
+  expect(screen.getByText('อายุต้องอยู่ระหว่าง 18–25 ปี')).toBeTruthy()
+  expect(screen.getByText('กรุณาเลือกพฤติกรรมการนอนอย่างน้อยหนึ่งรายการ')).toBeTruthy()
+  expect(screen.getByDisplayValue('22')).toBeTruthy()
+})
+
+// AC-ERP-04A: การบันทึกล้มเหลวต้องคงข้อมูลเดิมไว้และแจ้งให้ลองใหม่
+test('test_AC_ERP_04A_edit_page_keeps_original_values_when_save_fails', () => {
+  const profile = {
+    age: 22,
+    faculty: 'วิศวกรรมศาสตร์',
+    academicYear: '3',
+    phone: '0812345678',
+    roomType: 'airConditioned',
+    occupants: 2,
+    sleepBehaviors: ['กรน', 'นอนดิ้น'],
+    isSearchable: true,
+  }
+
+  render(
+    <ProfileEditPage
+      profile={profile}
+      saveError="การบันทึกข้อมูลล้มเหลว กรุณาลองใหม่"
+    />,
+  )
+
+  expect(screen.getByText('การบันทึกข้อมูลล้มเหลว กรุณาลองใหม่')).toBeTruthy()
+  expect(screen.getByDisplayValue('22')).toBeTruthy()
+  expect(screen.getByDisplayValue('0812345678')).toBeTruthy()
+})
+
+// AC-ERP-04: บันทึกสำเร็จต้องแสดงข้อความยืนยันและอัปเดตสถานะหน้าจอ
+test('test_AC_ERP_04_edit_page_shows_success_message_after_save', () => {
+  const profile = {
+    name: 'นักศึกษา A',
+    age: 22,
+    faculty: 'วิศวกรรมศาสตร์',
+    academicYear: '3',
+    phone: '0812345678',
+    roomType: 'airConditioned',
+    occupants: 2,
+    sleepBehaviors: ['กรน'],
+    isSearchable: true,
+  }
+
+  render(
+    <ProfileEditPage
+      profile={profile}
+      saveSuccess
+    />,
+  )
+
+  expect(screen.getByText('แก้ไขโปรไฟล์สำเร็จ')).toBeTruthy()
+  expect(screen.getByText('ข้อมูลโปรไฟล์ของคุณถูกบันทึกและพร้อมแสดงผลตามสถานะเปิดให้ค้นหา')).toBeTruthy()
+})
+
+// AC-ERP-07 และ AC-ERP-07A: หน้าโปรไฟล์ต้องสะท้อนสถานะเปิดให้ค้นหาแบบทันที
+test('test_AC_ERP_07_profile_page_reflects_latest_search_visibility_status', () => {
+  const baseProfile = {
+    name: 'นักศึกษา A',
+    age: 22,
+    faculty: 'วิศวกรรมศาสตร์',
+    academicYear: '3',
+    phone: '0812345678',
+    roomType: 'airConditioned',
+    occupants: 2,
+    sleepBehaviors: ['กรน'],
+    isSearchable: true,
+  }
+
+  const { rerender } = render(<ProfilePage profile={baseProfile} />)
+  expect(screen.getByText('แสดงในผลการค้นหา')).toBeTruthy()
+
+  rerender(<ProfilePage profile={{ ...baseProfile, isSearchable: false }} />)
+  expect(screen.getByText('ไม่แสดงในผลการค้นหา')).toBeTruthy()
 })

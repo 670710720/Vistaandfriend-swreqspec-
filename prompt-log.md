@@ -169,3 +169,57 @@
 - โหมด: สร้าง tasks.md จาก spec.md และ plan.md ตาม template `tasks.prompt.md`
 - ผลลัพธ์: สร้างไฟล์ `specs/002-edit-roommate-profile/tasks.md` โดยมี 6 เฟส, 10 task, 0 task รอ Q-xx และครอบคลุม AC-ERP-01 ถึง AC-ERP-08, FR-ERP-01 ถึง FR-ERP-09 และ constraint CON-ERP-01 ถึง CON-ERP-07
 - หมายเหตุ: ไม่พบ `specs/000-shared/constraints.md` ใน repo จึงใช้ constraint จาก spec ของฟีเจอร์นี้และ plan.md เป็นแหล่งอ้างอิงหลักเพียงแหล่งเดียว
+
+## 2026-11-11
+- คำสั่ง: `/implement T-01 specs/002-edit-roommate-profile/tasks.md`
+- ไฟล์ที่สร้าง/แก้: `backend/app/profile_model.py`, `backend/app/sample_profiles.py`, `specs/002-edit-roommate-profile/tasks.md`
+- ผล test: `cd backend && PYTHONPATH=. python - <<'PY' ... PY` สำเร็จ; import model และ sample profile ได้ พร้อมแสดง `RoommateProfile`, `student-1001 22 True True False`, `['other', 'owner']`
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี; task ระบุไฟล์และความต้องการชัดเจน จึงไม่ต้องเดาเพิ่มเติม
+
+## 2026-11-11
+- คำสั่ง: `/implement T-02 specs/002-edit-roommate-profile/tasks.md`
+- ไฟล์ที่สร้าง/แก้: `backend/app/profile_validation.py`, `backend/tests/test_profile_validation.py`, `backend/app/__init__.py`, `specs/002-edit-roommate-profile/tasks.md`
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest -q` ผ่าน 2 tests; output: `2 passed in 0.03s`
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี; task ระบุไว้ชัดว่า validation ต้องใช้ความถูกต้องของอายุ/เบอร์โทรศัพท์/ชนิดห้องและป้องกันชื่อ/เพศ จึงไม่ต้องเดาเพิ่มเติม
+
+## 2026-11-11
+- คำสั่ง: `/implement T-03 specs/002-edit-roommate-profile/tasks.md`
+- ไฟล์ที่สร้าง/แก้: `backend/app/profile_service.py`, `backend/tests/test_profile_service.py`, `specs/002-edit-roommate-profile/tasks.md`
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest -q tests/test_profile_service.py tests/test_profile_validation.py` ผ่าน 5 tests; output: `5 passed in 0.02s`
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่ได้เดา; พบว่าตัวอย่างข้อมูลใน repo ใช้ key เป็น `owner`/`other` ไม่ใช่ `user_id` จึงแก้ resolver ให้รองรับทั้งสองแบบ เพื่อให้สอดคล้องกับข้อมูลจริงของโปรเจค
+
+## 2026-11-11
+- คำสั่ง: `/implement T-04 specs/002-edit-roommate-profile/tasks.md`
+- ไฟล์ที่สร้าง/แก้: `backend/app/profile_service.py`, `backend/app/profile_update.py`, `backend/tests/test_profile_update.py`, `specs/002-edit-roommate-profile/tasks.md`
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest -q tests/test_profile_update.py tests/test_profile_service.py tests/test_profile_validation.py` ผ่าน 8 tests; output: `8 passed in 0.05s`
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่ได้เดา; แก้ให้ปฏิเสธการเปลี่ยนชื่อ/เพศทันที และยอมรับเฉพาะฟิลด์ที่อนุญาตเพื่อให้สอดคล้องกับข้อกำหนดใน spec และการทำงานของ T-02/T-03 ที่มีอยู่แล้ว
+
+## 2026-11-11
+- คำสั่ง: `/implement T-05 specs/002-edit-roommate-profile/tasks.md`
+- ไฟล์ที่สร้าง/แก้: `frontend/src/App.jsx`, `frontend/src/components/ProfileForm.jsx`, `frontend/src/pages/ProfileEditPage.jsx`, `frontend/src/__tests__/profile-form.test.jsx`, `specs/002-edit-roommate-profile/tasks.md`
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npx vitest run` ผ่าน 10 tests; output: `2 passed (2 files), 10 passed (10 tests)`
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่ได้เดา; ใช้เงื่อนไขที่มีอยู่ใน spec ว่า ชื่อ/เพศต้องไม่ปรากฏในฟอร์มแก้ไข และเจ้าของโปรไฟล์ต้องเห็น toggle เปิดให้ค้นหา เพื่อให้สอดคล้องกับ T-04 ที่ป้องกันฟิลด์ล็อกแล้ว
+
+## 2026-11-11
+- คำสั่ง: `/implement T-06 specs/002-edit-roommate-profile/tasks.md`
+- ไฟล์ที่สร้าง/แก้: `backend/app/profile_validation.py`, `backend/app/profile_service.py`, `backend/tests/test_profile_save_guard.py`, `specs/002-edit-roommate-profile/tasks.md`
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest -q` ผ่าน 10 tests; output: `10 passed in 0.05s`
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่ได้เดา; validation ขั้นสุดท้ายถูกออกแบบให้ยอมรับค่าปัจจุบันที่เป็นข้อมูลเดิมและตรวจเฉพาะฟิลด์ที่มีการเปลี่ยนแปลงจริง เพื่อป้องกันการปิดกั้น name/gender เมื่อ payload ยังใช้งานเดิมอยู่ และคงข้อมูลเดิมไว้เมื่อ save callback ล้มเหลว
+
+## 2026-11-11
+- คำสั่ง: `/implement T-07 specs/002-edit-roommate-profile/tasks.md`
+- ไฟล์ที่สร้าง/แก้: `frontend/src/pages/ProfileEditPage.jsx`, `frontend/src/components/ValidationMessage.jsx`, `frontend/src/__tests__/profile-form.test.jsx`, `specs/002-edit-roommate-profile/tasks.md`
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npx vitest run src/__tests__/profile-form.test.jsx` ผ่าน 11 tests; output: `11 passed (11)`
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่ได้เดา; UI ใช้ alert ที่แสดงข้อความสรุปและรายการ error ของฟิลด์ที่ไม่ผ่านการตรวจสอบ โดยคงค่าสูงสุดให้มาจาก profile เดิมเพื่อให้เห็นว่าข้อมูลไม่ถูกบันทึกและไม่มีการเปลี่ยนแปลงบางส่วน
+
+## 2026-11-11
+- คำสั่ง: `/implement T-09 specs/002-edit-roommate-profile/tasks.md`
+- ไฟล์ที่สร้าง/แก้: `frontend/src/pages/ProfileEditPage.jsx`, `frontend/src/components/SuccessToast.jsx`, `frontend/src/pages/ProfilePage.jsx`, `frontend/src/__tests__/profile-form.test.jsx`
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npx vitest run src/__tests__/profile-form.test.jsx` ผ่าน 13 tests; output: `13 passed (13)`
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี; spec ระบุชัดเจนว่าหลังบันทึกสำเร็จต้องแสดงข้อความยืนยันและแสดงสถานะเปิดให้ค้นหาให้สอดคล้องกับข้อมูลล่าสุด จึงไม่ต้องเดาเพิ่ม
+
+## 2026-11-11
+- คำสั่ง: `/implement T-10 specs/002-edit-roommate-profile/tasks.md`
+- ไฟล์ที่สร้าง/แก้: `specs/002-edit-roommate-profile/test-cases.md`, `docs/qa/edit-profile-ux-checklist.md`
+- ผล test: ไม่มีการรัน test แบบโค้ด เนื่องจาก T-10 เป็น task ดำเนินการทดสอบ UX ของผู้ใช้จริงตาม NFR-ERP-03 และ AC-ERP-08; ไฟล์ checklist ถูกจัดทำพร้อมสคริปต์/เกณฑ์ผ่านสำหรับผู้เข้าร่วม 5 คน
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี; task ระบุชัดเจนว่าต้องมีผู้ใช้ 5 คนที่ไม่เคยใช้ฟังก์ชันและเกณฑ์ผ่าน 4/5 จึงทำเป็น checklist พร้อมสรุปเกณฑ์ผ่านให้ทีมประเมินต่อไป

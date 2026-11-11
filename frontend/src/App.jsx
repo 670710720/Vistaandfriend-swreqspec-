@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { PROFILE_CONFIG } from './config.js'
+import ProfileEditPage from './pages/ProfileEditPage.jsx'
 import { validateProfile } from './profileValidation.js'
 
 const initialValues = {
@@ -25,6 +26,7 @@ function FieldError({ id, errors }) {
 // รองรับ FR-RMP-01, FR-RMP-02 และ AC-RMP-01
 export default function App() {
   const [formOpen, setFormOpen] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState({})
   const [valid, setValid] = useState(false)
@@ -65,7 +67,7 @@ export default function App() {
         <h1 className="mt-2 text-3xl font-bold text-slate-900">โปรไฟล์หาเมท</h1>
       </header>
 
-      <nav aria-label="เมนูโปรไฟล์" className="mb-6">
+      <nav aria-label="เมนูโปรไฟล์" className="mb-6 flex gap-3">
         <button
           className="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
           onClick={() => setFormOpen(true)}
@@ -73,7 +75,30 @@ export default function App() {
         >
           สร้างโปรไฟล์หาเมท
         </button>
+        <button
+          className="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-50"
+          onClick={() => setEditOpen(true)}
+          type="button"
+        >
+          แก้ไขโปรไฟล์
+        </button>
       </nav>
+
+      {editOpen && (
+        <ProfileEditPage
+          profile={{
+            age: 22,
+            faculty: 'วิศวกรรมศาสตร์',
+            academicYear: '3',
+            phone: '0812345678',
+            roomType: 'airConditioned',
+            occupants: 2,
+            sleepBehaviors: ['กรน', 'นอนดิ้น'],
+            otherSleepBehavior: '',
+            isSearchable: true,
+          }}
+        />
+      )}
 
       {formOpen && (
         <section aria-labelledby="create-profile-heading" className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
