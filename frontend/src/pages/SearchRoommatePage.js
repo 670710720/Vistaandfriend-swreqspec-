@@ -5,6 +5,14 @@ import { searchRoommates } from '../api/client.js'
 
 const KNOWN_PROFILE_USERS = ['user-1', 'user-2', 'user-3', 'user-4']
 
+const API_FILTER_NAMES = {
+  academicYear: 'academic_year',
+  roomType: 'room_type',
+  roomSize: 'room_size',
+  sleepBehavior: 'sleep_behavior',
+  sleepTime: 'sleep_time',
+}
+
 const initialFilters = {
   age: '',
   gender: '',
@@ -52,7 +60,9 @@ export default function SearchRoommatePage({ currentUserId = 'user-1' }) {
 
     try {
       const normalizedFilters = Object.fromEntries(
-        Object.entries(filters).filter(([, value]) => value !== '' && value !== null && value !== undefined),
+        Object.entries(filters)
+          .filter(([, value]) => value !== '' && value !== null && value !== undefined)
+          .map(([name, value]) => [API_FILTER_NAMES[name] ?? name, value]),
       )
       const data = await searchRoommates({
         current_user_id: currentUserId,
