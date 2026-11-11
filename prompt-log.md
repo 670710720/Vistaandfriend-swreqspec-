@@ -359,8 +359,144 @@
 - สรุป: ปรับเฉพาะค่าในช่อง "แบบหน้าจอ" ใน tasks.md เท่านั้น โดย task ที่เกี่ยวข้องกับหน้าจอได้ระบุ UI ID และ mockup ตามหัวข้อ 4 ใน plan.md ได้แก่ UI-SRS-01, UI-SRS-02, UI-SRS-03, UI-SRS-04, UI-SRS-05 และ task ที่ไม่ใช่หน้าจอยังคงเป็น "ไม่มี" โดยไม่เปลี่ยนสถานะหรือช่องอื่นใด
 
 ## 2026-11-11
+- คำสั่ง: `/testcases AC-SRS-01 specs/004-search-roommate/`
+- โหมด: ร่าง (มีแถวใน test-cases.md แล้วแต่ยังสถานะ "ร่าง" ไม่ใช่ "ใช้ได้")
+- TC ID ที่เสนอ/มีอยู่: TC-SRS-01-1, TC-SRS-01-2, TC-SRS-01-3, TC-SRS-01-4
+- ผล: หยุดก่อนเขียนโค้ด test เนื่องจากต้องเปลี่ยนสถานะแถวใน test-cases.md เป็น "ใช้ได้" ก่อน แล้วค่อยสั่ง /testcases อีกครั้ง
+- สรุป: AC-SRS-01 มีชุด test case ครบ 4 แบบ (ทางปกติ/ขอบ/ทางผิด) แต่ยังไม่ได้ผ่านการตรวจแบบ “ใช้ได้” จึงไม่สามารถเขียน test ในโค้ดได้ตามกติกา
+
+## 2026-11-11
 - คำสั่ง: `/edit specs/004-search-roommate/plan.md`
 - โหมด: manual edit (ปรับเฉพาะหัวข้อ 4 ตาม spec UI section)
 - ไฟล์ที่แก้: specs/004-search-roommate/plan.md
 - ผลตรวจ: `cd /workspaces/Vistaandfriend-swreqspec- && git --no-pager diff --check` -> ไม่มีปัญหา whitespace / formatting
 - สรุป: ปรับเฉพาะหัวข้อ 4 ใน plan.md เท่านั้น โดยเพิ่มรายการ UI ID และ mockup file สำหรับหน้าจอแต่ละหน้าให้ตรงกับหมวด "หน้าจอ (UI)" ใน spec.md: UI-SRS-01 ถึง UI-SRS-05 พร้อมระบุไฟล์ mockup .html และ .png สำหรับแต่ละหน้า โดยไม่แตะหัวข้ออื่นใน plan.md
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-SRS-01 specs/004-search-roommate/`
+- โหมด: เขียน test (แถวใน test-cases.md 已เป็นสถานะ "ใช้ได้")
+- TC ID ที่เขียน test: TC-SRS-01-1, TC-SRS-01-2, TC-SRS-01-3, TC-SRS-01-4
+- ไฟล์ที่สร้าง/แก้: frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/search-roommate-page.test.jsx` -> 10 passed in 1.71s
+- สรุป: หลังจากแถว AC-SRS-01 ถูกปรับเป็นสถานะ “ใช้ได้” แล้ว จึงดำเนินการเขียน test ตามแถวในตารางและรันตรวจได้สำเร็จ ครอบคลุมกรณีปกติ/ขอบ/ทางผิดของการเข้าใช้งานหน้า Search Roommate และการเข้าใช้งานที่ต้องเข้าถึงระบบก่อน
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ AC-SRS-01 ระบุชัดเจนว่าเมื่อเข้าสู่ระบบและมีโปรไฟล์จะเห็นหน้าค้นหา ได้รับอนุญาตให้เข้าถึงและเมื่อไม่เข้าสู่ระบบ/ไม่มีโปรไฟล์จะถูกปฏิเสธหรือแจ้งให้สร้างโปรไฟล์ ตาม spec และ UI ที่กำหนดแล้ว
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-SRS-02 specs/004-search-roommate/`
+- โหมด: เขียน test / ตรวจสอบซ้ำ (แถวใน test-cases.md 已เป็นสถานะ "ใช้ได้" และโค้ด test สำหรับ AC-SRS-02 มีอยู่แล้ว)
+- TC ID ที่ตรวจ: TC-SRS-02-1, TC-SRS-02-2, TC-SRS-02-3
+- ไฟล์ที่ตรวจ: frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/search-roommate-page.test.jsx` -> 10 passed in 1.67s
+- สรุป: AC-SRS-02 ได้รับการครอบคลุมแล้วจากแถวที่สถานะ “ใช้ได้” และโค้ด test ที่มีอยู่ในการตรวจรับค่า filter ก่อนกดค้นหา โดยรวมถึงกรณีปกติ ขอบ และทางผิดที่เชื่อมกับหน้าค้นหาเมท ไม่ต้องเพิ่ม/แก้โค้ดระบบเพิ่มเติม
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ spec ระบุชัดเจนว่าเมื่ออยู่ในหน้าค้นหาเมท ผู้ใช้สามารถระบุเงื่อนไขได้ และระบบรับเงื่อนไขที่ระบุไว้ ดังนั้น test ที่มีอยู่ตรงกับตาม AC นี้
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-SRS-03 specs/004-search-roommate/`
+- โหมด: เขียน test (แถวที่เกี่ยวข้องมีสถานะ "ใช้ได้")
+- TC ID ที่ตรวจ: TC-SRS-03-1, TC-SRS-03-2, TC-SRS-03-3, TC-SRS-03A-1, TC-SRS-03A-2, TC-SRS-03A-3, TC-SRS-03B-1, TC-SRS-03B-2, TC-SRS-03B-3, TC-SRS-03C-1, TC-SRS-03C-2, TC-SRS-03C-3, TC-SRS-03D-1, TC-SRS-03D-2, TC-SRS-03D-3, TC-SRS-03E-1, TC-SRS-03E-2, TC-SRS-03E-3
+- ไฟล์ที่ตรวจ: backend/tests/test_search_roommate.py, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/backend && PYTHONPATH=. pytest -q tests/test_search_roommate.py` -> 9 passed in 0.63s
+- สรุป: AC-SRS-03 ครอบคลุมการค้นหาและแสดงผลลัพธ์แบบปกติ/ขอบ/ทางผิด รวมถึงเงื่อนไขกรองโปรไฟล์ที่เปิดให้ค้นหา ไม่แสดงตัวเอง และใช้กติกา AND/OR, การใช้ข้อมูลความต้องการหาเมท, และ pagination เมื่อมีคำค้นหาใหม่ โดย test ที่มีอยู่ตรงตามแถวใน table แล้ว ไม่ต้องแก้โค้ดระบบเพิ่มเติม
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ spec และ task ระบุเงื่อนไขการค้นหา, การกรอง, และการจัดเรียงผลลัพธ์อย่างชัดเจน รวมถึงข้อกำหนดว่าโดนแยกเป็น page 20 รายการและเริ่มที่หน้า 1 เมื่อทำคำค้นหาใหม่
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-SRS-03A specs/004-search-roommate/`
+- โหมด: เขียน test (แถว TC-SRS-03A-1 ถึง TC-SRS-03A-3 มีสถานะ "ใช้ได้")
+- TC ID ที่เขียน test: TC-SRS-03A-1, TC-SRS-03A-2, TC-SRS-03A-3
+- ไฟล์ที่สร้าง/แก้: backend/tests/test_AC_SRS_03A.py, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: backend `PYTHONPATH=. pytest -v` -> 13 passed, 1 warning; frontend `npm test` -> 22 passed; tests เฉพาะ feature: backend 3 passed, frontend 13 passed
+- สรุป: เพิ่ม test สำหรับกรณีปกติที่ยกเว้นโปรไฟล์ปิดและโปรไฟล์ผู้ค้นหา, กรณีมีโปรไฟล์อื่นที่เปิดให้ค้นหาเพียง 1 รายการ, และกรณีมีเพียงโปรไฟล์ของผู้ค้นหาเอง โดยเพิ่มการตรวจ backend และหน้าจอตามช่อง "ตรวจด้วย" ในแต่ละแถว ไม่แก้โค้ดระบบ
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ CON-SRS-06 และ CON-SRS-07 ระบุชัดเจนว่าต้องแสดงเฉพาะโปรไฟล์ที่เจ้าของเปิดสถานะและไม่แสดงโปรไฟล์ผู้ค้นหาเอง
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-SRS-03B specs/004-search-roommate/`
+- โหมด: เขียน test (แถว TC-SRS-03B-1 ถึง TC-SRS-03B-3 มีสถานะ "ใช้ได้")
+- TC ID ที่เขียน test: TC-SRS-03B-1, TC-SRS-03B-2, TC-SRS-03B-3
+- ไฟล์ที่สร้าง/แก้: backend/tests/test_AC_SRS_03B.py, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: backend ทั้งชุด `PYTHONPATH=. pytest -v` -> 16 passed, 1 warning; frontend ทั้งชุด `npm test` -> 25 passed; test เพิ่มใหม่แยกตาม TC: backend 3 passed, frontend 3 passed
+- สรุป: เพิ่ม test สำหรับการค้นหาโดยไม่เลือกตัวกรองที่แสดงโปรไฟล์เปิดให้ค้นหาทั้งหมดโดยไม่รวมผู้ค้นหาเอง, กรณีมีโปรไฟล์อื่นที่เปิดเพียงหนึ่งรายการ, และการปฏิเสธคำค้นหาที่ส่งโดยผู้ใช้ที่ยังไม่ได้เข้าสู่ระบบ ตาม AC-SRS-03B และ AC-SRS-06 โดยไม่แก้โค้ดระบบ
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะผลกรณีไม่เลือกตัวกรองระบุใน AC-SRS-03B และเงื่อนไขการเข้าสู่ระบบระบุใน AC-SRS-06
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-SRS-03C specs/004-search-roommate/`
+- โหมด: เขียน test (TC-SRS-03C-1 และ TC-SRS-03C-2 เป็น "ใช้ได้"; TC-SRS-03C-3 ตรวจด้วยคน)
+- TC ID ที่เขียน test: TC-SRS-03C-1, TC-SRS-03C-2
+- ไฟล์ที่สร้าง/แก้: backend/tests/test_AC_SRS_03C.py, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: backend ทั้งชุด `PYTHONPATH=. pytest -v` -> 18 passed, 1 warning; frontend ทั้งชุด `npm test` -> 27 passed; test เพิ่มใหม่แยกตาม TC: backend 2 passed, frontend 2 passed
+- สรุป: เพิ่ม test สำหรับการใช้ AND/OR กับตัวกรองหลายตัว, การรวมโปรไฟล์ที่ตรง 0/1/ทุกตัวกรอง, การเรียงผล OR ตามจำนวนตัวกรองที่ตรงกัน, และขอบเขต 2 ตัวกรองทั้ง AND กับ OR โดยไม่แก้โค้ดระบบ
+- ขั้นตอนทดสอบด้วยคนสำหรับ TC-SRS-03C-3: Given นักศึกษาระบุหลายตัวกรองแต่ไม่ได้เลือก AND หรือ OR; When นักศึกษากดค้นหา; Then spec ไม่ได้บอกว่าระบบต้องใช้ตัวดำเนินการใดเมื่อไม่ได้เลือก AND หรือ OR
+- คำถามค้าง: เมื่อผู้ใช้ไม่เลือก AND หรือ OR ระบบควรใช้ค่าเริ่มต้น (และค่าใด) หรือปฏิเสธคำค้นหา? ไม่เขียน assert/ไม่กำหนดผลแทนทีม
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-SRS-03D specs/004-search-roommate/`
+- โหมด: เขียน test (TC-SRS-03D-1 ถึง TC-SRS-03D-3 มีสถานะ "ใช้ได้")
+- TC ID ที่เขียน test: TC-SRS-03D-1, TC-SRS-03D-2, TC-SRS-03D-3
+- ไฟล์ที่สร้าง/แก้: backend/tests/test_AC_SRS_03D.py, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: backend ทั้งชุด `PYTHONPATH=. pytest -v` -> 21 passed, 1 warning; frontend ทั้งชุด `npm test` -> 28 passed, 2 failed
+- รายละเอียดที่ไม่ผ่าน: test_TC_SRS_03D_1_uses_owner_preferences_for_filters และ test_TC_SRS_03D_2_uses_preference_data_for_single_filter พบว่า frontend ส่ง `sleepBehavior`/`sleepTime` แต่ backend ต้องรับ `sleep_behavior`/`sleep_time`; ไม่แก้ test หรือโค้ดระบบ
+- สรุป: เพิ่ม test สำหรับการใช้ข้อมูลความต้องการหาเมทกับตัวกรองทั้งสามและกรณีพฤติกรรมการนอน รวมถึงการใช้อายุจากข้อมูลโปรไฟล์ โดย test หน้าเว็บตรวจ payload ที่ส่งให้ backend
+
+## 2026-11-11
+- คำสั่ง: แก้ test ที่ไม่ผ่านจาก `/testcases AC-SRS-03D specs/004-search-roommate/`
+- สาเหตุและการแก้: แปลงชื่อฟิลด์ camelCase ของหน้าจอเป็น snake_case ตามชื่อฟิลด์ที่ API/backend ใช้ ก่อนส่งตัวกรองค้นหา โดยไม่เปลี่ยนตัวกรองที่ชื่อเหมือนกันอยู่แล้ว
+- ไฟล์ที่แก้: frontend/src/pages/SearchRoommatePage.js
+- ผลตรวจ: frontend `npm test` -> 30 passed; test TC-SRS-03D-1, TC-SRS-03D-2 และ TC-SRS-03D-3 ผ่าน; `git diff --check` ผ่าน
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-SRS-03E specs/004-search-roommate/`
+- โหมด: เขียน test (TC-SRS-03E-1 ถึง TC-SRS-03E-4 มีสถานะ "ใช้ได้")
+- TC ID ที่เขียน test: TC-SRS-03E-1, TC-SRS-03E-2, TC-SRS-03E-3, TC-SRS-03E-4
+- ไฟล์ที่สร้าง/แก้: backend/tests/test_AC_SRS_03E.py, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: backend ทั้งชุด `PYTHONPATH=. pytest -v` -> 25 passed, 1 warning; frontend ทั้งชุด `npm test` -> 34 passed; test ใหม่ทั้ง 4 กรณีผ่านในแต่ละฝั่ง
+- สรุป: ทดสอบการเริ่มค้นหาใหม่ที่หน้า 1, จำนวนผลลัพธ์พอดี 20 รายการ, การแบ่งหน้าเมื่อมี 21 รายการ และการค้นหาจากหน้าค้นหาก่อนมีผลลัพธ์
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-SRS-04 specs/004-search-roommate/`
+- โหมด: เขียน test (TC-SRS-04-1 และ TC-SRS-04-2 มีสถานะ "ใช้ได้"; TC-SRS-04-3 ตรวจด้วยคน)
+- TC ID ที่เขียน test: TC-SRS-04-1, TC-SRS-04-2
+- ไฟล์ที่แก้: frontend/src/__tests__/profile-detail-page.test.jsx
+- ผล test: frontend ทั้งชุด `npm test` -> 36 passed; test ใหม่ TC-SRS-04-1 และ TC-SRS-04-2 ผ่าน; `git diff --check` ผ่าน
+- ขั้นตอนทดสอบด้วยคนสำหรับ TC-SRS-04-3: Given ไม่มีรายการผลการค้นหาให้เลือก; When นักศึกษาพยายามเลือกโปรไฟล์ที่สนใจ; Then spec ไม่ได้บอกผลเมื่อพยายามเลือกโปรไฟล์ที่ไม่อยู่ในรายการผลการค้นหา
+- คำถามค้าง: เมื่อไม่มีผลลัพธ์ให้เลือก ระบบควรปฏิเสธการเปิดโปรไฟล์หรือแสดงสถานะอื่นอย่างไร? ไม่มีการเขียน assert แทนการตัดสินใจของทีม
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-SRS-05 specs/004-search-roommate/`
+- โหมด: เขียน test (TC-SRS-05-1 ถึง TC-SRS-05-3 มีสถานะ "ใช้ได้")
+- TC ID ที่เขียน test: TC-SRS-05-1, TC-SRS-05-2, TC-SRS-05-3
+- ไฟล์ที่แก้: frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: frontend ทั้งชุด `npm test` -> 39 passed; test TC-SRS-05-1, TC-SRS-05-2 และ TC-SRS-05-3 ผ่าน; `git diff --check` ผ่าน
+- หมายเหตุ: การรันครั้งแรก TC-SRS-05-2 ไม่ผ่านเพราะ mock API ส่งโปรไฟล์ที่ไม่ตรงให้หน้าแสดง; ปรับ mock ให้เป็นผลลัพธ์ว่างตามกรณีไม่มีโปรไฟล์ตรงและรันซ้ำผ่าน โดยไม่แก้โค้ดระบบ
+- สรุป: ทดสอบข้อความไม่พบผลการค้นหาเมื่อไม่มีผลตรง, กรณีโปรไฟล์ใกล้เคียงแต่ไม่ผ่านเงื่อนไข และการแสดงโปรไฟล์เมื่อพบหนึ่งรายการ; ไม่ assert ข้อความ empty-state ในกรณีผลลัพธ์มีข้อมูล เพราะ spec ไม่ได้กำหนดพฤติกรรมนั้น
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-SRS-06 specs/004-search-roommate/`
+- โหมด: เขียน test (TC-SRS-06-1 ถึง TC-SRS-06-3 มีสถานะ "ใช้ได้")
+- TC ID ที่เขียน test: TC-SRS-06-1, TC-SRS-06-2, TC-SRS-06-3
+- ไฟล์ที่แก้: frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: frontend ทั้งชุด `npm test` -> 42 passed; test TC-SRS-06-1, TC-SRS-06-2 และ TC-SRS-06-3 ผ่าน; `git diff --check` ผ่าน
+- สรุป: ทดสอบการปฏิเสธผู้ที่ยังไม่เข้าสู่ระบบ, การอนุญาตผู้ที่เข้าสู่ระบบและมีโปรไฟล์หาเมท, และการแจ้งพร้อมนำไปยังหน้าสร้างโปรไฟล์เมื่อยังไม่มีโปรไฟล์
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-SRS-07 specs/004-search-roommate/`
+- โหมด: เขียน test (TC-SRS-07-1 ถึง TC-SRS-07-3 มีสถานะ "ใช้ได้")
+- TC ID ที่เขียน test: TC-SRS-07-1, TC-SRS-07-2, TC-SRS-07-3
+- ไฟล์ที่แก้: frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: frontend ทั้งชุด `npm test` -> 45 passed; test TC-SRS-07-1, TC-SRS-07-2 และ TC-SRS-07-3 ผ่าน; `git diff --check` ผ่าน
+- สรุป: ทดสอบการแจ้งและนำไปหน้าสร้างโปรไฟล์เมื่อไม่มีโปรไฟล์, การเปิดหน้าค้นหาเมื่อมีโปรไฟล์ และการปฏิเสธผู้ที่ยังไม่เข้าสู่ระบบ; ไม่ตรวจการแสดงคำเตือนไม่มีโปรไฟล์ก่อน login เพราะ spec ไม่ได้ระบุ
+
+## 2026-11-11
+- คำสั่ง: `/testcases AC-SRS-08 specs/004-search-roommate/`
+- โหมด: ตรวจ test cases (TC-SRS-08-1 ถึง TC-SRS-08-5 ระบุให้ตรวจด้วย "คน")
+- TC ID ที่ตรวจ: TC-SRS-08-1, TC-SRS-08-2, TC-SRS-08-3, TC-SRS-08-4, TC-SRS-08-5
+- ไฟล์ที่อ่านอ้างอิง: docs/test/search-roommate-usability.md
+- ผลตรวจ: ไม่เขียน automated test และไม่รันทดสอบผู้ใช้จริง; สคริปต์ทดสอบและแบบบันทึกมีอยู่แล้ว
+- ขั้นตอนทดสอบจริง: ใช้นักศึกษาที่ไม่เคยใช้การค้นหา 5 คน; ให้แต่ละคนเข้าสู่ระบบด้วยโปรไฟล์พร้อมใช้งาน, ค้นหาและเปิดโปรไฟล์ที่สนใจโดยไม่มีคำแนะนำ; บันทึกผลสำเร็จ/ล้มเหลวและการได้รับคำแนะนำ; ผ่านเมื่ออย่างน้อย 4 จาก 5 คนสำเร็จโดยไม่รับคำแนะนำ
+- ข้อที่ยังตัดสินไม่ได้จาก spec: TC-SRS-08-4 ระบุผู้ทดสอบที่เคยใช้ฟังก์ชัน และ TC-SRS-08-5 มีผู้ทดสอบเพียง 4 คน; เกณฑ์ผลสำหรับสองกรณีนี้ไม่ได้ระบุ จึงต้องไม่สรุปผ่าน/ไม่ผ่านแทนทีม
+
+## 2026-11-11
+- คำสั่ง: `/verify specs/004-search-roommate/`
+- โหมด: ตรวจ requirement, implementation และ tests; ไม่แก้โค้ดหรือ test
+- ผล test: `cd backend && PYTHONPATH=. pytest -v` -> 25 passed, 1 warning; `cd frontend && npm test` -> 45 passed
+- ตารางตามรอยไปข้างหน้า: 20 IDs — ครบ 7, ยังไม่ถึง 0, รอ Q 0, ช่องโหว่ 13
+- ข้อค้นพบใหม่: F-01 ถึง F-13 ใน specs/004-search-roommate/rtm.md
+- สรุป: เพิ่ม RTM และบันทึกผลตรวจ; ไม่แก้ไฟล์อื่น
