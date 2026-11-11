@@ -352,6 +352,13 @@
 - สรุป: คำสั่ง clarify ได้ปิดความกำกวมหลักด้วยการยอมรับ assumptions ที่ได้กำหนดไว้แล้ว โดยไม่มีการตัดสินใจเพิ่มเติมหรือการแก้ไขโค้ด
 
 ## 2026-11-11
+- คำสั่ง: `/edit specs/004-search-roommate/tasks.md`
+- โหมด: manual edit (เพิ่มช่องแบบหน้าจอให้ทุก task ตาม UI section)
+- ไฟล์ที่แก้: specs/004-search-roommate/tasks.md
+- ผลตรวจ: `cd /workspaces/Vistaandfriend-swreqspec- && git --no-pager diff --check` -> ผ่าน ไม่มีปัญหา whitespace / formatting
+- สรุป: ปรับเฉพาะค่าในช่อง "แบบหน้าจอ" ใน tasks.md เท่านั้น โดย task ที่เกี่ยวข้องกับหน้าจอได้ระบุ UI ID และ mockup ตามหัวข้อ 4 ใน plan.md ได้แก่ UI-SRS-01, UI-SRS-02, UI-SRS-03, UI-SRS-04, UI-SRS-05 และ task ที่ไม่ใช่หน้าจอยังคงเป็น "ไม่มี" โดยไม่เปลี่ยนสถานะหรือช่องอื่นใด
+
+## 2026-11-11
 - คำสั่ง: `/edit specs/004-search-roommate/plan.md`
 - โหมด: manual edit (ปรับเฉพาะหัวข้อ 4 ตาม spec UI section)
 - ไฟล์ที่แก้: specs/004-search-roommate/plan.md

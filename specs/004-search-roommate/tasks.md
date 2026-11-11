@@ -34,7 +34,7 @@
 - รองรับ: FR-SRS-01, FR-SRS-02, NFR-SRS-01
 - ตรวจด้วย: AC-SRS-01, AC-SRS-06, AC-SRS-07
 - ไฟล์ที่แตะ: frontend/src/pages/SearchRoommatePage.js, frontend/src/api/client.js
-- แบบหน้าจอ: ไม่มี
+- แบบหน้าจอ: UI-SRS-01 — mockups/UI-SRS-01-search-filters.html / mockups/UI-SRS-01-search-filters.png
 - ต้องทำหลัง: T-01
 - เสร็จเมื่อ: หน้า Search Roommate เปิดได้และแสดงฟอร์มตัวกรองพร้อมเรียก API ได้
 - สถานะ: เสร็จ รอทีมตรวจ
@@ -72,7 +72,7 @@
 - รองรับ: CON-SRS-02
 - ตรวจด้วย: AC-SRS-07
 - ไฟล์ที่แตะ: frontend/src/pages/SearchRoommatePage.js, backend/app/services/profile_status.py
-- แบบหน้าจอ: ไม่มี
+- แบบหน้าจอ: UI-SRS-04 — mockups/UI-SRS-04-no-roommate-profile.html / mockups/UI-SRS-04-no-roommate-profile.png
 - ต้องทำหลัง: T-05
 - เสร็จเมื่อ: เมื่อเข้าสู่ระบบแต่ไม่มีโปรไฟล์หาเมท ระบบแจ้งว่าต้องสร้างโปรไฟล์ก่อนและเสนอทางลัดไปหน้าสร้างโปรไฟล์
 - สถานะ: เสร็จ รอทีมตรวจ
@@ -92,7 +92,7 @@
 - รองรับ: FR-SRS-03, CON-SRS-03
 - ตรวจด้วย: AC-SRS-02
 - ไฟล์ที่แตะ: frontend/src/pages/SearchRoommatePage.js, frontend/src/components/SearchFiltersForm.js
-- แบบหน้าจอ: ไม่มี
+- แบบหน้าจอ: UI-SRS-01 — mockups/UI-SRS-01-search-filters.html / mockups/UI-SRS-01-search-filters.png
 - ต้องทำหลัง: T-06
 - เสร็จเมื่อ: ผู้ใช้สามารถเลือกและแก้ไขค่าตัวกรองทั้งหมดก่อนกดค้นหาได้ และข้อมูลถูกเก็บใน state ของฟอร์ม
 - สถานะ: เสร็จ รอทีมตรวจ
@@ -101,7 +101,7 @@
 - รองรับ: FR-SRS-04, FR-SRS-05
 - ตรวจด้วย: AC-SRS-03
 - ไฟล์ที่แตะ: frontend/src/pages/SearchRoommatePage.js, backend/app/api/search.py
-- แบบหน้าจอ: ไม่มี
+- แบบหน้าจอ: UI-SRS-02 — mockups/UI-SRS-02-search-results.html / mockups/UI-SRS-02-search-results.png
 - ต้องทำหลัง: T-07
 - เสร็จเมื่อ: เมื่อกดค้นหา ระบบส่งคำค้นหาแล้วแสดงรายการผลการค้นหาในหน้าเดียว
 - สถานะ: เสร็จ รอทีมตรวจ
@@ -110,7 +110,7 @@
 - รองรับ: FR-SRS-05
 - ตรวจด้วย: AC-SRS-03
 - ไฟล์ที่แตะ: frontend/src/components/SearchResultsList.js
-- แบบหน้าจอ: ไม่มี
+- แบบหน้าจอ: UI-SRS-02 — mockups/UI-SRS-02-search-results.html / mockups/UI-SRS-02-search-results.png
 - ต้องทำหลัง: T-08
 - เสร็จเมื่อ: รายการผลลัพธ์แสดงข้อมูลสำคัญของโปรไฟล์ที่ตรงตามเงื่อนไขครบถ้วนและสามารถดูได้ทันที
 - สถานะ: เสร็จ รอทีมตรวจ
@@ -148,7 +148,7 @@
 - รองรับ: FR-SRS-03, FR-SRS-05
 - ตรวจด้วย: AC-SRS-03C
 - ไฟล์ที่แตะ: frontend/src/components/SearchFiltersForm.js, frontend/src/components/SearchResultsList.js
-- แบบหน้าจอ: ไม่มี
+- แบบหน้าจอ: UI-SRS-02 — mockups/UI-SRS-02-search-results.html / mockups/UI-SRS-02-search-results.png
 - ต้องทำหลัง: T-11
 - เสร็จเมื่อ: ผู้ใช้เห็นการเลือก AND/OR และผลลัพธ์ที่จัดเรียงตามจำนวนตัวกรองที่ตรงกันได้อย่างชัดเจน
 - สถานะ: เสร็จ รอทีมตรวจ
@@ -177,7 +177,7 @@
 - รองรับ: FR-SRS-03, CON-SRS-08
 - ตรวจด้วย: AC-SRS-03D
 - ไฟล์ที่แตะ: frontend/src/components/SearchFiltersForm.js
-- แบบหน้าจอ: ไม่มี
+- แบบหน้าจอ: UI-SRS-01 — mockups/UI-SRS-01-search-filters.html / mockups/UI-SRS-01-search-filters.png
 - ต้องทำหลัง: T-13
 - เสร็จเมื่อ: ผู้ใช้สามารถระบุค่าเหล่านี้ได้ และส่งให้ backend ประมวลผลต่อไปได้
 - สถานะ: เสร็จ รอทีมตรวจ
@@ -206,7 +206,7 @@
 - รองรับ: FR-SRS-08, FR-SRS-09
 - ตรวจด้วย: AC-SRS-03E
 - ไฟล์ที่แตะ: frontend/src/components/SearchResultsList.js, frontend/src/pages/SearchRoommatePage.js
-- แบบหน้าจอ: ไม่มี
+- แบบหน้าจอ: UI-SRS-02 — mockups/UI-SRS-02-search-results.html / mockups/UI-SRS-02-search-results.png
 - ต้องทำหลัง: T-15
 - เสร็จเมื่อ: ผู้ใช้สามารถเปลี่ยนหน้าและเมื่อส่งคำค้นหาใหม่ระบบกลับสู่หน้า 1 พร้อมรายการผลลัพธ์ใหม่
 - สถานะ: เสร็จ รอทีมตรวจ
@@ -235,7 +235,7 @@
 - รองรับ: FR-SRS-06, CON-SRS-06
 - ตรวจด้วย: AC-SRS-04
 - ไฟล์ที่แตะ: frontend/src/pages/ProfileDetailPage.js, frontend/src/components/ProfileCard.js
-- แบบหน้าจอ: ไม่มี
+- แบบหน้าจอ: UI-SRS-03 — mockups/UI-SRS-03-profile-detail.html / mockups/UI-SRS-03-profile-detail.png
 - ต้องทำหลัง: T-17
 - เสร็จเมื่อ: เมื่อเลือกโปรไฟล์ที่สนใจ ระบบเปิดหน้ารายละเอียดโปรไฟล์ที่มีข้อมูลครบถ้วนและไม่แสดงเบอร์โทรศัพท์
 - สถานะ: เสร็จ รอทีมตรวจ
@@ -264,7 +264,7 @@
 - รองรับ: FR-SRS-07
 - ตรวจด้วย: AC-SRS-05
 - ไฟล์ที่แตะ: frontend/src/components/SearchResultsList.js
-- แบบหน้าจอ: ไม่มี
+- แบบหน้าจอ: UI-SRS-05 — mockups/UI-SRS-05-no-search-results.html / mockups/UI-SRS-05-no-search-results.png
 - ต้องทำหลัง: T-19
 - เสร็จเมื่อ: ผู้ใช้เห็นข้อความว่าไม่พบผลการค้นหา หากคำค้นหาของตนไม่มีรายการที่ตรงตามเงื่อนไข
 - สถานะ: เสร็จ รอทีมตรวจ
