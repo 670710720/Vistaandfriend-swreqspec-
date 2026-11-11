@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { PROFILE_CONFIG } from './config.js'
+import { useAuth } from './hooks/useAuth.js'
 import { validateProfile } from './profileValidation.js'
+import SearchRoommatePage from './pages/SearchRoommatePage.js'
+import { Sidebar } from './navigation/sidebar.js'
 
 const initialValues = {
   nickname: '',
@@ -23,8 +26,10 @@ function FieldError({ id, errors }) {
 }
 
 // รองรับ FR-RMP-01, FR-RMP-02 และ AC-RMP-01
-export default function App() {
+export default function App({ initialLoggedIn = true }) {
+  const { isLoggedIn } = useAuth(initialLoggedIn)
   const [formOpen, setFormOpen] = useState(false)
+  const [currentView, setCurrentView] = useState('profile')
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState({})
   const [valid, setValid] = useState(false)
@@ -56,6 +61,22 @@ export default function App() {
     ? PROFILE_CONFIG.roomOccupants[values.roomType]
     : null
 
+  if (!isLoggedIn) {
+    return (
+      <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+        <header className="mb-8">
+          <p className="text-sm font-semibold uppercase tracking-wide text-teal-800">Vista & Friend</p>
+          <h1 className="mt-2 text-3xl font-bold text-slate-900">โปรไฟล์หาเมท</h1>
+        </header>
+        <p role="alert">กรุณาเข้าสู่ระบบก่อนใช้งานฟังก์ชันค้นหาเมท</p>
+      </main>
+    )
+  }
+
+  if (currentView === 'search-roommate') {
+    return <SearchRoommatePage currentUserId="user-1" />
+  }
+
   return (
     <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
       <header className="mb-8">
@@ -65,15 +86,17 @@ export default function App() {
         <h1 className="mt-2 text-3xl font-bold text-slate-900">โปรไฟล์หาเมท</h1>
       </header>
 
-      <nav aria-label="เมนูโปรไฟล์" className="mb-6">
-        <button
-          className="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
-          onClick={() => setFormOpen(true)}
-          type="button"
-        >
-          สร้างโปรไฟล์หาเมท
-        </button>
-      </nav>
+      <Sidebar
+        isLoggedIn={isLoggedIn}
+        onOpenProfile={() => {
+          setFormOpen(true)
+          setCurrentView('profile')
+        }}
+        onOpenSearch={() => {
+          setFormOpen(false)
+          setCurrentView('search-roommate')
+        }}
+      />
 
       {formOpen && (
         <section aria-labelledby="create-profile-heading" className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">

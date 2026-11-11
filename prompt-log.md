@@ -163,3 +163,177 @@
 - โหมด/ผล: พบแถวที่ใช้ได้ TC-RMP-04A-1 ถึง TC-RMP-04A-3 แต่มีเพียง TC-RMP-04A-1 ที่ระบุ pytest; ยังไม่เขียน backend test เพราะไม่มี `backend/app/`, `backend/tests/`, fixture หรือสัญญา API/แผนทดสอบใน `plan.md` ให้ยึด และไม่ควรสมมติ interface ของระบบ
 - ผล test: ไม่ได้รัน เนื่องจากยังไม่มี backend test ที่เขียนได้อย่างไม่ต้องเดา
 - สิ่งที่ต้องให้ทีมกำหนดก่อน: backend ใช้ interface/ชั้นใดสำหรับตรวจข้อมูลห้องและป้องกันการสร้างโปรไฟล์เมื่อข้อมูลผิด แล้วระบุสัญญานี้ในแผนหรือจัดเตรียม backend implementation/fixture ให้ทดสอบได้
+## 2026-11-11
+- คำสั่ง: `/tasks specs/004-search-roommate/spec.md`
+- โหมด: tasks (สร้างแผนงานย่อยตาม spec)
+- ผลลัพธ์: สร้างไฟล์ [specs/004-search-roommate/tasks.md](specs/004-search-roommate/tasks.md) สำเร็จ
+- สรุป: มี 9 เฟส, 20 task, 0 task รอ Q-xx และเฟสแรกที่ใช้งานได้จริงคือ เฟส 1: เปิดหน้าและค้นหาเมทในระบบที่เข้าสู่ระบบและมีโปรไฟล์แล้ว
+- ประเด็นที่ต้องติดตาม: spec v3 มีข้อคำถาม Q-SRS-01 ถึง Q-SRS-06 ที่ตอบแล้วทั้งหมด จึงไม่มี task ที่ต้องรอคำตอบจากทีม
+
+## 2026-11-11
+- คำสั่ง: `/implement T-01 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: backend/app/config.py, backend/app/services/search_roommate.py, backend/app/api/search.py, backend/tests/test_search_roommate.py
+- ผล test: `cd backend && pytest -q` -> 2 passed in 0.79s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-01 โดยเพิ่ม model และ endpoint สำหรับค้นหาเมทที่กรองเฉพาะโปรไฟล์เปิดให้ค้นหาและไม่รวมโปรไฟล์ของผู้ใช้เอง พร้อมทดสอบ AC-SRS-03 และ AC-SRS-03D
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุไฟล์และ scope ชัดเจน และ spec v3 มีคำตอบครบแล้ว
+
+## 2026-11-11
+- คำสั่ง: `/implement T-02 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: backend/app/data/sample_roommate_profiles.json, backend/app/seeds/search_roommate_seed.py, backend/tests/test_search_roommate_seed.py
+- ผล test: `cd backend && pytest -q tests/test_search_roommate_seed.py tests/test_search_roommate.py` -> 3 passed in 0.41s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-02 โดยเพิ่มชุดข้อมูลตัวอย่างที่มีโปรไฟล์เปิดให้ค้นหา, ปิดให้ค้นหา, เป็นตัวเอง, และมีข้อมูลความต้องการหาเมทครบตาม spec
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุให้สร้าง seed data ครบตามข้อจำกัดใน spec และไม่มีคำถามเปิดที่ค้าง
+
+## 2026-11-11
+- คำสั่ง: `/implement T-03 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: frontend/src/api/client.js, frontend/src/pages/SearchRoommatePage.js, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: `cd frontend && npm test -- --run src/__tests__/search-roommate-page.test.jsx` -> 2 passed in 1.19s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-03 โดยสร้างหน้า Search Roommate เบื้องต้นพร้อมฟอร์มตัวกรอง, โหมด AND/OR, และการเรียก API แบบ POST ไปยัง /search-roommates พร้อมทดสอบการแสดงหน้าและการเรียก API
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าต้องสร้างหน้าและ wiring API เบื้องต้น และไม่มี mockup หรือ Open Question ที่ค้าง
+
+## 2026-11-11
+- คำสั่ง: `/implement T-04 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: frontend/src/App.jsx, frontend/src/navigation/sidebar.js, frontend/src/routes.js, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: `cd frontend && npm test -- --run src/__tests__/search-roommate-page.test.jsx` -> 4 passed in 1.52s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-04 โดยเพิ่มเมนู "ค้นหาเมท" ให้แสดงเฉพาะเมื่อเข้าสู่ระบบแล้ว พร้อมส่งผู้ใช้ไปยังหน้า Search Roommate และเพิ่ม test สำหรับเมนู/route และกรณีไม่ได้เข้าสู่ระบบ
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าต้องเพิ่มเมนูและ route หลัก และไม่พบ mockup หรือ Open Question ใดที่ค้างใน spec
+
+## 2026-11-11
+- คำสั่ง: `/implement T-05 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: backend/app/middleware/auth_guard.py, backend/app/api/search.py, frontend/src/hooks/useAuth.js, frontend/src/App.jsx, backend/tests/test_search_roommate.py, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: `cd backend && pytest -q tests/test_search_roommate.py` -> 3 passed in 0.46s; `cd frontend && npm test -- --run src/__tests__/search-roommate-page.test.jsx` -> 4 passed in 0.25s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-05 โดยสร้าง auth guard ร่วมกับ hook จัดการสถานะเข้าสู่ระบบ เพื่อป้องกันการค้นหาเมทเมื่อยังไม่ได้เข้าสู่ระบบ และยืนยันด้วย test ของ AC-SRS-06 ว่าเมนูซ่อนและ API ปฏิเสธคำขอที่ไม่มีผู้ใช้ที่เข้าสู่ระบบ
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าต้องป้องกันการเข้าถึงหน้าและตรวจสิทธิ์เข้าสู่ระบบ และไม่มี mockup หรือ Open Question ใดที่ค้างใน spec
+
+## 2026-11-11
+- คำสั่ง: `/implement T-06 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: backend/app/services/profile_status.py, frontend/src/pages/SearchRoommatePage.js, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: `cd backend && pytest -q tests/test_search_roommate.py` -> 3 passed in 0.56s; `cd frontend && npm test -- --run src/__tests__/search-roommate-page.test.jsx` -> 5 passed in 0.33s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-06 โดยตรวจสอบว่าผู้ใช้มีโปรไฟล์หาเมทหรือไม่ หากไม่มีให้แสดงข้อความแจ้งต้องสร้างโปรไฟล์ก่อนค้นหา พร้อมปุ่มทางลัดไปหน้า Create Profile และยืนยันด้วย test ของ AC-SRS-07
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าต้องแจ้งเมื่อยังไม่มีโปรไฟล์หาเมท และไม่มี mockup หรือ Open Question ใดที่ค้างใน spec
+
+## 2026-11-11
+- คำสั่ง: `/implement T-07 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: frontend/src/pages/SearchRoommatePage.js, frontend/src/components/SearchFiltersForm.js, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: `cd frontend && npm test -- --run src/__tests__/search-roommate-page.test.jsx` -> 6 passed in 1.63s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-07 โดยแยกฟอร์มตัวกรองออกเป็น component ที่รับค่าและเก็บใน state แบบ real-time สำหรับทุกฟิลด์รวมถึงโหมด AND/OR ก่อนกดส่งคำค้นหา และเพิ่ม test ของ AC-SRS-02 เพื่อยืนยันว่าการแก้ไขฟิลด์และการเลือกโหมดถูกเก็บไว้ก่อน submit
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าต้องให้ผู้ใช้กรอกและเก็บเงื่อนไขได้ก่อนกดค้นหา และไม่มี mockup หรือ Open Question ใดที่ค้างใน spec
+
+## 2026-11-11
+- คำสั่ง: `/implement T-08 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: frontend/src/pages/SearchRoommatePage.js, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: `cd frontend && npm test -- --run src/__tests__/search-roommate-page.test.jsx` -> 7 passed in 2.00s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-08 โดยเมื่อกดค้นหา ระบบจะส่งคำค้นหาไปยัง API และแสดงผลลัพธ์ในหน้าเดียว พร้อมจัดการกรณีที่ค้นหาแล้วไม่พบผลให้แสดงข้อความว่า “ไม่พบผลการค้นหา” ตาม spec
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าต้องส่งคำค้นหาและแสดงผลลัพธ์เริ่มต้น และไม่มี mockup หรือ Open Question ใดที่ค้างใน spec
+
+## 2026-11-11
+- คำสั่ง: `/implement T-09 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: frontend/src/components/SearchResultsList.js, frontend/src/pages/SearchRoommatePage.js, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: `cd frontend && npm test -- --run src/__tests__/search-roommate-page.test.jsx` -> 8 passed in 1.91s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-09 โดยแยกการแสดงผลลัพธ์เป็น component รายการบัตรที่แสดงข้อมูลหลักของโปรไฟล์ เช่น ชื่อ คณะ อายุ เพศ และชั้นปี พร้อมใช้งานในหน้า Search Roommate โดยยังคงโหมดผลลัพธ์เริ่มต้นและเงื่อนไขไม่พบผลตาม spec
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ spec ระบุให้แสดงผลลัพธ์ที่ตรงเงื่อนไขแบบหลักและไม่ระบุ mockup หรือ Open Question เพิ่มเติม
+
+## 2026-11-11
+- คำสั่ง: `/implement T-10 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: backend/app/services/search_roommate.py, backend/tests/test_search_roommate.py
+- ผล test: `cd backend && pytest -q tests/test_search_roommate.py` -> 4 passed in 0.66s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-10 โดยสร้าง helper สำหรับกรองผลลัพธ์ให้คงเฉพาะโปรไฟล์ที่เปิดให้ค้นหาและไม่ใช่โปรไฟล์ของผู้ค้นหาเองก่อนประมวลผลเงื่อนไขต่อ เน้นให้ตรงตาม CON-SRS-04, CON-SRS-06, CON-SRS-07 พร้อมเพิ่ม test AC-SRS-03A และ AC-SRS-03B เพื่อยืนยัน behavior ของการกรองและกรณีไม่มีตัวกรอง
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าต้องกรองโปรไฟล์ที่ปิดและตัวเองออกก่อนและไม่มี Open Question ที่ค้างใน spec
+
+## 2026-11-11
+- คำสั่ง: `/implement T-11 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: backend/app/services/filter_logic.py, backend/app/services/search_roommate.py, backend/tests/test_search_roommate.py
+- ผล test: `cd backend && pytest -q tests/test_search_roommate.py` -> 6 passed in 0.52s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-11 โดยแยกกติกา AND/OR และการจัดอันดับตามจำนวนตัวกรองที่ตรงกันออกเป็น filter_logic.py และเชื่อมกับ SearchRoommateService เพื่อให้โหมด AND ตรวจครบทุกตัวกรอง โหมด OR ตรวจอย่างน้อยหนึ่งตัวกรอง และเรียงลำดับผลลัพธ์จากตรงมากสุดก่อนตาม match count พร้อมเพิ่ม test AC-SRS-03C เพื่อยืนยันทั้งสองโหมด
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าต้องใช้กติกา AND/OR และจัดเรียงผลตามจำนวนเงื่อนไขที่ตรงกัน โดยไม่มี Open Question ใดที่รอความชัดเจนใน spec
+
+## 2026-11-11
+- คำสั่ง: `/implement T-12 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: frontend/src/components/SearchFiltersForm.js, frontend/src/components/SearchResultsList.js, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: `cd frontend && npm test -- --run src/__tests__/search-roommate-page.test.jsx` -> 8 passed in 1.78s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-12 โดยแสดง label และคำอธิบายโหมดค้นหาแบบ AND/OR ในฟอร์มให้เห็นชัดเจน และเพิ่ม status บนรายการผลลัพธ์เพื่อสะท้อนว่าผลลัพธ์ถูกเรียงตามจำนวนตัวกรองที่ตรงกันจากมากไปน้อย พร้อมปรับ test ให้เชื่อมกับ label ใหม่
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าต้องแสดงโหมด AND/OR และสถานะผลลัพธ์ให้เห็นบนหน้าจอ และไม่มีกำหนด mockup หรือ Open Question เพิ่มเติม
+
+## 2026-11-11
+- คำสั่ง: `/implement T-13 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: backend/app/services/search_roommate.py, backend/app/services/roommate_preference_match.py, backend/tests/test_search_roommate.py
+- ผล test: `cd backend && pytest -q tests/test_search_roommate.py` -> 7 passed in 0.55s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-13 โดยแยกการเปรียบเทียบตัวกรองพฤติกรรมการนอน ความสะอาด และเวลาเข้านอนออกเป็น helper สำหรับข้อมูลความต้องการหาเมทของเจ้าของโปรไฟล์เท่านั้น และเชื่อมกับ SearchRoommateService เพื่อให้ตัวกรอง 3 รายการทำงานจากข้อมูลความต้องการจริงตาม CON-SRS-08 พร้อมเพิ่ม test AC-SRS-03D เพื่อยืนยัน sleep_behavior, cleanliness และ sleep_time
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ spec ระบุชัดเจนว่าตัวกรอง 3 รายการต้องใช้ข้อมูลความต้องการหาเมทของเจ้าของโปรไฟล์ และไม่มี Open Question เพิ่มเติม
+
+## 2026-11-11
+- คำสั่ง: `/implement T-14 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: frontend/src/components/SearchFiltersForm.js, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: `cd frontend && npm test -- --run src/__tests__/search-roommate-page.test.jsx` -> 9 passed in 1.98s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-14 โดยยืนยันว่าฟิลด์พฤติกรรมการนอน ความสะอาด และเวลาเข้านอนถูกแสดงบนหน้า Search Roommate และสามารถกรอกค่าแล้วส่งต่อไปยัง state ของฟอร์มเพื่อให้ backend ประมวลผลต่อไปได้ตาม FR-SRS-03 และ CON-SRS-08
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าต้องมีตัวกรอง 3 รายการบนหน้าและเป็นข้อมูลจาก roommate preference ตาม spec
+
+## 2026-11-11
+- คำสั่ง: `/implement T-15 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: backend/app/services/search_roommate.py, backend/tests/test_search_roommate.py
+- ผล test: `cd backend && pytest -q tests/test_search_roommate.py` -> 8 passed in 0.50s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-15 โดยให้ SearchRoommateService คืนผลลัพธ์ที่จำกัดหน้าแต่ละหน้า 20 รายการ และเริ่มจากหน้า 1 เสมอในทุกการค้นหาใหม่ พร้อมเพิ่ม test AC-SRS-03E เพื่อยืนยันว่าการค้นหาใหม่และ page 2 ทำงานตามเงื่อนไขการแบ่งหน้า
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ spec ระบุชัดเจนว่าการค้นหาใหม่ต้องกลับหน้า 1 และแบ่งผลหน้าละ 20 รายการ โดยไม่มี Open Question ที่ค้าง
+
+## 2026-11-11
+- คำสั่ง: `/implement T-16 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: frontend/src/components/SearchResultsList.js, frontend/src/pages/SearchRoommatePage.js, frontend/src/api/client.js, backend/app/api/search.py, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: `cd frontend && npm test -- --run src/__tests__/search-roommate-page.test.jsx` -> 10 passed in 1.99s; `cd /workspaces/Vistaandfriend-swreqspec- && pytest backend/tests/test_search_roommate.py -q` -> 8 passed in 0.46s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-16 โดยเพิ่ม pagination control บนรายการผลลัพธ์สำหรับหน้า ก่อนหน้า/ถัดไป, ส่งค่า page ไปกับ request ของ API ทุกครั้ง, และรีเซ็ตกลับไปหน้า 1 เมื่อกดค้นหาใหม่ ตาม FR-SRS-08 และ FR-SRS-09 พร้อมให้ test AC-SRS-03E ยืนยันว่า request บนหน้าแรกเริ่มจาก page=1 และการกดถัดไปส่ง page=2 อย่างถูกต้อง
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ spec ระบุชัดเจนว่าตต้องมีการแบ่งหน้าและ reset หน้าใหม่ทุกครั้ง และไม่มี Open Question หรือ mockup ที่ค้าง
+
+## 2026-11-11
+- คำสั่ง: `/implement T-17 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: backend/app/services/profile_detail.py, backend/app/api/profile_detail.py, backend/tests/test_search_roommate.py
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec- && pytest backend/tests/test_search_roommate.py -q` -> 9 passed in 0.62s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-17 โดยสร้าง API เปิดรายละเอียดโปรไฟล์ที่สนใจที่คืนข้อมูลโปรไฟล์ที่อนุญาตรวมโซเชียลยังคงไว้ แต่ไม่รวมเบอร์โทรศัพท์ และตรวจสอบว่า profile นั้นเปิดให้ค้นหาและไม่ใช่โปรไฟล์ของผู้ค้นหาเองตาม FR-SRS-06 และ CON-SRS-06 พร้อมเพิ่ม test AC-SRS-04 เพื่อยืนยัน behavior ของการเปิดข้อมูลที่อนุญาต
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าต้องมี API สำหรับเปิดข้อมูลโปรไฟล์และเฉพาะข้อมูลที่อนุญาตเท่านั้น และไม่มี Open Question หรือ mockup ที่ค้าง
+
+## 2026-11-11
+- คำสั่ง: `/implement T-18 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: frontend/src/components/ProfileCard.js, frontend/src/pages/ProfileDetailPage.js, frontend/src/__tests__/profile-detail-page.test.jsx
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/profile-detail-page.test.jsx` -> 1 passed in 1.14s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-18 โดยสร้างหน้าโปรไฟล์และ component ที่แสดงข้อมูลที่อนุญาตได้ครบถ้วน พร้อมแสดงข้อมูลโซเชียลและระบุว่าเบอร์โทรศัพท์ไม่เปิดเผยตาม FR-SRS-06 และ CON-SRS-06 เพื่อให้ผู้ใช้เห็นโปรไฟล์ที่สนใจโดยไม่เปิดเผยข้อมูลส่วนตัว
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าต้องมีหน้าโปรไฟล์และไม่แสดงเบอร์โทรศัพท์ และไม่มี Open Question หรือ mockup ที่ค้าง
+
+## 2026-11-11
+- คำสั่ง: `/implement T-19 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: backend/app/services/search_roommate.py
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec- && PYTHONPATH=backend pytest backend/tests/test_search_roommate.py -q` -> 9 passed in 0.47s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-19 โดยให้ SearchRoommateService คืนผลลัพธ์แบบลิสต์ที่มีสถานะว่างและข้อความ "ไม่พบผลการค้นหา" เมื่อไม่มีผลลัพธ์ตรงตามเงื่อนไข พร้อมยังคงรักษารูปแบบ List สำหรับ endpoint เดิมตาม FR-SRS-07 และ CON-SRS-05
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าต้องคืนสถานะว่างพร้อมข้อความแจ้ง แต่ไม่มี Open Question หรือ mockup ที่ค้าง
+
+## 2026-11-11
+- คำสั่ง: `/implement T-20 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: frontend/src/components/SearchResultsList.js, frontend/src/pages/SearchRoommatePage.js, frontend/src/__tests__/search-roommate-page.test.jsx
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/search-roommate-page.test.jsx` -> 10 passed in 2.05s
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-20 โดยแสดงข้อความ "ไม่พบผลการค้นหา" ใน UI เมื่อผลลัพธ์เป็นว่างใน SearchResultsList และจัดการให้หน้า Search Roommate แสดง empty state แบบนี้แบบสอดคล้องกับ FR-SRS-07 และ AC-SRS-05
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าต้องแสดงข้อความเมื่อผลลัพธ์ว่าง และไม่มี Open Question หรือ mockup ที่ค้าง
+
+## 2026-11-11
+- คำสั่ง: `/implement T-21 specs/004-search-roommate/tasks.md`
+- โหมด: implement (ทำ task เดียวตาม tasks.md)
+- ไฟล์ที่สร้าง/แก้: docs/test/search-roommate-usability.md, specs/004-search-roommate/test-cases.md, specs/004-search-roommate/tasks.md
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec- && git --no-pager diff --check` -> ไม่มีข้อผิดพลาดด้าน whitespace / formatting
+- สรุป: เสร็จตาม "เสร็จเมื่อ" ของ T-21 โดยจัดทำสคริปต์ทดสอบ usability สำหรับนักศึกษาที่ไม่เคยใช้ฟังก์ชัน 5 คน พร้อมแบบฟอร์มบันทึกผลและเกณฑ์ประเมินที่กำหนดให้ต้องมีผู้สำเร็จอย่างน้อย 4 จาก 5 คนโดยไม่รับคำแนะนำ ตาม NFR-SRS-03 และ AC-SRS-08; ทีมยังสามารถนำสคริปต์นี้ไปทดสอบจริงกับผู้ใช้ได้ภายหลัง
+- สิ่งที่เกือบต้องเดาแต่ไม่ถาม: ไม่มี เพราะ task ระบุชัดเจนว่าเป็นสคริปต์ประเมินความสามารถใช้งาน และ spec ไม่กำหนดรายละเอียดสคริปต์ละเอียดเกินกว่านี้ จึงใช้แผนทดสอบที่สอดคล้องกับ AC-SRS-08 โดยไม่เพิ่มเงื่อนไขที่ผิดจาก spec

@@ -1,0 +1,76 @@
+[
+  {
+    "user_id": "user-1",
+    "name": "ผู้ใช้หลัก",
+    "age": 22,
+    "gender": "หญิง",
+    "faculty": "วิศวกรรมศาสตร์",
+    "academic_year": "2",
+    "room_type": "ห้องแยก",
+    "room_size": 2,
+    "is_open_for_search": true,
+    "sleep_behavior": "กรน",
+    "cleanliness": "สะอาด",
+    "sleep_time": "23:00",
+    "social_links": {
+      "Facebook": "fb-user-1",
+      "LINE": "line-user-1"
+    },
+    "phone_number": "0912345678"
+  },
+  {
+    "user_id": "user-2",
+    "name": "น้องแอปเปิล",
+    "age": 21,
+    "gender": "หญิง",
+    "faculty": "วิศวกรรมศาสตร์",
+    "academic_year": "2",
+    "room_type": "ห้องแยก",
+    "room_size": 2,
+    "is_open_for_search": true,
+    "sleep_behavior": "กรน",
+    "cleanliness": "สะอาด",
+    "sleep_time": "22:30",
+    "social_links": {
+      "Facebook": "fb-user-2",
+      "Instagram": "ig-user-2"
+    },
+    "phone_number": "0998765432"
+  },
+  {
+    "user_id": "user-3",
+    "name": "ปอปอ",
+    "age": 23,
+    "gender": "ชาย",
+    "faculty": "แพทยศาสตร์",
+    "academic_year": "3",
+    "room_type": "ห้องรวม",
+    "room_size": 4,
+    "is_open_for_search": false,
+    "sleep_behavior": "กัดฟัน",
+    "cleanliness": "ไม่สะอาด",
+    "sleep_time": "00:15",
+    "social_links": {
+      "TikTok": "tt-user-3"
+    },
+    "phone_number": "0812345678"
+  },
+  {
+    "user_id": "user-4",
+    "name": "เบลล่า",
+    "age": 20,
+    "gender": "หญิง",
+    "faculty": "วิทยาศาสตร์",
+    "academic_year": "1",
+    "room_type": "ห้องแยก",
+    "room_size": 1,
+    "is_open_for_search": true,
+    "sleep_behavior": "นอนดิ้น",
+    "cleanliness": "สะอาด",
+    "sleep_time": "23:30",
+    "social_links": {
+      "LINE": "line-user-4"
+    },
+    "phone_number": "0834567890"
+  }
+]
