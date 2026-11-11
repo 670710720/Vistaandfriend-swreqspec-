@@ -163,3 +163,9 @@
 - โหมด/ผล: พบแถวที่ใช้ได้ TC-RMP-04A-1 ถึง TC-RMP-04A-3 แต่มีเพียง TC-RMP-04A-1 ที่ระบุ pytest; ยังไม่เขียน backend test เพราะไม่มี `backend/app/`, `backend/tests/`, fixture หรือสัญญา API/แผนทดสอบใน `plan.md` ให้ยึด และไม่ควรสมมติ interface ของระบบ
 - ผล test: ไม่ได้รัน เนื่องจากยังไม่มี backend test ที่เขียนได้อย่างไม่ต้องเดา
 - สิ่งที่ต้องให้ทีมกำหนดก่อน: backend ใช้ interface/ชั้นใดสำหรับตรวจข้อมูลห้องและป้องกันการสร้างโปรไฟล์เมื่อข้อมูลผิด แล้วระบุสัญญานี้ในแผนหรือจัดเตรียม backend implementation/fixture ให้ทดสอบได้
+
+## 2026-11-11
+- คำสั่ง: `/tasks specs/002-edit-roommate-profile/spec.md`
+- โหมด: สร้าง tasks.md จาก spec.md และ plan.md ตาม template `tasks.prompt.md`
+- ผลลัพธ์: สร้างไฟล์ `specs/002-edit-roommate-profile/tasks.md` โดยมี 6 เฟส, 10 task, 0 task รอ Q-xx และครอบคลุม AC-ERP-01 ถึง AC-ERP-08, FR-ERP-01 ถึง FR-ERP-09 และ constraint CON-ERP-01 ถึง CON-ERP-07
+- หมายเหตุ: ไม่พบ `specs/000-shared/constraints.md` ใน repo จึงใช้ constraint จาก spec ของฟีเจอร์นี้และ plan.md เป็นแหล่งอ้างอิงหลักเพียงแหล่งเดียว
