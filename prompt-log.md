@@ -74,6 +74,18 @@
 
 ## 2026-11-13
 - คำสั่ง: `/tasks specs/005-chat-roommate/spec.md`
+
+## 2026-11-13
+- คำสั่ง: `/implement T-03 specs/005-chat-roommate/tasks.md`
+- ไฟล์ที่สร้าง/แก้: `frontend/src/api/client.js`, `frontend/src/pages/ChatListPage.jsx`, `frontend/src/pages/ChatPage.jsx`, `frontend/src/__tests__/chat-roommate-ui.test.jsx`, `specs/005-chat-roommate/tasks.md`
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/setup.test.jsx src/__tests__/chat-roommate-ui.test.jsx` → 3 passed (3)
+- ประเด็นที่เกือบต้องเดา: ไม่มี API จริงสำหรับ list/history ใน T-02 จึงแยกชั้น API เป็น `client.js` และใช้ Mock Data เมื่อ backend ยังไม่พร้อม พร้อมระบุชัดว่าเป็น fallback เฉพาะกรณี API ไม่พร้อม
+
+## 2026-11-13
+- คำสั่ง: `/implement T-04 specs/005-chat-roommate/tasks.md`
+- ไฟล์ที่สร้าง/แก้: `frontend/src/api/client.js`, `frontend/src/pages/ChatPage.jsx`, `frontend/src/__tests__/chat-roommate-ui.test.jsx`, `specs/005-chat-roommate/tasks.md`
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/chat-roommate-ui.test.jsx` → 5 tests passed
+- ประเด็นที่เกือบต้องเดา: Backend ยังไม่มี endpoint สำหรับส่งข้อความจริง จึงสร้าง boundary ใน API client และ UI ให้รอ API ยืนยันก่อนแสดงข้อความว่า “ส่งสำเร็จ” พร้อมระบุชัดว่าต้องเชื่อมต่อกับ backend จริงในภายหลัง
 - ผลลัพธ์: สร้างไฟล์ [specs/005-chat-roommate/tasks.md](./specs/005-chat-roommate/tasks.md) แล้ว โดยแบ่ง task เป็น 5 เฟส รวม 12 task ไม่มี task รอ Q-xx และครอบคลุมทุก AC/Constraint/FR ของ SPEC-CHAT-005
 - TC ID ที่เสนอ: TC-CCM-01-1, TC-CCM-01-2, TC-CCM-01-3, TC-CCM-01-4, TC-CCM-02-1, TC-CCM-02-2, TC-CCM-02-3, TC-CCM-03-1, TC-CCM-03-2, TC-CCM-03-3, TC-CCM-03D-1, TC-CCM-03D-2, TC-CCM-03D-3, TC-CCM-03A-1, TC-CCM-03A-2, TC-CCM-03A-3, TC-CCM-03B-1, TC-CCM-03B-2, TC-CCM-03B-3, TC-CCM-03C-1, TC-CCM-03C-2, TC-CCM-03C-3, TC-CCM-03C-4, TC-CCM-03E-1, TC-CCM-03E-2, TC-CCM-03E-3, TC-CCM-04-1, TC-CCM-04-2, TC-CCM-04-3, TC-CCM-05-1, TC-CCM-05-2, TC-CCM-05-3, TC-CCM-05A-1, TC-CCM-05A-2, TC-CCM-05A-3, TC-CCM-05B-1, TC-CCM-05B-2, TC-CCM-05B-3, TC-CCM-06-1, TC-CCM-06-2, TC-CCM-06-3, TC-CCM-06-4, TC-CCM-07-1, TC-CCM-07-2, TC-CCM-07-3, TC-CCM-07-4, TC-CCM-07-5
 - ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
@@ -234,3 +246,10 @@
 - สิ่งที่ระบุเป็นการเลือกทางเทคนิค: React (Vite), FastAPI, Vitest และ pytest ไม่ได้มาจาก spec; SQLite มาจากคำตอบ Q-07
 - สิ่งที่ยังต้องให้ทีมกำหนดก่อน implement: วิธีส่ง/จัดเก็บรูป, แหล่ง identity/authentication และสัญญาตรวจโปรไฟล์เดิม; ไม่สร้าง Q-ID เพิ่ม
 - ขอบเขต: แก้เฉพาะ `specs/001-roommate-profile/plan.md` และเพิ่มบันทึกนี้ท้าย `prompt-log.md`; ไม่แก้ spec, tasks, RTM, source หรือ tests; ไม่รันทดสอบเพราะเป็นเอกสารเท่านั้น
+
+## 2026-11-13
+- คำสั่ง: `/implement T-01 specs/005-chat-roommate/tasks.md`
+- ไฟล์ที่สร้าง/แก้: `backend/app/__init__.py`, `backend/app/models/chat_message.py`, `backend/app/repositories/chat_repository.py`, `backend/app/main.py`, `backend/tests/test_chat_backend_smoke.py`, และปรับ `specs/005-chat-roommate/tasks.md` ให้ T-01 เป็นสถานะ "เสร็จ รอทีมตรวจ"
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest -q tests/test_chat_backend_smoke.py` -> 1 passed
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่ได้มีข้อสรุปเพิ่มเติมที่ต้องถาม; ใช้เฉพาะ spec ที่ระบุ: schema สำหรับบทสนทนา, ลำดับข้อความ, และการบันทึกก่อน/พร้อมกับส่งข้อความ
+- ขอบเขต: ทำเฉพาะ T-01 ตาม task นี้ โดยไม่แก้ spec.md หรือเริ่ม task ถัดไป

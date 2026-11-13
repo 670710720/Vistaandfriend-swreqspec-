@@ -1,0 +1,577 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI-CHT-01 - Chat with Roommate</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 28px;
+      font-family: Arial, Tahoma, sans-serif;
+      color: #263238;
+      background: #f3f5f7;
+    }
+
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .description {
+      color: #607078;
+      margin-bottom: 24px;
+    }
+
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .chat-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 570px;
+      background: white;
+      border: 1px solid #dce2e6;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      border-right: 1px solid #e2e7ea;
+      padding: 20px;
+    }
+
+    .conversation {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .panel-title {
+      font-size: 18px;
+      margin-bottom: 16px;
+    }
+
+    .person {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 8px;
+      border-radius: 8px;
+      border-bottom: 1px solid #edf0f2;
+    }
+
+    .person.active {
+      background: #eef5f3;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #dce9e5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .person-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .person-info strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .muted {
+      color: #718087;
+      font-size: 13px;
+    }
+
+    .new-chat {
+      padding: 14px 0;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #e2e7ea;
+    }
+
+    .new-chat h3 {
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+
+    .new-chat .person {
+      padding: 8px 0;
+    }
+
+    .chat-header {
+      padding: 18px 22px;
+      border-bottom: 1px solid #e2e7ea;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-header p {
+      margin: 4px 0 0;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 22px;
+      background: #fafbfc;
+      min-height: 340px;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      line-height: 1.5;
+      background: #e9eef1;
+    }
+
+    .message.mine {
+      margin-left: auto;
+      background: #dcefe7;
+    }
+
+    .message small {
+      display: block;
+      margin-top: 6px;
+      color: #64736d;
+      text-align: right;
+      font-size: 11px;
+    }
+
+    .attachment {
+      padding: 10px;
+      border: 1px solid #cbd7d2;
+      border-radius: 8px;
+      margin-top: 8px;
+      background: white;
+      font-size: 13px;
+    }
+
+    .composer {
+      padding: 16px 20px;
+      border-top: 1px solid #e2e7ea;
+      background: white;
+    }
+
+    .composer textarea {
+      width: 100%;
+      min-height: 65px;
+      padding: 12px;
+      resize: vertical;
+      border: 1px solid #cbd4d9;
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    .composer-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 9px 16px;
+      border: 0;
+      border-radius: 7px;
+      background: #286b59;
+      color: white;
+      cursor: default;
+      font: inherit;
+    }
+
+    button.secondary {
+      background: #e8edef;
+      color: #35434a;
+    }
+
+    button.danger {
+      background: #a83d3d;
+    }
+
+    .state-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .state {
+      background: white;
+      border: 1px solid #dce2e6;
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .state h3 {
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+
+    .notice {
+      padding: 12px;
+      border-radius: 8px;
+      background: #fff3dc;
+      color: #75551c;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .error {
+      background: #fdeaea;
+      color: #963838;
+    }
+
+    .success {
+      background: #e5f3eb;
+      color: #286348;
+    }
+
+    .readonly {
+      background: #edf0f2;
+      color: #56636a;
+    }
+
+    .todo {
+      border: 1px dashed #a0aab0;
+      background: #f8f9fa;
+      padding: 12px;
+      color: #65737a;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .counter {
+      text-align: right;
+      font-size: 12px;
+      color: #718087;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 12px;
+      }
+
+      .chat-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        border-right: 0;
+        border-bottom: 1px solid #e2e7ea;
+      }
+
+      .state-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+
+    <header class="section">
+      <h1>Chat with Roommate</h1>
+      <p class="description">
+        UI-CHT-01 | หน้าจอติดต่อและสนทนาระหว่างนักศึกษา
+      </p>
+      <p class="muted">
+        ขอบเขต: UC-05 ติดต่อ/แชทกับรูมเมท
+        รายชื่อนักศึกษาที่เริ่มสนทนามาจาก UC-04
+      </p>
+    </header>
+
+    <!-- Main chat screen -->
+    <section class="section">
+      <div class="chat-layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+          <h2 class="panel-title">บทสนทนา</h2>
+
+          <!-- Start new conversation -->
+          <div class="new-chat" data-req="FR-CHAT-01">
+
+            <h3>เริ่มบทสนทนาใหม่</h3>
+
+            <div class="person">
+              <div class="avatar">C</div>
+
+              <div class="person-info">
+                <strong>นักศึกษา C</strong>
+                <span class="muted">โปรไฟล์พร้อมให้ค้นหา</span>
+              </div>
+            </div>
+
+            <button data-req="FR-CHAT-01">
+              เริ่มแชท
+            </button>
+
+            <p class="muted">
+              รายชื่อนักศึกษาที่ได้รับจาก UC-04
+            </p>
+
+          </div>
+
+          <!-- Existing conversations -->
+          <div class="person active" data-req="FR-CHAT-02">
+            <div class="avatar">A</div>
+
+            <div class="person-info">
+              <strong>นักศึกษา A</strong>
+              <span class="muted">
+                สนใจหาห้องพักแถวมหาวิทยาลัย
+              </span>
+            </div>
+          </div>
+
+          <div class="person" data-req="FR-CHAT-08">
+            <div class="avatar">B</div>
+
+            <div class="person-info">
+              <strong>นักศึกษา B</strong>
+              <span class="muted">
+                ขอบคุณสำหรับข้อมูลค่ะ
+              </span>
+            </div>
+          </div>
+
+          <div class="todo">
+            รายชื่อบทสนทนาตัวอย่าง
+            ไม่ใช่ระบบค้นหาหรือจับคู่รูมเมท
+          </div>
+
+        </aside>
+
+        <!-- Conversation -->
+        <section class="conversation">
+
+          <header class="chat-header">
+            <div class="avatar">A</div>
+
+            <div>
+              <strong>นักศึกษา A</strong>
+              <p class="muted">
+                บทสนทนาระหว่างนักศึกษา 2 คน
+              </p>
+            </div>
+          </header>
+
+          <!-- Message history -->
+          <div class="messages"
+               data-req="FR-CHAT-02 FR-CHAT-05 FR-CHAT-06 FR-CHAT-08">
+
+            <div class="message">
+              สวัสดีครับ สนใจหาห้องพักแถวไหนครับ?
+              <small>10:30 น.</small>
+            </div>
+
+            <div class="message mine">
+              สนใจแถวมหาวิทยาลัยค่ะ
+              <small>10:32 น. · Read</small>
+            </div>
+
+            <div class="message">
+              ผมมีข้อมูลห้องพักที่น่าสนใจครับ
+              <small>10:33 น.</small>
+            </div>
+
+            <div class="message mine"
+                 data-req="FR-CHAT-09 FR-CHAT-11 FR-CHAT-16">
+
+              ส่งรายละเอียดไฟล์มาให้แล้วนะคะ
+
+              <div class="attachment">
+                📎 room-details.pdf
+                <div class="muted">
+                  PDF · ตัวอย่างไฟล์แนบ
+                </div>
+              </div>
+
+              <small>10:35 น. · Read</small>
+            </div>
+
+          </div>
+
+          <!-- Message composer -->
+          <footer class="composer">
+
+            <textarea
+              data-req="FR-CHAT-03 FR-CHAT-13"
+              placeholder="พิมพ์ข้อความ..."
+              maxlength="2000"
+            ></textarea>
+
+            <div class="counter">
+              สูงสุด 2,000 ตัวอักษร
+            </div>
+
+            <div class="composer-footer">
+
+              <button class="secondary"
+                      data-req="FR-CHAT-09">
+                📎 แนบไฟล์
+              </button>
+
+              <button data-req="FR-CHAT-03">
+                ส่งข้อความ
+              </button>
+
+            </div>
+
+            <p class="muted">
+              รองรับ JPG, PNG และ PDF
+              แนบได้ 1 ไฟล์ต่อข้อความ ขนาดไม่เกิน 10 MB
+            </p>
+
+          </footer>
+
+        </section>
+      </div>
+    </section>
+
+    <!-- Other required UI states -->
+    <section class="section">
+
+      <h2>สถานะอื่นของหน้าจอแชท</h2>
+
+      <p class="muted">
+        ตัวอย่างสถานะสำหรับประกอบการตรวจสอบ Requirements
+        ไม่ใช่การทำงานจริงของระบบ
+      </p>
+
+      <div class="state-grid">
+
+        <!-- Sending failure -->
+        <article class="state">
+          <h3>1. ส่งข้อความไม่สำเร็จ</h3>
+
+          <div class="notice error"
+               data-req="FR-CHAT-07 FR-CHAT-14">
+            ไม่สามารถส่งข้อความได้
+            ระบบลองส่งซ้ำครบ 3 ครั้งแล้ว
+            กรุณาลองส่งอีกครั้ง
+          </div>
+
+          <button class="secondary"
+                  data-req="FR-CHAT-14">
+            ลองส่งอีกครั้ง
+          </button>
+        </article>
+
+        <!-- Read-only chat -->
+        <article class="state">
+          <h3>2. แชทเดิมอ่านได้อย่างเดียว</h3>
+
+          <div class="notice readonly"
+               data-req="FR-CHAT-15">
+            ไม่สามารถส่งข้อความใหม่ได้
+            เนื่องจากผู้เข้าร่วมสนทนาปิดสถานะการค้นหาเมท
+            หรือโปรไฟล์ไม่พร้อมให้ค้นหา
+          </div>
+
+          <textarea
+            disabled
+            placeholder="ไม่สามารถส่งข้อความในบทสนทนานี้ได้"
+          ></textarea>
+        </article>
+
+        <!-- Expired attachment -->
+        <article class="state">
+          <h3>3. ไฟล์แนบหมดอายุ</h3>
+
+          <div class="message">
+            ส่งรายละเอียดห้องพักให้แล้ว
+
+            <div class="attachment"
+                 data-req="FR-CHAT-11 FR-CHAT-16">
+              📎 room-details.pdf
+
+              <div class="muted">
+                ไฟล์แนบหมดอายุ ไม่สามารถดาวน์โหลดได้
+              </div>
+            </div>
+          </div>
+
+          <div class="notice">
+            ประวัติข้อความยังคงแสดงอยู่
+            แต่ไฟล์แนบไม่สามารถเปิดหรือดาวน์โหลดได้หลังครบ 30 วัน
+          </div>
+        </article>
+
+        <!-- Cannot start chat -->
+        <article class="state">
+          <h3>4. ไม่สามารถเริ่มแชทใหม่</h3>
+
+          <div class="notice error"
+               data-req="FR-CHAT-12">
+            ไม่สามารถเริ่มบทสนทนากับนักศึกษาคนนี้ได้
+            เนื่องจากโปรไฟล์ไม่พร้อมให้ค้นหา
+          </div>
+        </article>
+
+        <!-- Invalid message -->
+        <article class="state">
+          <h3>5. ข้อความไม่ถูกต้อง</h3>
+
+          <div class="notice error"
+               data-req="FR-CHAT-13">
+            กรุณากรอกข้อความก่อนส่ง
+            และข้อความต้องมีความยาวไม่เกิน 2,000 ตัวอักษร
+          </div>
+        </article>
+
+        <!-- Attachment validation -->
+        <article class="state">
+          <h3>6. ไฟล์แนบไม่ผ่านเงื่อนไข</h3>
+
+          <div class="notice error"
+               data-req="FR-CHAT-09">
+            ไม่สามารถแนบไฟล์ได้
+            กรุณาเลือกไฟล์ JPG, PNG หรือ PDF
+            ขนาดไม่เกิน 10 MB และแนบได้ครั้งละ 1 ไฟล์
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <footer class="section">
+      <div class="todo">
+        หมายเหตุ: หน้าจอนี้เป็น Static HTML Mockup
+        ใช้แสดงโครงสร้างและสถานะของ UI เท่านั้น
+        ไม่มีการส่งข้อความ อัปโหลดไฟล์ หรือเชื่อมต่อฐานข้อมูลจริง
+      </div>
+    </footer>
+
+  </main>
+</body>
+</html>
