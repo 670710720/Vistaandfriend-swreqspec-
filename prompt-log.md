@@ -163,3 +163,14 @@
 - โหมด/ผล: พบแถวที่ใช้ได้ TC-RMP-04A-1 ถึง TC-RMP-04A-3 แต่มีเพียง TC-RMP-04A-1 ที่ระบุ pytest; ยังไม่เขียน backend test เพราะไม่มี `backend/app/`, `backend/tests/`, fixture หรือสัญญา API/แผนทดสอบใน `plan.md` ให้ยึด และไม่ควรสมมติ interface ของระบบ
 - ผล test: ไม่ได้รัน เนื่องจากยังไม่มี backend test ที่เขียนได้อย่างไม่ต้องเดา
 - สิ่งที่ต้องให้ทีมกำหนดก่อน: backend ใช้ interface/ชั้นใดสำหรับตรวจข้อมูลห้องและป้องกันการสร้างโปรไฟล์เมื่อข้อมูลผิด แล้วระบุสัญญานี้ในแผนหรือจัดเตรียม backend implementation/fixture ให้ทดสอบได้
+## 2026-11-13
+- คำสั่ง: `/tasks specs/006-request-roommate/spec.md`
+- ผลลัพธ์: สร้าง tasks.md สำหรับ SPEC-RRS-006 แล้ว โดยมี 5 เฟส, 14 task, 0 task รอ Open Questions และเฟส 1 เป็นเฟสแรกที่ลองใช้งานได้จริง
+- ไฟล์: specs/006-request-roommate/tasks.md
+- หมายเหตุ: ไม่มี specs/000-shared/ หรือ mockup สำหรับฟีเจอร์นี้ จึงไม่เพิ่ม constraint หรือ UI จากไฟล์ร่วม และทุก AC ใน spec มี task ครอบคลุมแล้ว
+
+## 2026-11-13
+- คำสั่ง: ตรวจทานและแก้ไข `specs/006-request-roommate/tasks.md` รอบที่ 2 โดยไม่ implement
+- จุดที่แก้: แก้สรุปจำนวนเป็น 7 เฟส/14 task; แยกการทดสอบผู้ใช้ใหม่ตาม AC-RRS-14 ออกจากการทดสอบ concurrent duplicate ตาม NFR-RRS-05 ด้วย T-14; ขยาย T-09 ให้ครอบคลุม atomic validation, duplicate check, match-state และ race condition; ระบุว่า Q-RRS-02 ตอบแล้วและไม่มี task รอคำตอบ; จำกัดงานให้ไม่สร้างฟังก์ชันนอก scope
+- ตาราง AC และ Constraints: ตรวจเทียบกับ spec.md แล้วพบว่าครบ ไม่มีแถวว่าง จึงไม่แก้
+- ขอบเขต: ไม่แก้ spec.md และไม่เริ่ม implement
