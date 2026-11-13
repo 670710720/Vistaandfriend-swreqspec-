@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { PROFILE_CONFIG } from './config.js'
 import { useAuth } from './hooks/useAuth.js'
+import ProfileEditPage from './pages/ProfileEditPage.jsx'
 import { validateProfile } from './profileValidation.js'
 import SearchRoommatePage from './pages/SearchRoommatePage.js'
 import { Sidebar } from './navigation/sidebar.js'
@@ -30,6 +31,7 @@ export default function App({ initialLoggedIn = true }) {
   const { isLoggedIn } = useAuth(initialLoggedIn)
   const [formOpen, setFormOpen] = useState(false)
   const [currentView, setCurrentView] = useState('profile')
+  const [editOpen, setEditOpen] = useState(false)
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState({})
   const [valid, setValid] = useState(false)
@@ -97,6 +99,38 @@ export default function App({ initialLoggedIn = true }) {
           setCurrentView('search-roommate')
         }}
       />
+      <nav aria-label="เมนูโปรไฟล์" className="mb-6 flex gap-3">
+        <button
+          className="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
+          onClick={() => setFormOpen(true)}
+          type="button"
+        >
+          สร้างโปรไฟล์หาเมท
+        </button>
+        <button
+          className="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-50"
+          onClick={() => setEditOpen(true)}
+          type="button"
+        >
+          แก้ไขโปรไฟล์
+        </button>
+      </nav>
+
+      {editOpen && (
+        <ProfileEditPage
+          profile={{
+            age: 22,
+            faculty: 'วิศวกรรมศาสตร์',
+            academicYear: '3',
+            phone: '0812345678',
+            roomType: 'airConditioned',
+            occupants: 2,
+            sleepBehaviors: ['กรน', 'นอนดิ้น'],
+            otherSleepBehavior: '',
+            isSearchable: true,
+          }}
+        />
+      )}
 
       {formOpen && (
         <section aria-labelledby="create-profile-heading" className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
