@@ -6,6 +6,8 @@ from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 import uuid
 
+from app.validators.request_validator import validate_roommate_request_message_length
+
 # รองรับ FR-RRS-05, FR-RRS-07, FR-RRS-14, CON-RRS-05, CON-RRS-10
 
 
@@ -59,6 +61,8 @@ class RoommateRequest:
     status: str = "pending"
     message: str = ""
     receiver_status: Optional[str] = None
+    notification_status: Optional[str] = None
+    notification_error: Optional[str] = None
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
@@ -66,14 +70,14 @@ class RoommateRequest:
     def __post_init__(self) -> None:
         self.status = normalize_status(self.status)
         self.receiver_status = normalize_receiver_status(self.receiver_status)
+        if self.notification_status is not None:
+            self.notification_status = str(self.notification_status).strip().lower()
         self.message = str(self.message or "")
-        self.validate_message_length()
+        self.validate_message_length(self.message)
 
     @staticmethod
     def validate_message_length(message: Optional[str] = None) -> None:
-        candidate = "" if message is None else str(message)
-        if len(candidate) > 500:
-            raise ValueError("ข้อความประกอบต้องไม่เกิน 500 ตัวอักษร")
+        validate_roommate_request_message_length(message)
 
     def validate(self) -> None:
         """Validate message length and stored request state."""
@@ -110,6 +114,8 @@ class RoommateRequest:
             "status": self.status,
             "message": self.message,
             "receiver_status": self.receiver_status,
+            "notification_status": self.notification_status,
+            "notification_error": self.notification_error,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }
@@ -122,6 +128,8 @@ class RoommateRequest:
             status=payload.get("status", "pending"),
             message=payload.get("message", ""),
             receiver_status=payload.get("receiver_status"),
+            notification_status=payload.get("notification_status"),
+            notification_error=payload.get("notification_error"),
             id=payload.get("id", str(uuid.uuid4())),
             created_at=datetime.fromisoformat(payload["created_at"]) if payload.get("created_at") else datetime.now(timezone.utc),
             updated_at=datetime.fromisoformat(payload["updated_at"]) if payload.get("updated_at") else datetime.now(timezone.utc),
