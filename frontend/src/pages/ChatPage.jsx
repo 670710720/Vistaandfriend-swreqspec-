@@ -1,9 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-import { sendChatMessage, validateChatMessage } from '../api/client.js'
+import {
+  markChatMessageRead,
+  sendChatMessage,
+  sendChatMessageWithAttachment,
+  validateChatMessage,
+} from '../api/client.js'
+import { CHAT_CONFIG } from '../config.js'
 
-// Supports FR-CHAT-03, FR-CHAT-04, FR-CHAT-13 and AC-CHAT-02 / AC-CHAT-02C.
-// The UI only submits when the API boundary confirms the message was sent.
+// Supports FR-CHAT-03/04/05/06/07/09/11/13/14/16, CON-REL-01 and AC-CHAT-02/02A/02B/02C/03/03A/03C/03D/04/04A.
+// A message is shown as sent only after the Backend confirms and returns it.
 
 const styles = {
   wrapper: {
@@ -76,12 +82,15 @@ const styles = {
     fontSize: '11px',
   },
   attachment: {
+    display: 'block',
     padding: '10px',
     border: '1px solid #cbd7d2',
     borderRadius: '8px',
     marginTop: '8px',
     background: '#fff',
     fontSize: '13px',
+    color: '#245b4e',
+    textDecoration: 'none',
   },
   composer: {
     padding: '16px 20px',
@@ -137,20 +146,140 @@ function formatMessageTime(timestamp) {
   return Number.isNaN(date.getTime()) ? timestamp : date.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
 }
 
-export default function ChatPage({ conversation, currentUserId = 'student-1', onBack }) {
+export default function ChatPage({
+  conversation,
+  currentUserId,
+  onBack,
+  readOnly = false,
+}) {
   const [draft, setDraft] = useState('')
   const [localMessages, setLocalMessages] = useState(conversation?.messages ?? [])
   const [error, setError] = useState('')
+  const [readError, setReadError] = useState('')
   const [sending, setSending] = useState(false)
+  const [selectedAttachment, setSelectedAttachment] = useState(null)
+  const attachmentInputRef = useRef(null)
+  const messagesContainerRef = useRef(null)
+  const readRequestsRef = useRef(new Set())
+  const activeConversationIdRef = useRef(conversation?.id)
+  activeConversationIdRef.current = conversation?.id
 
   useEffect(() => {
     setLocalMessages(conversation?.messages ?? [])
     setDraft('')
     setError('')
-  }, [conversation])
+    setReadError('')
+    setSelectedAttachment(null)
+    if (attachmentInputRef.current) {
+      attachmentInputRef.current.value = ''
+    }
+  }, [conversation, readOnly])
+
+  useEffect(() => {
+    readRequestsRef.current.clear()
+    setReadError('')
+  }, [conversation?.id])
+
+  useEffect(() => {
+    const root = messagesContainerRef.current
+    if (!root || typeof IntersectionObserver === 'undefined') {
+      return undefined
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) {
+          continue
+        }
+
+        const messageKey = entry.target.getAttribute('data-message-id')
+        const message = localMessages.find((candidate) => String(candidate.id) === messageKey)
+        if (
+          !message ||
+          message.senderId === currentUserId ||
+          message.isRead ||
+          readRequestsRef.current.has(messageKey)
+        ) {
+          continue
+        }
+
+        readRequestsRef.current.add(messageKey)
+        observer.unobserve(entry.target)
+        markChatMessageRead(message.id)
+          .then((receipt) => {
+            if (activeConversationIdRef.current !== conversation?.id) {
+              return
+            }
+            setLocalMessages((currentMessages) => currentMessages.map((currentMessage) => (
+              currentMessage.id === receipt.id
+                ? { ...currentMessage, isRead: receipt.isRead, status: 'Read' }
+                : currentMessage
+            )))
+            setReadError('')
+          })
+          .catch((readStatusError) => {
+            readRequestsRef.current.delete(messageKey)
+            if (activeConversationIdRef.current === conversation?.id) {
+              setReadError(
+                readStatusError instanceof Error
+                  ? readStatusError.message
+                  : 'อัปเดตสถานะการอ่านไม่สำเร็จ',
+              )
+            }
+          })
+      }
+    }, { root })
+
+    const elementsById = new Map(
+      Array.from(root.querySelectorAll('[data-message-id]')).map((element) => [
+        element.getAttribute('data-message-id'),
+        element,
+      ]),
+    )
+    for (const message of localMessages) {
+      if (message.senderId !== currentUserId && !message.isRead) {
+        const element = elementsById.get(String(message.id))
+        if (element) {
+          observer.observe(element)
+        }
+      }
+    }
+
+    return () => observer.disconnect()
+  }, [conversation?.id, currentUserId, localMessages])
+
+  const handleAttachmentChange = (event) => {
+    if (readOnly) {
+      return
+    }
+    const files = Array.from(event.currentTarget.files ?? [])
+    event.currentTarget.value = ''
+    if (files.length === 0) {
+      return
+    }
+    if (files.length > CHAT_CONFIG.maxAttachmentsPerMessage) {
+      setSelectedAttachment(null)
+      setError('แนบไฟล์ได้ไม่เกินจำนวนที่กำหนด')
+      return
+    }
+
+    const file = files[0]
+    if (file.size > CHAT_CONFIG.attachmentMaxSizeBytes) {
+      setSelectedAttachment(null)
+      setError('ไฟล์แนบมีขนาดใหญ่เกินขีดจำกัด')
+      return
+    }
+
+    setSelectedAttachment(file)
+    setError('')
+  }
 
   const handleSend = async () => {
-    if (!conversation) {
+    if (!conversation || readOnly) {
+      return
+    }
+    if (!currentUserId) {
+      setError('ไม่พบข้อมูลผู้ใช้ปัจจุบัน')
       return
     }
 
@@ -163,11 +292,17 @@ export default function ChatPage({ conversation, currentUserId = 'student-1', on
     try {
       setSending(true)
       setError('')
-      const sentMessage = await sendChatMessage({
+      const messageInput = {
         senderId: currentUserId,
         receiverId: conversation.id,
         text: validation.value,
-      })
+      }
+      const sentMessage = selectedAttachment
+        ? await sendChatMessageWithAttachment({
+          ...messageInput,
+          file: selectedAttachment,
+        })
+        : await sendChatMessage(messageInput)
 
       setLocalMessages((currentMessages) => [
         ...currentMessages,
@@ -182,6 +317,10 @@ export default function ChatPage({ conversation, currentUserId = 'student-1', on
         },
       ])
       setDraft('')
+      setSelectedAttachment(null)
+      if (attachmentInputRef.current) {
+        attachmentInputRef.current.value = ''
+      }
     } catch (submissionError) {
       setError(submissionError instanceof Error ? submissionError.message : 'ไม่สามารถส่งข้อความได้')
     } finally {
@@ -208,16 +347,24 @@ export default function ChatPage({ conversation, currentUserId = 'student-1', on
         <div style={styles.avatar}>{conversation.avatar}</div>
         <div style={styles.headerMeta}>
           <p style={styles.title}>{conversation.name}</p>
-          <p style={styles.subtitle}>{conversation.status}</p>
+          {conversation.status && <p style={styles.subtitle}>{conversation.status}</p>}
         </div>
       </header>
 
-      <div style={styles.messages} aria-live="polite">
+      {readOnly && (
+        <p role="status" style={{ margin: 0, padding: '8px 20px', background: '#fff7dd', color: '#674d00' }}>
+          แชทนี้อ่านได้อย่างเดียว
+        </p>
+      )}
+
+      <div ref={messagesContainerRef} style={styles.messages} aria-live="polite">
         {localMessages.map((message) => {
           const isMine = message.senderId === currentUserId
           return (
             <div
               key={message.id}
+              data-message-side={isMine ? 'current-user' : 'conversation-partner'}
+              data-message-id={message.id}
               style={{
                 ...styles.message,
                 ...(isMine ? styles.messageMine : {}),
@@ -225,43 +372,77 @@ export default function ChatPage({ conversation, currentUserId = 'student-1', on
             >
               <div>{message.text}</div>
               {message.attachment && (
-                <div style={styles.attachment}>📎 {message.attachment.name}</div>
+                <a
+                  href={message.attachment.downloadUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`เปิดไฟล์แนบ ${message.attachment.name}`}
+                  style={styles.attachment}
+                >
+                  📎 {message.attachment.name}
+                </a>
               )}
               <small style={styles.timestamp}>
-                {formatMessageTime(message.createdAt)} · {isMine ? 'คุณ' : conversation.name} · {message.status || 'Sent'}
+                {formatMessageTime(message.createdAt)} · {isMine ? 'คุณ' : conversation.name}
+                {message.isRead ? ' · Read' : isMine ? ' · Sent' : ''}
               </small>
             </div>
           )
         })}
       </div>
 
-      <div style={styles.composer}>
-        <textarea
-          aria-label="พิมพ์ข้อความ"
-          placeholder="พิมพ์ข้อความ..."
-          value={draft}
-          onChange={(event) => {
-            setDraft(event.target.value)
-            if (error) {
-              setError('')
-            }
-          }}
-          style={styles.textarea}
-        />
-        {error && (
-          <p role="alert" style={{ marginTop: '8px', color: '#963838', fontSize: '13px' }}>
-            {error}
-          </p>
-        )}
-        <div style={styles.composerFooter}>
-          <button type="button" style={styles.secondaryButton}>
-            แนบไฟล์
-          </button>
-          <button type="button" style={styles.button} onClick={handleSend} disabled={sending}>
-            {sending ? 'กำลังส่ง...' : 'ส่ง'}
-          </button>
+      {readError && (
+        <p role="alert" style={{ margin: 0, padding: '8px 20px', color: '#963838' }}>
+          อัปเดตสถานะการอ่านไม่สำเร็จ: {readError}
+        </p>
+      )}
+
+      {!readOnly && (
+        <div style={styles.composer}>
+          <input
+            ref={attachmentInputRef}
+            type="file"
+            aria-label="เลือกไฟล์แนบ"
+            onChange={handleAttachmentChange}
+            style={{ display: 'none' }}
+          />
+          <textarea
+            aria-label="พิมพ์ข้อความ"
+            placeholder="พิมพ์ข้อความ..."
+            value={draft}
+            onChange={(event) => {
+              setDraft(event.target.value)
+              if (error) {
+                setError('')
+              }
+            }}
+            style={styles.textarea}
+          />
+          {selectedAttachment && (
+            <p role="status" style={{ marginTop: '8px', color: '#52636a', fontSize: '13px' }}>
+              ไฟล์แนบที่เลือก: {selectedAttachment.name}
+            </p>
+          )}
+          {error && (
+            <p role="alert" style={{ marginTop: '8px', color: '#963838', fontSize: '13px' }}>
+              ไม่สามารถส่งข้อความได้: {error}
+            </p>
+          )}
+          <div style={styles.composerFooter}>
+            <button
+              type="button"
+              style={styles.secondaryButton}
+              onClick={() => attachmentInputRef.current?.click()}
+              disabled={sending}
+            >
+              แนบไฟล์
+            </button>
+            <button type="button" style={styles.button} onClick={handleSend} disabled={sending}>
+              {sending ? 'กำลังส่ง...' : error ? 'ลองส่งอีกครั้ง' : 'ส่ง'}
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

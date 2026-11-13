@@ -1,108 +1,10 @@
-// Supports FR-CHAT-01, FR-CHAT-02 and AC-CHAT-01 while keeping the API
-// connection isolated from the UI; backend is still pending, so mock data is
-// explicitly used only as a fallback.
-
-const mockContacts = [
-  {
-    id: 'student-2',
-    name: 'แพรว',
-    summary: 'สวัสดีครับ กำลังดูห้องแถว ม.กังสดาล',
-    online: true,
-    avatar: 'P',
-    status: 'ออนไลน์',
-  },
-  {
-    id: 'student-3',
-    name: 'เจน',
-    summary: 'ได้โปรดตรวจสอบค่าเช่ารอบเดือน',
-    online: false,
-    avatar: 'J',
-    status: 'ออฟไลน์',
-  },
-  {
-    id: 'student-4',
-    name: 'นัท',
-    summary: 'ห้องเช่าของเราอยู่ใกล้ BTS',
-    online: true,
-    avatar: 'N',
-    status: 'ออนไลน์',
-  },
-]
-
-const mockConversationById = {
-  'student-2': [
-    {
-      id: 'msg-1',
-      senderId: 'student-1',
-      receiverId: 'student-2',
-      text: 'สวัสดี แพรวครับ ผมสนใจห้องพักของคุณ',
-      createdAt: '2026-11-12T09:00:00+07:00',
-      status: 'Read',
-      attachment: null,
-    },
-    {
-      id: 'msg-2',
-      senderId: 'student-2',
-      receiverId: 'student-1',
-      text: 'สวัสดีครับ ห้องพักยังว่างอยู่ตอนนี้',
-      createdAt: '2026-11-12T09:02:00+07:00',
-      status: 'Read',
-      attachment: null,
-    },
-    {
-      id: 'msg-3',
-      senderId: 'student-1',
-      receiverId: 'student-2',
-      text: 'ดีมากครับ ขอรายละเอียดเพิ่มเติมได้ไหม',
-      createdAt: '2026-11-12T09:04:00+07:00',
-      status: 'Sent',
-      attachment: null,
-    },
-  ],
-  'student-3': [
-    {
-      id: 'msg-4',
-      senderId: 'student-3',
-      receiverId: 'student-1',
-      text: 'ค่าเช่า 4,500 บาท สัปดาห์นี้มีเรื่องรอชี้แจง',
-      createdAt: '2026-11-11T18:30:00+07:00',
-      status: 'Read',
-      attachment: null,
-    },
-  ],
-  'student-4': [
-    {
-      id: 'msg-5',
-      senderId: 'student-1',
-      receiverId: 'student-4',
-      text: 'ห้องของคุณอยู่ใกล้ MRT ใช่ไหมครับ',
-      createdAt: '2026-11-09T15:10:00+07:00',
-      status: 'Read',
-      attachment: null,
-    },
-  ],
-}
+// Supports FR-CHAT-01, FR-CHAT-02, FR-CHAT-08 and FR-CHAT-12 through the Backend API.
+import { CHAT_CONFIG } from '../config.js'
 
 const API_BASE = import.meta.env.VITE_CHAT_API_BASE || '/api'
 
 export const MESSAGE_RULES = {
-  maxLength: 2000,
-}
-
-function shouldUseMockData() {
-  return Boolean(import.meta.env.DEV)
-}
-
-function handleFallbackError(featureName, fallbackData, error) {
-  if (shouldUseMockData()) {
-    return fallbackData
-  }
-
-  if (error instanceof Error) {
-    throw error
-  }
-
-  throw new Error(`${featureName} API failed`)
+  maxLength: CHAT_CONFIG.messageMaxLength,
 }
 
 export function validateChatMessage(rawText) {
@@ -120,20 +22,77 @@ export function validateChatMessage(rawText) {
 }
 
 export async function fetchChatList() {
-  try {
-    const response = await fetch(`${API_BASE}/chat/list`)
-    if (!response.ok) {
-      throw new Error('Chat list API unavailable')
+  const response = await fetch(`${API_BASE}/chat/list`)
+  if (!response.ok) {
+    throw new Error(`Chat list API unavailable (${response.status})`)
+  }
+
+  const data = await response.json()
+  if (
+    !data ||
+    typeof data.current_user_id !== 'string' ||
+    !data.current_user_id.trim() ||
+    typeof data.demo_mode !== 'boolean' ||
+    !Array.isArray(data.contacts)
+  ) {
+    throw new Error('Chat list API returned invalid payload')
+  }
+
+  const contacts = data.contacts.map((contact) => {
+    if (
+      !contact ||
+      typeof contact.id !== 'string' ||
+      !contact.id.trim() ||
+      typeof contact.name !== 'string' ||
+      !contact.name.trim()
+    ) {
+      throw new Error('Chat list API returned invalid contact')
     }
 
-    const data = await response.json()
-    if (!Array.isArray(data)) {
-      throw new Error('Chat list API returned invalid payload')
+    return {
+      id: contact.id,
+      name: contact.name,
+      avatar: contact.name.trim().slice(0, 1),
+      summary: '',
     }
+  })
 
-    return data
-  } catch (error) {
-    return handleFallbackError('Chat list', mockContacts, error)
+  return {
+    currentUserId: data.current_user_id,
+    demoMode: data.demo_mode,
+    contacts,
+  }
+}
+
+export async function openChat(senderId, recipientId) {
+  const response = await fetch(`${API_BASE}/chat/open`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sender_id: senderId, recipient_id: recipientId }),
+  })
+  if (!response.ok) {
+    throw new Error(`Chat start API unavailable (${response.status})`)
+  }
+
+  const data = await response.json()
+  if (typeof data?.allowed !== 'boolean' || typeof data?.read_only !== 'boolean') {
+    throw new Error('Chat start API returned invalid payload')
+  }
+  if (!data.allowed && (typeof data.reason !== 'string' || !data.reason.trim())) {
+    throw new Error('Chat start API returned denial without a reason')
+  }
+  if (!data.allowed && data.read_only) {
+    throw new Error('Chat start API returned read-only state for a denied chat')
+  }
+  if (data.allowed && (typeof data.room_id !== 'string' || !data.room_id.trim())) {
+    throw new Error('Chat start API returned invalid room')
+  }
+
+  return {
+    allowed: data.allowed,
+    readOnly: data.read_only,
+    reason: data.reason ?? null,
+    roomId: data.room_id ?? null,
   }
 }
 
@@ -167,43 +126,96 @@ function normalizeChatMessage(rawMessage, fallbackStatus = 'Read') {
     return null
   }
 
+  let attachment = null
+  if (rawMessage.attachment !== undefined && rawMessage.attachment !== null) {
+    const rawAttachment = rawMessage.attachment
+    const downloadUrl = rawAttachment?.download_url
+    if (
+      !rawAttachment ||
+      typeof rawAttachment !== 'object' ||
+      typeof rawAttachment.name !== 'string' ||
+      !rawAttachment.name.trim() ||
+      typeof rawAttachment.content_type !== 'string' ||
+      !Number.isInteger(rawAttachment.size_bytes) ||
+      rawAttachment.size_bytes < 0 ||
+      typeof downloadUrl !== 'string' ||
+      !/^\/api\/chat\/attachments\/\d+$/.test(downloadUrl)
+    ) {
+      return null
+    }
+
+    attachment = {
+      id: rawAttachment.id,
+      name: rawAttachment.name,
+      contentType: rawAttachment.content_type,
+      sizeBytes: rawAttachment.size_bytes,
+      downloadUrl,
+    }
+  }
+
   return {
     id: rawMessage.id,
     senderId: String(senderId),
     receiverId: String(receiverId),
     text: String(text),
     createdAt: String(createdAt),
-    status: String(rawMessage.status ?? fallbackStatus),
-    attachment: rawMessage.attachment ?? null,
+    isRead: rawMessage.is_read === true,
+    status: String(rawMessage.status ?? (rawMessage.is_read === true ? 'Read' : fallbackStatus)),
+    attachment,
   }
 }
 
-export async function fetchChatMessages(peerId, currentUserId = 'student-1') {
-  try {
-    const params = new URLSearchParams({
-      sender_id: currentUserId,
-      receiver_id: peerId,
-    })
-    const response = await fetch(`${API_BASE}/chat/messages?${params.toString()}`)
-    if (!response.ok) {
-      throw new Error('Chat history API unavailable')
-    }
-
-    const data = await response.json()
-    if (!Array.isArray(data)) {
-      throw new Error('Chat history API returned invalid payload')
-    }
-
-    return data
-      .map((message) => normalizeChatMessage(message, 'Read'))
-      .filter(Boolean)
-  } catch (error) {
-    const fallbackData = mockConversationById[peerId] ?? []
-    return handleFallbackError('Chat history', fallbackData, error)
+export async function fetchChatMessages(peerId, currentUserId) {
+  if (!peerId || !currentUserId) {
+    throw new Error('Chat history requires both conversation participants')
   }
+
+  const params = new URLSearchParams({
+    sender_id: currentUserId,
+    receiver_id: peerId,
+  })
+  const response = await fetch(`${API_BASE}/chat/messages?${params.toString()}`)
+  if (!response.ok) {
+    throw new Error(`Chat history API unavailable (${response.status})`)
+  }
+
+  const data = await response.json()
+  if (!Array.isArray(data)) {
+    throw new Error('Chat history API returned invalid payload')
+  }
+
+  return data
+    .map((message) => normalizeChatMessage(message, 'Sent'))
+    .filter(Boolean)
+}
+
+export async function markChatMessageRead(messageId) {
+  const parsedMessageId = Number(messageId)
+  if (!Number.isInteger(parsedMessageId) || parsedMessageId < 1) {
+    throw new Error('Read status requires a valid message ID')
+  }
+
+  const response = await fetch(`${API_BASE}/chat/messages/${parsedMessageId}/read`, {
+    method: 'POST',
+  })
+  if (!response.ok) {
+    const errorPayload = await response.json().catch(() => null)
+    const detail = typeof errorPayload?.detail === 'string'
+      ? errorPayload.detail.trim()
+      : ''
+    throw new Error(detail || `อัปเดตสถานะการอ่านไม่สำเร็จ (HTTP ${response.status})`)
+  }
+
+  const data = await response.json()
+  if (data?.id !== parsedMessageId || data?.is_read !== true) {
+    throw new Error('Read status API returned invalid payload')
+  }
+
+  return { id: data.id, isRead: data.is_read }
 }
 
 export async function sendChatMessage({ senderId, receiverId, text }) {
+  // FR-CHAT-03/04/05/07/13/14, CON-REL-01: retry transient failures and accept only confirmed messages.
   const validation = validateChatMessage(text)
   if (!validation.ok) {
     throw new Error(validation.error)
@@ -215,34 +227,102 @@ export async function sendChatMessage({ senderId, receiverId, text }) {
     content: validation.value,
   }
 
-  try {
-    const response = await fetch(`${API_BASE}/chat/messages`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
+  for (let retry = 0; ; retry += 1) {
+    let response
+    try {
+      response = await fetch(`${API_BASE}/chat/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+    } catch {
+      if (retry < CHAT_CONFIG.automaticRetryLimit) {
+        continue
+      }
+      throw new Error('ไม่สามารถเชื่อมต่อระบบได้ กรุณาลองใหม่')
+    }
 
     if (!response.ok) {
-      throw new Error('Send message API unavailable')
+      const errorPayload = await response.json().catch(() => null)
+      const detail = typeof errorPayload?.detail === 'string'
+        ? errorPayload.detail.trim()
+        : ''
+      const reason = detail || `ส่งข้อความไม่สำเร็จ (HTTP ${response.status})`
+
+      if (response.status >= 500 && retry < CHAT_CONFIG.automaticRetryLimit) {
+        continue
+      }
+      throw new Error(reason)
     }
 
     const data = await response.json()
     const normalizedMessage = normalizeChatMessage(data, 'Sent')
-    if (!normalizedMessage || !normalizedMessage.text || !normalizedMessage.senderId || !normalizedMessage.receiverId || !normalizedMessage.createdAt) {
+    if (
+      !normalizedMessage ||
+      !normalizedMessage.text ||
+      !normalizedMessage.senderId ||
+      !normalizedMessage.receiverId ||
+      !normalizedMessage.createdAt
+    ) {
       throw new Error('Send message API returned invalid payload')
+    }
+    if (
+      normalizedMessage.senderId !== senderId ||
+      normalizedMessage.receiverId !== receiverId ||
+      normalizedMessage.text !== validation.value
+    ) {
+      throw new Error('Send message API returned a message that does not match the request')
     }
 
     return {
       ...normalizedMessage,
       status: normalizedMessage.status ?? 'Sent',
     }
-  } catch (error) {
-    if (error instanceof Error) {
-      throw error
-    }
-
-    throw new Error('Send message API failed')
   }
 }
 
-export { mockContacts, mockConversationById }
+export async function sendChatMessageWithAttachment({ senderId, receiverId, text, file }) {
+  // FR-CHAT-09/11/16 and AC-CHAT-02A: accept only Backend-confirmed message and attachment data.
+  const validation = validateChatMessage(text)
+  if (!validation.ok) {
+    throw new Error(validation.error)
+  }
+  if (!file) {
+    throw new Error('กรุณาเลือกไฟล์แนบก่อนส่ง')
+  }
+
+  const formData = new FormData()
+  formData.append('sender_id', senderId)
+  formData.append('receiver_id', receiverId)
+  formData.append('content', validation.value)
+  formData.append('attachments', file)
+
+  const response = await fetch(`${API_BASE}/chat/messages/with-attachment`, {
+    method: 'POST',
+    body: formData,
+  })
+  if (!response.ok) {
+    const errorPayload = await response.json().catch(() => null)
+    const detail = typeof errorPayload?.detail === 'string'
+      ? errorPayload.detail.trim()
+      : ''
+    throw new Error(detail || `ส่งข้อความไม่สำเร็จ (HTTP ${response.status})`)
+  }
+
+  const data = await response.json()
+  const normalizedMessage = normalizeChatMessage(data, 'Sent')
+  if (
+    !normalizedMessage ||
+    !normalizedMessage.attachment ||
+    normalizedMessage.senderId !== senderId ||
+    normalizedMessage.receiverId !== receiverId ||
+    normalizedMessage.text !== validation.value
+  ) {
+    throw new Error('Send attachment API returned an invalid response')
+  }
+
+  return {
+    ...normalizedMessage,
+    status: normalizedMessage.status ?? 'Sent',
+  }
+}

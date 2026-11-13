@@ -71,22 +71,6 @@
 ## 2026-10-13
 - คำสั่ง: `/testcases AC-CCM /009-cancle-match จาก ac ทั้งหมด`
 - โหมด: ร่าง (ครอบคลุม AC-CCM-01, AC-CCM-02, AC-CCM-03, AC-CCM-03D, AC-CCM-03A, AC-CCM-03B, AC-CCM-03C, AC-CCM-03E, AC-CCM-04, AC-CCM-05, AC-CCM-05A, AC-CCM-05B, AC-CCM-06 และ AC-CCM-07 ใน SPEC-CCM-009)
-
-## 2026-11-13
-- คำสั่ง: `/tasks specs/005-chat-roommate/spec.md`
-
-## 2026-11-13
-- คำสั่ง: `/implement T-03 specs/005-chat-roommate/tasks.md`
-- ไฟล์ที่สร้าง/แก้: `frontend/src/api/client.js`, `frontend/src/pages/ChatListPage.jsx`, `frontend/src/pages/ChatPage.jsx`, `frontend/src/__tests__/chat-roommate-ui.test.jsx`, `specs/005-chat-roommate/tasks.md`
-- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/setup.test.jsx src/__tests__/chat-roommate-ui.test.jsx` → 3 passed (3)
-- ประเด็นที่เกือบต้องเดา: ไม่มี API จริงสำหรับ list/history ใน T-02 จึงแยกชั้น API เป็น `client.js` และใช้ Mock Data เมื่อ backend ยังไม่พร้อม พร้อมระบุชัดว่าเป็น fallback เฉพาะกรณี API ไม่พร้อม
-
-## 2026-11-13
-- คำสั่ง: `/implement T-04 specs/005-chat-roommate/tasks.md`
-- ไฟล์ที่สร้าง/แก้: `frontend/src/api/client.js`, `frontend/src/pages/ChatPage.jsx`, `frontend/src/__tests__/chat-roommate-ui.test.jsx`, `specs/005-chat-roommate/tasks.md`
-- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/chat-roommate-ui.test.jsx` → 5 tests passed
-- ประเด็นที่เกือบต้องเดา: Backend ยังไม่มี endpoint สำหรับส่งข้อความจริง จึงสร้าง boundary ใน API client และ UI ให้รอ API ยืนยันก่อนแสดงข้อความว่า “ส่งสำเร็จ” พร้อมระบุชัดว่าต้องเชื่อมต่อกับ backend จริงในภายหลัง
-- ผลลัพธ์: สร้างไฟล์ [specs/005-chat-roommate/tasks.md](./specs/005-chat-roommate/tasks.md) แล้ว โดยแบ่ง task เป็น 5 เฟส รวม 12 task ไม่มี task รอ Q-xx และครอบคลุมทุก AC/Constraint/FR ของ SPEC-CHAT-005
 - TC ID ที่เสนอ: TC-CCM-01-1, TC-CCM-01-2, TC-CCM-01-3, TC-CCM-01-4, TC-CCM-02-1, TC-CCM-02-2, TC-CCM-02-3, TC-CCM-03-1, TC-CCM-03-2, TC-CCM-03-3, TC-CCM-03D-1, TC-CCM-03D-2, TC-CCM-03D-3, TC-CCM-03A-1, TC-CCM-03A-2, TC-CCM-03A-3, TC-CCM-03B-1, TC-CCM-03B-2, TC-CCM-03B-3, TC-CCM-03C-1, TC-CCM-03C-2, TC-CCM-03C-3, TC-CCM-03C-4, TC-CCM-03E-1, TC-CCM-03E-2, TC-CCM-03E-3, TC-CCM-04-1, TC-CCM-04-2, TC-CCM-04-3, TC-CCM-05-1, TC-CCM-05-2, TC-CCM-05-3, TC-CCM-05A-1, TC-CCM-05A-2, TC-CCM-05A-3, TC-CCM-05B-1, TC-CCM-05B-2, TC-CCM-05B-3, TC-CCM-06-1, TC-CCM-06-2, TC-CCM-06-3, TC-CCM-06-4, TC-CCM-07-1, TC-CCM-07-2, TC-CCM-07-3, TC-CCM-07-4, TC-CCM-07-5
 - ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
 - ประเด็นที่ spec ไม่ได้บอก: ผลการเปิดหน้าเมื่อยังไม่เข้าสู่ระบบหรือไม่มีสถานะจับคู่สำเร็จ (AC-CCM-01); การเลือกยกเลิกโดยยังไม่เลือกคู่ (AC-CCM-02); การยืนยันโดยไม่มีข้อความยืนยัน (AC-CCM-03); ผลแสดงเมื่อสถานะเปลี่ยนระหว่างตรวจแบบ atomic และข้อความปฏิเสธกรณีไม่ใช่สมาชิก (AC-CCM-03D); การแจ้งเตือนเมื่อบันทึกไม่สำเร็จและรายละเอียด/ระยะเวลาการแสดงสถานะ (AC-CCM-03A); รายละเอียดการลองใหม่เมื่อบันทึกล้มเหลว (AC-CCM-03B); ผลเมื่อ retry การแจ้งเตือนสำเร็จและการแจ้งผลสำเร็จหลัง retry (AC-CCM-03C); การเปิดแชทโดยไม่มีประวัติ (AC-CCM-03E); การไม่ยืนยันโดยไม่มีข้อความยืนยัน (AC-CCM-04); การค้นหาก่อนยกเลิกสำเร็จ (AC-CCM-05); ผลค้นหาเมื่อฝ่ายหนึ่งไม่เปิดสถานะให้ค้นหา (AC-CCM-05A); การส่งคำขอเมื่อฝ่ายหนึ่งไม่เปิดสถานะให้ค้นหา (AC-CCM-05B); รายละเอียดการปฏิเสธเมื่อผู้ใช้ไม่ได้เข้าสู่ระบบหรือสถานะไม่ใช่จับคู่สำเร็จ (AC-CCM-06); การใช้เกณฑ์กับผู้มีประสบการณ์หรือจำนวนผู้ทดสอบไม่ครบ 5 คน (AC-CCM-07)
@@ -248,8 +232,186 @@
 - ขอบเขต: แก้เฉพาะ `specs/001-roommate-profile/plan.md` และเพิ่มบันทึกนี้ท้าย `prompt-log.md`; ไม่แก้ spec, tasks, RTM, source หรือ tests; ไม่รันทดสอบเพราะเป็นเอกสารเท่านั้น
 
 ## 2026-11-13
+- คำสั่ง: `/task specs/005-chat-roommate` (ผู้ใช้ยืนยันให้แตก implementation tasks จาก spec โดยตรง ไม่แก้ plan.md)
+- ผลลัพธ์: สร้าง `specs/005-chat-roommate/tasks.md` เป็น 20 เฟส 37 task ครอบคลุม AC 19 ข้อ, Constraints 9 ข้อ และ FR 16 ข้อ
+- ข้อค้นพบ: Q-01 ถึง Q-06 ตอบครบ; Q-01 ต้องการ in-app และ push notifications แต่ไม่มี FR/AC จึงไม่สร้าง task; ระบุ integration gaps เรื่อง Authentication, UC-04, production storage และภาระ concurrent
+- ตรวจเอกสาร: ตรวจช่องบังคับและ traceability; ไม่รันทดสอบเพราะสร้างเอกสารเท่านั้น
+- ขอบเขต: แก้เฉพาะ `specs/005-chat-roommate/tasks.md` และเพิ่มบันทึกนี้ท้าย `prompt-log.md`; ไม่แก้ spec, plan, mockup หรือโค้ด
+
+## 2026-11-13
+- คำสั่ง: แก้ `/tasks specs/005-chat-roommate/tasks.md` รอบที่ 1 ตามคำขอให้ลดจำนวน T เหลือ 10 และเน้นงาน UI
+- ผลการแก้: รวม breakdown จาก 37 เหลือ 10 task ใน 6 เฟส; รวม AC ที่เกี่ยวข้องไว้ใน vertical slices และคง UI task, ตาราง AC/Constraint/FR และ integration gaps
+- ข้อกำหนดที่คงไว้: ครอบคลุม AC ทั้ง 19 ข้อ; ไม่เพิ่ม task แจ้งเตือนจาก Q-01 เพราะไม่มี FR/AC; ไม่แก้ `spec.md`, `plan.md`, mockup หรือโค้ด
+- ผลตรวจ: ไม่รัน tests เพราะแก้เฉพาะเอกสาร; ตรวจความครบของ task และ traceability หลังแก้
+
+## 2026-11-13
 - คำสั่ง: `/implement T-01 specs/005-chat-roommate/tasks.md`
-- ไฟล์ที่สร้าง/แก้: `backend/app/__init__.py`, `backend/app/models/chat_message.py`, `backend/app/repositories/chat_repository.py`, `backend/app/main.py`, `backend/tests/test_chat_backend_smoke.py`, และปรับ `specs/005-chat-roommate/tasks.md` ให้ T-01 เป็นสถานะ "เสร็จ รอทีมตรวจ"
-- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest -q tests/test_chat_backend_smoke.py` -> 1 passed
-- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่ได้มีข้อสรุปเพิ่มเติมที่ต้องถาม; ใช้เฉพาะ spec ที่ระบุ: schema สำหรับบทสนทนา, ลำดับข้อความ, และการบันทึกก่อน/พร้อมกับส่งข้อความ
-- ขอบเขต: ทำเฉพาะ T-01 ตาม task นี้ โดยไม่แก้ spec.md หรือเริ่ม task ถัดไป
+- ผลการทำ: เพิ่มค่ากำหนด Feature 005 ใน Backend/Frontend config และให้ `ChatMessageCreate` ใช้ค่าความยาวข้อความจาก config; เพิ่ม tests สำหรับ config, การบันทึกหลายคู่สนทนา, และ smoke test concurrency/latency
+- ไฟล์โค้ดที่แก้: `backend/app/config.py` (สร้าง), `frontend/src/config.js`, `backend/app/models/chat_message.py`, `backend/tests/test_chat_backend_smoke.py`, `frontend/src/api/client.test.js`
+- ไฟล์ `backend/app/main.py` และ `backend/app/repositories/chat_repository.py` ตามรายการ T-01 ไม่ต้องแก้ เพราะโครงสร้างเดิมเปิดให้สร้างฐานทดสอบและแยกประวัติหลายคู่ได้อยู่แล้ว; ยืนยันด้วย tests
+- ผล test: `cd backend && pytest -q tests/test_chat_backend_smoke.py` ผ่าน 4 tests (มี Starlette deprecation warning); `cd frontend && npm test -- src/api/client.test.js` ผ่าน 9 tests; `git diff --check` ผ่าน
+- เรื่องที่ถามแทนการเดา: `plan.md` ยังไม่ใช่แผนเทคนิค จึงถามก่อนเรื่อง stack; ทีมอนุญาตให้ใช้ stack ที่มีใน repository เดิม และไม่มีการตัดสินใจ requirement เพิ่ม
+- หมายเหตุ: concurrency/latency เป็น smoke test สองคู่สนทนาตาม T-01 ไม่ใช่การรับรอง performance ภายใต้จำนวนผู้ใช้พร้อมกันที่ยังไม่ระบุ
+- สถานะ T-01: เสร็จ รอทีมตรวจ; ไม่เริ่ม T-02
+
+## 2026-11-13
+- ข้อสังเกตหลัง implement T-01: `frontend/src/api/client.js` ยังมี `MESSAGE_RULES.maxLength` เป็นค่า 2000; ไม่แก้ใน T-01 เพราะไฟล์นี้ไม่อยู่ในรายการไฟล์ที่แตะของ T-01 แต่ระบุไว้ใน T-05 ซึ่งควรเชื่อมค่ากับ `CHAT_CONFIG`
+
+## 2026-11-13
+- การตรวจและอนุมัติ T-01: ผู้รับผิดชอบและผู้มีอำนาจตัดสินใจ Feature Chat Roommate ยืนยันตรวจผลจากรายงานและอนุมัติ T-01 แล้ว ไม่ต้องรอการตรวจจากทีมเพิ่มเติม
+- ปรับสถานะ T-01 ใน `specs/005-chat-roommate/tasks.md` เป็น "เสร็จ" ตามการอนุมัติ; ไม่แก้ task อื่นหรือไฟล์ source, tests และ mockup
+
+## 2026-11-13
+- คำสั่ง: `/implement T-02 specs/005-chat-roommate/tasks.md`
+- ผลการทำ: เพิ่ม identity boundary แบบ fail-closed โดยอ่าน `request.state.user_id` จาก trusted upstream middleware; เปิดแชทและส่งข้อความได้เฉพาะเมื่อ sender ตรงกับ principal และอ่านประวัติได้เฉพาะเมื่อ principal เป็นผู้ส่งหรือผู้รับ
+- ขอบเขต: ไม่สร้าง Authentication, token/provider หรือ UC-04; tests ใช้ test-only middleware เพื่อ inject principal; runtime จะปฏิเสธคำขอด้วย 401 จนกว่าจะเชื่อม trusted middleware ภายนอก
+- ไฟล์โค้ดที่แก้: `backend/app/controllers/chat_controller.py`, `backend/app/main.py`, `backend/tests/test_chat_backend_smoke.py`, `backend/tests/test_chat_start_access.py`
+- ไฟล์ `backend/app/repositories/chat_repository.py` และ `backend/app/services/chat_service.py` ไม่ต้องแก้ เพราะ repository มี query แบบคู่สนทนาอยู่แล้ว และ service มี profile-eligibility boundary อยู่แล้ว
+- ผล test: `cd backend && pytest -q` ผ่าน 10 tests (มี Starlette deprecation warning); `git diff --check` ผ่าน
+- ประเด็นที่ถามแทนการเดา: หลังพบว่าไม่มี auth provider ขออนุมัติแนวทาง; ผู้รับผิดชอบอนุมัติให้เพิ่มเฉพาะ identity boundary ที่รับ principal จาก middleware ภายนอก
+- สถานะ T-02: เสร็จ รอทีมตรวจ; ไม่เริ่ม T-03
+
+## 2026-11-13
+- คำสั่ง: `/implement T-03 specs/005-chat-roommate/tasks.md`
+- การอนุมัติขอบเขต: ผู้รับผิดชอบอนุมัติให้ข้าม Dependency Gate ของ T-02 สำหรับ T-03 และอนุมัติการเพิ่ม contact-list API กับ Development Demo Provider เพื่อทดลอง UI ได้ โดยห้ามสร้าง Authentication, ใช้ `sender_id` เป็นหลักฐานยืนยันตัวตน, แตะ Mockup หรือเริ่ม T-04
+- ผลการทำ: เพิ่ม `GET /api/chat/list` ผ่าน contact provider; โหมดสาธิตเปิดได้เมื่อ `APP_ENV=development` และ `CHAT_DEMO_MODE=true` เท่านั้น โดย Backend กำหนด demo principal เอง; Frontend เรียก list, `POST /api/chat/open` แล้วจึงอ่านประวัติ และแสดงเหตุผลเมื่อถูกปฏิเสธ
+- การแยก Demo/Production: ไม่มี fallback รายชื่อหรือประวัติใน Frontend; หากไม่มี provider API แจ้ง 503; เส้นทางสาธิตแสดงป้ายข้อมูลตัวอย่างและซ่อน composer; App แสดง Chat UI ได้เฉพาะ Vite development ที่ตั้ง `VITE_CHAT_DEMO_MODE=true`; Vite proxy คง prefix `/api`
+- ไฟล์โค้ด/ทดสอบที่แก้หรือเพิ่ม: `backend/app/controllers/chat_controller.py`, `backend/app/main.py`, `backend/app/services/chat_contact_provider.py`, `backend/tests/test_chat_list.py`, `frontend/src/App.jsx`, `frontend/src/api/client.js`, `frontend/src/api/client.test.js`, `frontend/src/pages/ChatListPage.jsx`, `frontend/src/pages/ChatPage.jsx`, `frontend/src/__tests__/chat-roommate-ui.test.jsx`, `frontend/vite.config.js`
+- เอกสารที่แก้: เพิ่ม interface clarification โดยไม่สร้าง FR/AC/ID ใน `specs/005-chat-roommate/spec.md`; ปรับขอบเขต/ไฟล์/เกณฑ์และสถานะ T-03 ใน `specs/005-chat-roommate/tasks.md`; ไม่แก้ Mockup และคงสถานะ T-02 เป็น "เสร็จ รอทีมตรวจ"
+- ผลทดสอบ: `cd frontend && npm test` ผ่าน 29 tests; `cd frontend && npm run build` ผ่าน; `cd backend && pytest -q` ผ่าน 13 tests (มี Starlette deprecation warning); ทดสอบ API Demo (`list`/`open`/`history`) และ Vite proxy ได้ HTTP 200; `git diff --check` ผ่าน
+- ข้อจำกัดคงเหลือ: Production ยังต้องเชื่อม trusted identity middleware และ provider รายชื่อ/สิทธิ์จาก UC-04; ไม่ได้สร้างระบบ Authentication หรือระบบ UC-04
+- สถานะ T-03: เสร็จ รอทีมตรวจ; หยุดโดยไม่เริ่ม T-04
+
+## 2026-11-13
+- การตรวจและอนุมัติ T-02 และ T-03: ผู้รับผิดชอบและผู้มีอำนาจอนุมัติงาน Feature Chat Roommate ยืนยันตรวจผลจากรายงานและผลทดสอบแล้ว และอนุมัติทั้งสอง task โดยไม่ต้องรอการตรวจเพิ่มเติม
+- ปรับเฉพาะสถานะ T-02 และ T-03 ใน `specs/005-chat-roommate/tasks.md` จาก "เสร็จ รอทีมตรวจ" เป็น "เสร็จ"; ไม่แก้ Source Code, Tests, Spec, Mockup หรือ Task อื่น
+- คงข้อจำกัดเดิม: Production ต้องเชื่อม trusted identity middleware ซึ่งส่ง principal ผ่าน `request.state.user_id`; หากไม่มี identity context ระบบยังปฏิเสธคำขอ และยังต้องเชื่อมรายชื่อ/สิทธิ์จาก UC-04; ไม่มีการสร้าง Authentication หรือ UC-04
+
+## 2026-11-13
+- คำสั่ง: `/implement T-04 specs/005-chat-roomate/tasks.md` (ใช้ไฟล์จริง `specs/005-chat-roommate/tasks.md`)
+- ผลการทำ: เพิ่มการปฏิเสธข้อความว่าง/ช่องว่างล้วน/เกินขนาดจาก config; ให้ Repository flush, สร้างผลตอบกลับ, commit และ rollback เมื่อเกิด SQLAlchemy failure; Service แปลง persistence failure เป็นข้อผิดพลาดภายในที่ไม่เผยรายละเอียด; API ส่ง HTTP 503 พร้อมข้อความทั่วไปที่ให้ลองใหม่ได้ และไม่ตอบสำเร็จ
+- เวลา: เก็บ instant เป็น UTC ตามเดิม; แปลงเวลาใน response `created_at` เป็น ISO datetime เขต Asia/Bangkok ตาม ASM-03 โดยไม่เปลี่ยนชื่อ field หรือชนิดข้อมูล; เพิ่มการทดสอบความสอดคล้องระหว่างเวลาใน DB และ response
+- Identity boundary: API ยังต้องได้ `request.state.user_id` จาก trusted middleware และตรวจว่า `sender_id` ตรงกับ principal; ไม่ใช้ request body เป็นหลักฐานยืนยันตัวตน
+- ไฟล์โค้ด/ทดสอบที่แก้: `backend/app/models/chat_message.py`, `backend/app/main.py`, `backend/app/repositories/chat_repository.py`, `backend/app/services/chat_service.py`, `backend/tests/test_chat_backend_smoke.py`
+- ผลทดสอบ: `cd backend && pytest -q` ผ่าน 18 tests (มี Starlette deprecation warning); `git diff --check` ผ่าน
+- ข้อจำกัดคงเหลือ: ไม่มี Push/Real-time delivery ตามขอบเขต; Production ยังต้องเชื่อม trusted identity middleware; การแสดงเหตุผลและให้ลองใหม่ใน UI เป็นงาน T-05
+- สถานะ T-04: เสร็จ รอทีมตรวจ; ไม่เริ่ม T-05
+
+## 2026-11-13
+- การตรวจและอนุมัติ T-04: ผู้รับผิดชอบและผู้มีอำนาจอนุมัติงาน Feature Chat Roommate ยืนยันตรวจรายงานและอนุมัติผล T-04 แล้ว
+- เปลี่ยนเฉพาะสถานะ T-04 ใน `specs/005-chat-roommate/tasks.md` จาก "เสร็จ รอทีมตรวจ" เป็น "เสร็จ"; ไม่แก้ Source Code, Tests, Spec, Mockup หรือ Task อื่น และไม่เริ่ม T-05
+
+## 2026-11-13
+- คำสั่ง: `/implement T-05 specs/005-chat-roommate/tasks.md`
+- ผลการทำ: UI โหลดประวัติจาก History API, จัดตำแหน่งข้อความตาม sender ที่ Backend ส่งกลับ, เรียก POST เพื่อส่งข้อความ และแสดงเป็นข้อความสำเร็จหลัง API ยืนยันเท่านั้น; เมื่อส่งล้มเหลวแสดงเหตุผลและให้ลองใหม่ พร้อม retry อัตโนมัติตาม `CHAT_CONFIG.automaticRetryLimit` โดยไม่เพิ่ม delay
+- ตรวจข้อความว่างและความยาวตาม Backend; ไม่ใช้ mock messages ใน production และใช้ mock เฉพาะ Frontend tests
+- ไฟล์โค้ด/ทดสอบที่แก้: `frontend/src/api/client.js`, `frontend/src/pages/ChatPage.jsx`, `frontend/src/pages/ChatListPage.jsx`, `frontend/src/__tests__/chat-roommate-ui.test.jsx`, `frontend/src/api/client.test.js`
+- ผลทดสอบ: `cd frontend && npm test` ผ่าน 36 tests; `cd frontend && npm run build` ผ่าน; `git diff --check` ผ่าน
+- ระหว่างรันทดสอบทั้งหมดพบ test ส่งข้อความเริ่มก่อน History API เสร็จ จึงปรับ test ให้รอข้อความประวัติปรากฏก่อนส่ง และรันทดสอบทั้งหมดซ้ำจนผ่าน
+- ไม่พบข้อกำหนดที่ต้องเดา; ไม่แก้ Spec, Mockup, Backend หรือ task อื่น และไม่เริ่ม T-06
+- ข้อจำกัดคงเหลือ: Production ยังต้องเชื่อม trusted identity middleware และ UC-04 contact/profile provider ตามข้อจำกัดจาก T-02/T-03; ไม่เพิ่ม retry delay เพราะ Spec ไม่กำหนด
+- สถานะ T-05: เสร็จ รอทีมตรวจ
+
+## 2026-11-13
+- คำสั่ง: ให้หน้าเว็บที่เปิดด้วย `npm run dev` แสดง Chat Roommate เป็นหน้าเริ่มต้นบน branch `319`
+- การตัดสินใจ: ผู้รับผิดชอบอนุมัติให้ Chat เป็นค่าเริ่มต้นเฉพาะ Vite development และปรับ clarification ใน spec; production คงหน้าโปรไฟล์เดิม
+- สาเหตุ: `App.jsx` ต้องมี `VITE_CHAT_DEMO_MODE=true` จึงแสดง Chat แต่ `npm run dev` ไม่ได้ตั้งค่านี้; `main.jsx` mount `App` โดยตรงและ Vite proxy `/api` มีอยู่แล้ว
+- การแก้ไข: ให้ dev mode แสดง Chat โดยปริยายและรองรับ `VITE_CHAT_DEMO_MODE=false` เพื่อ opt out; จำกัดการเปลี่ยนหน้าด้วย `MODE=development`; ปรับ clarification ใน `spec.md` และเพิ่ม tests สำหรับ default/opt out โดยไม่แตะ backend, routing, task status หรือ T-06
+- ไฟล์ที่แก้: `frontend/src/App.jsx`, `frontend/src/__tests__/chat-roommate-ui.test.jsx`, `specs/005-chat-roommate/spec.md`, `prompt-log.md`
+- ผลตรวจ: `cd frontend && npm test -- --cache=false` ผ่าน 38 tests; `cd frontend && npm run build` ผ่าน; `git diff --check` ผ่าน; ทดสอบ Vite `/` ได้ HTTP 200 และเรียก Chat List, Open Chat, History ผ่าน Vite proxy ได้ HTTP 200
+- ข้อจำกัด: ตรวจหน้าและ API integration ผ่าน dev server แต่ไม่มีการตรวจภาพหน้าเว็บด้วย browser screenshot ในรอบนี้
+
+## 2026-11-13
+- การอนุมัติ T-05: ผู้รับผิดชอบ Feature ยืนยันอนุมัติผล T-05
+- เปลี่ยนเฉพาะสถานะ T-05 ใน `specs/005-chat-roommate/tasks.md` จาก "เสร็จ รอทีมตรวจ" เป็น "เสร็จ"; ไม่แก้ source code หรือ task อื่น
+- Preflight T-06: สถานะ "พร้อมทำ"; dependencies T-01 และ T-04 เป็น "เสร็จ"; แต่ตรวจพบว่า `python-multipart` ไม่มีใน environment และไม่มีใน `backend/requirements.txt` ซึ่งจำเป็นสำหรับรับ multipart upload ของ AC-CHAT-02A/02B
+- หยุดก่อน Implement T-06 ตามข้อควรระวังของผู้ใช้; ไม่ติดตั้ง dependency และไม่แก้ไฟล์นอกขอบเขตโดยไม่ได้รับอนุมัติ; T-06 ยังคง "พร้อมทำ" และไม่ได้เริ่ม T-07
+
+## 2026-11-13
+- อนุมัติขยายขอบเขต T-06 ให้แก้ `backend/requirements.txt` เพื่อเพิ่ม dependency ที่จำเป็นสำหรับ Multipart File Upload
+- ตรวจรูปแบบ manifest: ใช้ข้อกำหนดขั้นต่ำแบบ `package>=version` เช่น FastAPI/SQLAlchemy; environment มี FastAPI 0.162.5, Starlette 1.10.0 และ SQLAlchemy 2.1.8
+- เพิ่ม `python-multipart>=0.0.18,<1.0` ใน `backend/requirements.txt` และเพิ่มไฟล์นี้ในช่อง "ไฟล์ที่แตะ" ของ T-06; เหตุผลคือ FastAPI `Request.form()` ต้องใช้ multipart parser เพื่อรองรับ AC-CHAT-02A/02B
+- ดำเนิน Implement T-06 ต่อโดยคงการเปลี่ยนแปลงเดิมทั้งหมด; ไม่เริ่ม T-07
+
+## 2026-11-13
+- คำสั่ง: `/implement T-06 specs/005-chat-roommate/tasks.md`
+- ผลการทำ: เพิ่ม Attachment metadata model และ filesystem storage boundary ใช้ storage key แบบสุ่ม; เพิ่ม multipart API สำหรับ JPG/JPEG, PNG และ PDF โดยตรวจจำนวน ชนิด และขนาดจาก config; บันทึก message กับ metadata ใน transaction เดียว; History ส่ง metadata ตราบที่ยังไม่หมดอายุ และ API ดาวน์โหลดจำกัดเฉพาะคู่สนทนาพร้อมปิดการเข้าถึงเมื่อเกิน retention โดยยังคงข้อความไว้
+- ไฟล์ที่แก้สำหรับ T-06: `backend/app/config.py`, `backend/app/main.py`, `backend/app/models/chat_attachment.py`, `backend/app/repositories/chat_repository.py`, `backend/app/services/attachment_storage.py`, `backend/tests/test_chat_attachments.py`, `backend/requirements.txt`
+- เพิ่ม tests สำหรับ AC-CHAT-02A/02B, 03A/03C/03D และ 08 รวมขนาดสูงสุด, rejection, retention boundary, ผู้ใช้นอกบทสนทนา, storage failure และ rollback ของ metadata; ใช้ฐานข้อมูลและ storage ชั่วคราวใน tests
+- ผลทดสอบ: `cd backend && pytest -q` ผ่าน 29 tests; `git diff --check` ผ่าน; มี Starlette deprecation warning จากการใช้ `TestClient` แต่ไม่มี test failure
+- ข้อจำกัด: ใช้ filesystem boundary ที่ตั้งค่าได้ผ่าน `CHAT_ATTACHMENT_STORAGE_DIR`; วิธี storage/backup สำหรับ production ยังไม่กำหนดใน Spec/plan; หลังพ้น 30 วัน API ปิดการดาวน์โหลดและซ่อน metadata แต่ไม่ได้ลบ bytes ทางกายภาพตามทางเลือกที่ CON-CHAT-04 อนุญาต
+- ข้อสังเกตจากการทดสอบ: การ import app หลักทำให้ `backend/chat.db` และ Python `__pycache__` เปลี่ยนตามการสร้าง schema/cache; ไม่ใช้ restore/reset หรือทิ้งการเปลี่ยนแปลงใน working tree
+- สถานะ T-06: เสร็จ รอทีมตรวจ; ไม่เริ่ม T-07
+
+## 2026-11-13
+- คำสั่ง: ตรวจและแก้ไขเฉพาะ T-06 ตาม Code Review ก่อนอนุมัติ
+- การแก้ไข: ตรวจ signature ของ JPEG, PNG และ PDF ให้ตรงกับนามสกุลและ MIME ที่กำหนด; ปฏิเสธ MIME ที่ไม่ตรงรวมถึง `application/octet-stream`; ตรวจกรณีไม่มีไฟล์ก่อนอ่านรายการและตอบ HTTP 422
+- ขอบเขตหมดอายุ: คงพฤติกรรมให้ดาวน์โหลดได้เมื่อครบ 30 วันพอดี เนื่องจาก AC-CHAT-03C ระบุ "ยังไม่เกิน 30 วัน" และ AC-CHAT-03D ระบุ "เกิน 30 วัน"; เพิ่มการตรวจว่าหลังขอบเขต 1 microsecond API ตอบ 410 และซ่อน metadata
+- Failure handling: เมื่อบันทึกฐานข้อมูลล้มเหลว ระบบพยายามลบไฟล์; หากลบสำเร็จไฟล์ไม่ค้างและ API ตอบ 503 แบบไม่เปิดเผยรายละเอียด; หาก cleanup ล้มเหลว API ยังคงตอบ 503 แบบทั่วไปและบันทึกรายละเอียดใน server log แต่ไฟล์ orphan อาจคงอยู่ เพราะยังไม่มีข้อกำหนด cleanup/retry สำหรับกรณี storage ใช้งานไม่ได้
+- ไฟล์ที่แก้ในรอบ Code Review: `backend/app/main.py`, `backend/tests/test_chat_attachments.py`, `specs/005-chat-roommate/tasks.md`, `prompt-log.md`
+- ผลทดสอบ: `cd backend && PYTHONDONTWRITEBYTECODE=1 pytest -q` ผ่าน 34 tests; `git diff --check` ผ่าน; มี Starlette deprecation warning จาก `TestClient`
+- สถานะ T-06 คงเป็น `เสร็จ รอทีมตรวจ`; ไม่แก้ Spec, ไม่เปลี่ยนสถานะ Task อื่น และไม่เริ่ม T-07
+
+## 2026-11-13
+- การอนุมัติ T-06: ผู้รับผิดชอบและผู้ตัดสินใจอนุมัติงาน Feature ยืนยันอนุมัติ T-06 แล้ว
+- เปลี่ยนเฉพาะสถานะ T-06 ใน `specs/005-chat-roommate/tasks.md` จาก `เสร็จ รอทีมตรวจ` เป็น `เสร็จ`
+- ตรวจ Dependency สำหรับ T-07: T-06 เป็น `เสร็จ`, T-07 เป็น `พร้อมทำ`; เริ่ม T-07 ตามขอบเขตใน tasks.md โดยไม่เริ่ม task ถัดไป
+
+## 2026-11-13
+- คำสั่ง: `/implement T-07 specs/005-chat-roommate/tasks.md`
+- ขอบเขต: ทำเฉพาะ UI/API client สำหรับแนบไฟล์และแสดงไฟล์ในประวัติ ตาม AC-CHAT-02A, AC-CHAT-02B, AC-CHAT-03A, AC-CHAT-03C และ AC-CHAT-03D; ใช้ API contract ที่ทำเสร็จใน T-06 และ UI-CHT-01 เป็น reference โดยไม่แก้ mockup
+- ผลการทำ: เพิ่ม multipart `FormData` ส่งไปยัง Backend; แสดงข้อความและไฟล์เป็นสำเร็จหลัง Backend ยืนยันและส่ง metadata ที่ถูกต้องเท่านั้น; ตรวจขนาดไฟล์จาก `CHAT_CONFIG`; แสดงเหตุผลจาก Backend เมื่อไม่รองรับ; แสดงลิงก์ดาวน์โหลดจาก API ในข้อความที่เกี่ยวข้อง และไม่แสดงลิงก์เมื่อ History API คืน attachment เป็น `null`
+- ไฟล์ที่แก้: `frontend/src/api/client.js`, `frontend/src/pages/ChatPage.jsx`, `frontend/src/__tests__/chat-roommate-ui.test.jsx`, `frontend/src/api/client.test.js`, `specs/005-chat-roommate/tasks.md`, `prompt-log.md`
+- ผลทดสอบ: `cd frontend && npm test` ผ่าน 46 tests; `cd frontend && npm run build` ผ่าน; `git diff --check` ตรวจหลังบันทึกผล
+- ข้อจำกัด: การตรวจชนิดและ signature ของไฟล์ยังเป็นหน้าที่ Backend ตาม T-06; Frontend ส่งผ่าน API จริงใน production และใช้ fetch test doubles เฉพาะใน UI/API-client tests
+- สถานะ T-07: เสร็จ รอทีมตรวจ; ไม่เริ่ม T-08
+
+## 2026-11-13
+- การอนุมัติ T-07: ผู้รับผิดชอบ Feature ตรวจรายงานและอนุมัติ T-07 แล้ว
+- เปลี่ยนสถานะ T-07 ใน `specs/005-chat-roommate/tasks.md` จาก `เสร็จ รอทีมตรวจ` เป็น `เสร็จ`
+- Preflight T-08: T-02, T-04 และไฟล์ที่กำหนดใน task พร้อมแล้ว; AC-CHAT-03B ต้องบันทึก Read แยกต่อข้อความ ส่วน AC-CHAT-07B ต้องปฏิเสธข้อความใหม่เมื่อสถานะค้นหาของผู้เข้าร่วมฝ่ายใดไม่พร้อม
+- ประเด็นก่อน Implement: `ProfileEligibilityChecker` ปัจจุบันมีเพียง `can_start_chat(sender_id, recipient_id)` และไม่มี provider ถูกตั้งค่าใน app ปกติ จึงยังไม่มีสัญญาที่ระบุวิธีตรวจสถานะค้นหาของผู้เข้าร่วมทั้งสองฝ่ายสำหรับแชทเดิม; การบังคับ fail-closed จะกระทบเส้นทางส่งข้อความ/ไฟล์แนบและ tests ที่ใช้อยู่โดยไม่มี provider
+- การดำเนินการ: หยุดก่อน Implement และรอคำตัดสินเรื่องแหล่งตรวจ eligibility/พฤติกรรมเมื่อไม่มี provider; คง T-08 เป็น `พร้อมทำ` และไม่เริ่ม T-09
+
+## 2026-11-13
+- คำตอบ/อนุมัติจากผู้รับผิดชอบ: ขยาย provider boundary ให้ตรวจ `is_searchable(user_id)` แยกต่อผู้ใช้; fail-closed เมื่อ provider หาย/ไม่พร้อม/ยืนยันไม่ได้; บังคับทั้ง API ส่งข้อความและไฟล์แนบ; ประวัติยังอ่านได้; อนุมัติแก้ Spec และ tests ที่ได้รับผลกระทบ โดยไม่สร้าง Authentication หรือ UC-04
+- ปรับ `specs/005-chat-roommate/spec.md` เป็น Draft v4 โดยขยาย CON-CHAT-03 และ AC-CHAT-03B/07B พร้อมระบุ History/Read API contract ที่ T-09 จะใช้; ไม่เพิ่มหรือเปลี่ยน ID
+- Implement T-08: เพิ่มสถานะ `is_read` ต่อข้อความและ migration แบบเพิ่มคอลัมน์ที่ไม่ rebuild/ลบประวัติเดิม; เพิ่ม `POST /api/chat/messages/{message_id}/read` ซึ่งอนุญาตเฉพาะผู้รับและแก้ทีละข้อความ; ส่ง `is_read` ใน History API
+- เพิ่ม write gate ที่ตรวจผู้ส่งและผู้รับแยกกันทั้ง API ข้อความและไฟล์แนบ; ปฏิเสธ 403 เมื่อฝ่ายใดไม่ searchable และ 503 เมื่อไม่มี provider/provider แจ้ง unavailable/ผลไม่ใช่ boolean; GET ประวัติยังไม่ขึ้นกับ provider; คง demo mode เป็น read-only
+- ไฟล์ที่แก้: `backend/app/main.py`, `backend/app/models/chat_message.py`, `backend/app/repositories/chat_repository.py`, `backend/app/services/chat_service.py`, `backend/app/services/chat_contact_provider.py`, `backend/tests/test_chat_backend_smoke.py`, `backend/tests/test_chat_start_access.py`, `backend/tests/test_chat_attachments.py`, `specs/005-chat-roommate/spec.md`, `specs/005-chat-roommate/tasks.md`, `prompt-log.md`
+- ผลทดสอบ: `cd backend && PYTHONDONTWRITEBYTECODE=1 pytest -q` ผ่าน 46 tests; มี Starlette deprecation warning เรื่อง `httpx`/`TestClient` แต่ไม่มี test failure
+- ผลตรวจ: `git diff --check` ผ่าน; ทดสอบ migration กับฐานข้อมูลเดิมบนฐานชั่วคราวและยืนยันว่าประวัติเดิมยังอ่านได้; ไม่แก้ tests `test_TC_*`
+- ข้อจำกัด/ขอบเขต: adapter จริงจาก UC-04 ยังไม่เชื่อม; จนกว่าจะมี provider ที่ทำตาม contract API จะปฏิเสธการส่งแบบ fail-closed; T-09 ยังไม่เริ่ม โดย T-08 เปิดเผย `is_read` และ Read endpoint สำหรับ T-09 เท่านั้น
+- สถานะ T-08: เสร็จ รอทีมตรวจ; หยุดก่อน T-09
+
+## 2026-11-13
+- การอนุมัติ T-08: ผู้รับผิดชอบ Feature ตรวจรายงานและอนุมัติ T-08 แล้ว
+- เปลี่ยนสถานะ T-08 ใน `specs/005-chat-roommate/tasks.md` จาก `เสร็จ รอทีมตรวจ` เป็น `เสร็จ`
+- Preflight T-09: dependency T-08 ได้รับอนุมัติ; AC-CHAT-03B ต้องส่ง Read เฉพาะข้อความที่อยู่ในหน้าจอ; AC-CHAT-07B ต้องอ่านประวัติเดิมได้แต่ปิด composer เมื่อสมาชิกคนใดไม่ searchable
+- Blocker ที่พบก่อน Implement: `ChatListPage` เรียก `openChat` และเมื่อ API ตอบ `allowed=false` จะแสดงเหตุผลโดยไม่เรียก History API; component ยังไม่ส่ง `readOnly` ให้ `ChatPage`. พฤติกรรมนี้ตรงกับ Implementation interface clarification ของ T-03 แต่ขัดกับ AC-CHAT-07B สำหรับแชทเดิม
+- ขอบเขต T-09 เดิมไม่มี `ChatListPage` หรือ Backend open-chat boundary; หยุดก่อน Implement เพื่อขออนุมัติแนวทางแก้ contract/ขอบเขต โดยไม่เริ่ม T-10 และคง T-09 เป็น `พร้อมทำ`
+- ได้รับอนุมัติจากผู้รับผิดชอบให้ขยาย T-09 เฉพาะการเปิดแชทเดิมแบบ Read-only เพื่อให้ AC-CHAT-07B สอดคล้องกับ T-03
+- ปรับ interface clarification ใน `specs/005-chat-roommate/spec.md`: API เปิดแชทต้องคืน `allowed` และ `read_only` ชัดเจน; ห้องเดิมที่มีประวัติและไม่มีสิทธิ์ส่งคืนค่าอ่านอย่างเดียว; ห้องใหม่ที่ไม่ผ่านเงื่อนไขยังถูกปฏิเสธและ Frontend ไม่เรียก History
+- ขยายรายการไฟล์ T-09 ใน `specs/005-chat-roommate/tasks.md` ให้ครอบคลุม open-chat Backend, ChatListPage และ tests ที่เกี่ยวข้อง; คง ID เดิมและไม่เริ่ม T-10
+- คำสั่ง: `/implement T-09 specs/005-chat-roommate/tasks.md`
+- ผล Implement: `POST /api/chat/open` แยกแชทใหม่ที่ถูกปฏิเสธจากประวัติเดิมที่เปิดอ่านอย่างเดียวด้วย `read_only`; History ยังคงตรวจ identity ของผู้เข้าร่วม; Frontend ส่ง `readOnly` ให้ `ChatPage`, ซ่อน composer/ไฟล์แนบในโหมดนี้ และเรียก Read API เฉพาะข้อความขาเข้าที่ IntersectionObserver ระบุว่าอยู่ใน viewport
+- Tests เพิ่ม/ปรับ: `test_AC_CHAT_07_new_disallowed_chat_does_not_create_room_or_allow_history`, `test_AC_CHAT_07B_existing_chat_is_read_only`, `test_AC_CHAT_07B_existing_history_opens_read_only_without_provider`, `test_AC_CHAT_03B_ui_marks_only_visible_message_read`, `test_AC_CHAT_07B_ui_loads_existing_history_read_only`; ปรับ API contract tests สำหรับ `read_only`
+- ไฟล์ที่แก้: `backend/app/controllers/chat_controller.py`, `backend/app/main.py`, `backend/app/repositories/chat_repository.py`, `backend/app/services/chat_service.py`, `backend/tests/test_chat_start_access.py`, `backend/tests/test_chat_list.py`, `frontend/src/api/client.js`, `frontend/src/api/client.test.js`, `frontend/src/pages/ChatListPage.jsx`, `frontend/src/pages/ChatPage.jsx`, `frontend/src/__tests__/chat-roommate-ui.test.jsx`, `specs/005-chat-roommate/spec.md`, `specs/005-chat-roommate/tasks.md`, `prompt-log.md`
+- ผลทดสอบสุดท้าย: `cd backend && PYTHONDONTWRITEBYTECODE=1 pytest -q` ผ่าน 48 tests (มี Starlette deprecation warning เรื่อง httpx/TestClient); `cd frontend && npm test` ผ่าน 50 tests; `cd frontend && npm run build` ผ่าน; `git diff --check` ผ่าน
+- ข้อจำกัดคงเหลือ: Production Adapter จาก UC-04 ยังไม่เชื่อม จึงยังยืนยันไม่ได้ว่า contact provider จริงจะยังคืนผู้ติดต่อที่ปิดสถานะค้นหาแต่มีประวัติเดิมให้เลือก; บันทึกติดตามใน Integration/Verify
+- สถานะ T-09: เสร็จ รอทีมตรวจ; ไม่เริ่ม T-10
+
+## 2026-11-13
+- การอนุมัติ T-09: ผู้รับผิดชอบ Feature ตรวจรายงานและอนุมัติ T-09 แล้ว
+- เปลี่ยนสถานะ T-09 ใน `specs/005-chat-roommate/tasks.md` จาก `เสร็จ รอทีมตรวจ` เป็น `เสร็จ`
+- Preflight T-10: dependency T-03, T-05, T-07 และ T-09 อยู่สถานะ `เสร็จ`; AC-CHAT-09/NFR-USE-01 กำหนดผู้ทดลองจริง 5 คนที่ไม่เคยใช้แชท และอย่างน้อย 4 คนต้องเปิดแชทและส่งข้อความสำเร็จโดยไม่รับคำแนะนำ
+- ขอบเขต T-10 ระบุให้ทดสอบกับ UI ที่มีอยู่และไม่แตะ source/test เพิ่ม; ค้นหาแล้วไม่พบ automated test `test_AC_CHAT_09_usability_threshold` ใน Backend หรือ Frontend ซึ่งสอดคล้องกับการประเมินที่ต้องใช้คนจริง
+- Blocker: ยังไม่มีผู้ทดลอง 5 คนหรือผลทดสอบจริงให้ประเมิน และ Integration ของ Authentication/UC-04 ยังไม่พร้อม; Demo Provider ที่มีอยู่เป็น read-only จึงใช้แทนการทดสอบส่งข้อความจริงไม่ได้
+- ไม่สร้างผลจำลองหรือแก้โค้ด/Tests เพื่อทำให้ AC ผ่าน; เปลี่ยนสถานะ T-10 เป็น `รอผู้ทดลองจริง` และหยุดโดยไม่เริ่มงานอื่น
+- ข้อจำกัด Production Adapter จาก UC-04 ยังคงต้องติดตามใน Integration/Verify
+
+## 2026-11-13
+- คำตอบทีมต่อ blocker T-10: ให้รอ Authentication/UC-04 และสภาพแวดล้อมทดสอบพร้อมก่อน; ไม่มีผู้ทดลองจริง 5 คน และห้ามใช้ Demo Provider, automated tests หรือผลจำลองแทน
+- คงสถานะ T-10 เป็น `รอผู้ทดลองจริง`; ไม่สร้างผลทดสอบ/หลักฐาน ไม่ลด AC และไม่แก้โค้ดหรือ Tests
+- เงื่อนไขกลับมาทำ T-10: มี environment ที่เชื่อม Authentication และ UC-04 จริง พร้อมผู้เริ่มต้นจริง 5 คน; แต่ละคนทดลองเปิดแชทและส่งข้อความโดยไม่มีคำแนะนำ แล้วบันทึกผลรวมจริงแบบไม่ระบุตัวตนเพื่อตรวจเกณฑ์อย่างน้อย 4/5
+- งาน T-10 พักอยู่; ไม่เริ่ม Task ถัดไป

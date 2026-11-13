@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { fetchChatList, fetchChatMessages } from '../api/client.js'
+import { fetchChatList, fetchChatMessages, openChat } from '../api/client.js'
 import ChatPage from './ChatPage.jsx'
 
-// Supports AC-CHAT-01 and AC-CHAT-05 by loading the contact list and the
-// previous conversation before the user opens the selected chat thread.
+// Supports AC-CHAT-01, AC-CHAT-05, AC-CHAT-07 and AC-CHAT-07A via the Backend API.
 
 const styles = {
   page: {
@@ -25,6 +24,13 @@ const styles = {
   subtitle: {
     margin: 0,
     color: '#607078',
+  },
+  demoNotice: {
+    marginBottom: '16px',
+    padding: '10px 12px',
+    borderRadius: '8px',
+    background: '#fff7dd',
+    color: '#674d00',
   },
   layout: {
     display: 'grid',
@@ -91,39 +97,41 @@ const styles = {
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
   },
-  section: {
-    marginBottom: '18px',
-    borderBottom: '1px solid #e2e7ea',
-    paddingBottom: '12px',
-  },
-  newChatButton: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    background: '#f5f7f8',
-    color: '#33464c',
-    border: '1px solid #dce2e6',
-    borderRadius: '8px',
-    padding: '8px 12px',
-    font: 'inherit',
-    cursor: 'pointer',
-  },
+}
+
+function errorMessage(error) {
+  return error instanceof Error ? error.message : 'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ'
 }
 
 export default function ChatListPage() {
   const [contacts, setContacts] = useState([])
+  const [currentUserId, setCurrentUserId] = useState('')
+  const [demoMode, setDemoMode] = useState(false)
   const [selectedId, setSelectedId] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [messages, setMessages] = useState([])
+  const [loadingList, setLoadingList] = useState(true)
+  const [loadingConversation, setLoadingConversation] = useState(false)
+  const [readOnly, setReadOnly] = useState(false)
+  const [listError, setListError] = useState('')
+  const [conversationError, setConversationError] = useState('')
+  const [denialReason, setDenialReason] = useState('')
 
   useEffect(() => {
     let ignore = false
 
     async function loadChats() {
-      setLoading(true)
-      const list = await fetchChatList()
-      if (ignore) return
-      setContacts(list)
-      setSelectedId((current) => current || list[0]?.id || '')
-      setLoading(false)
+      try {
+        const result = await fetchChatList()
+        if (ignore) return
+        setContacts(result.contacts)
+        setCurrentUserId(result.currentUserId)
+        setDemoMode(result.demoMode)
+        setSelectedId(result.contacts[0]?.id ?? '')
+      } catch (error) {
+        if (!ignore) setListError(errorMessage(error))
+      } finally {
+        if (!ignore) setLoadingList(false)
+      }
     }
 
     loadChats()
@@ -132,45 +140,52 @@ export default function ChatListPage() {
     }
   }, [])
 
-  const selectedConversation = useMemo(() => {
-    if (!selectedId) return null
-    const contact = contacts.find((entry) => entry.id === selectedId)
-    if (!contact) return null
-
-    return {
-      ...contact,
-      status: contact.status || 'ออนไลน์',
-      messages: contact.messages || [],
-    }
-  }, [contacts, selectedId])
-
   useEffect(() => {
-    if (!selectedId) return
+    if (!selectedId || !currentUserId) return undefined
 
     let ignore = false
 
     async function loadConversation() {
-      const messages = await fetchChatMessages(selectedId)
-      if (ignore) return
-      setContacts((current) =>
-        current.map((contact) =>
-          contact.id === selectedId
-            ? { ...contact, messages }
-            : contact,
-        ),
-      )
+      setLoadingConversation(true)
+      setConversationError('')
+      setDenialReason('')
+      setReadOnly(false)
+      setMessages([])
+
+      try {
+        const startResult = await openChat(currentUserId, selectedId)
+        if (ignore) return
+        if (!startResult.allowed) {
+          setDenialReason(startResult.reason)
+          return
+        }
+
+        const history = await fetchChatMessages(selectedId, currentUserId)
+        if (!ignore) {
+          setMessages(history)
+          setReadOnly(startResult.readOnly)
+        }
+      } catch (error) {
+        if (!ignore) setConversationError(errorMessage(error))
+      } finally {
+        if (!ignore) setLoadingConversation(false)
+      }
     }
 
     loadConversation()
     return () => {
       ignore = true
     }
-  }, [selectedId])
+  }, [currentUserId, selectedId])
 
-  const viewConversation = selectedConversation && {
-    ...selectedConversation,
-    messages: selectedConversation.messages ?? [],
-  }
+  const selectedContact = useMemo(
+    () => contacts.find((contact) => contact.id === selectedId) ?? null,
+    [contacts, selectedId],
+  )
+  const conversation = useMemo(
+    () => selectedContact ? { ...selectedContact, messages } : null,
+    [messages, selectedContact],
+  )
 
   return (
     <main style={styles.page}>
@@ -179,18 +194,22 @@ export default function ChatListPage() {
         <h1 style={styles.title}>แชทกับรูมเมท</h1>
       </header>
 
-      {loading ? (
-        <p>กำลังโหลดประวัติแชท...</p>
+      {demoMode && (
+        <p style={styles.demoNotice} role="status">
+          โหมดสาธิต: รายชื่อและข้อมูลนี้เป็นข้อมูลตัวอย่าง
+        </p>
+      )}
+
+      {loadingList ? (
+        <p role="status">กำลังโหลดรายการแชท...</p>
+      ) : listError ? (
+        <p role="alert">ไม่สามารถโหลดรายการแชทได้: {listError}</p>
+      ) : contacts.length === 0 ? (
+        <p role="status">ไม่มีผู้ติดต่อในรายการ</p>
       ) : (
         <div style={styles.layout}>
           <aside style={styles.sidebar}>
-            <div style={styles.section}>
-              <h2 style={styles.panelTitle}>รายการแชท</h2>
-              <button type="button" style={styles.newChatButton}>
-                + เริ่มแชทใหม่
-              </button>
-            </div>
-
+            <h2 style={styles.panelTitle}>รายการแชท</h2>
             {contacts.map((contact) => (
               <button
                 key={contact.id}
@@ -201,17 +220,33 @@ export default function ChatListPage() {
                   ...(selectedId === contact.id ? styles.contactButtonActive : {}),
                 }}
                 aria-label={`เปิดแชทกับ ${contact.name}`}
+                aria-pressed={selectedId === contact.id}
               >
                 <div style={styles.avatar}>{contact.avatar}</div>
                 <div style={styles.detail}>
                   <strong style={styles.name}>{contact.name}</strong>
-                  <p style={styles.summary}>{contact.summary}</p>
+                  {contact.summary && <p style={styles.summary}>{contact.summary}</p>}
                 </div>
               </button>
             ))}
           </aside>
 
-          <ChatPage conversation={viewConversation} onBack={null} />
+          <section aria-live="polite">
+            {loadingConversation ? (
+              <p role="status">กำลังโหลดประวัติแชท...</p>
+            ) : denialReason ? (
+              <p role="alert">ไม่สามารถเริ่มแชทได้: {denialReason}</p>
+            ) : conversationError ? (
+              <p role="alert">ไม่สามารถเปิดประวัติแชทได้: {conversationError}</p>
+            ) : (
+              <ChatPage
+                conversation={conversation}
+                currentUserId={currentUserId}
+                readOnly={readOnly}
+                onBack={null}
+              />
+            )}
+          </section>
         </div>
       )}
     </main>

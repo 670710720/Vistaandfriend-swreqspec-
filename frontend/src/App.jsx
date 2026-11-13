@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { PROFILE_CONFIG } from './config.js'
 import { validateProfile } from './profileValidation.js'
+import ChatListPage from './pages/ChatListPage.jsx'
 
 const initialValues = {
   nickname: '',
@@ -22,7 +23,7 @@ function FieldError({ id, errors }) {
   return <p className="mt-1 text-sm text-red-700" role="alert">{errors[id]}</p>
 }
 
-// รองรับ FR-RMP-01, FR-RMP-02 และ AC-RMP-01
+// รองรับ FR-RMP-01, FR-RMP-02, AC-RMP-01 และหน้า Chat development ตาม FR-CHAT-01/02/08/12
 export default function App() {
   const [formOpen, setFormOpen] = useState(false)
   const [values, setValues] = useState(initialValues)
@@ -55,6 +56,14 @@ export default function App() {
   const occupants = values.roomType
     ? PROFILE_CONFIG.roomOccupants[values.roomType]
     : null
+
+  if (
+    import.meta.env.DEV &&
+    import.meta.env.MODE === 'development' &&
+    import.meta.env.VITE_CHAT_DEMO_MODE !== 'false'
+  ) {
+    return <ChatListPage />
+  }
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">

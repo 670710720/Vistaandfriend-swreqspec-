@@ -31,3 +31,23 @@ export const PROFILE_CONFIG = {
   sleepBehaviors: ['กรน', 'กัดฟัน', 'นอนดิ้น', 'ไม่มีพฤติกรรมดังกล่าว', 'อื่น ๆ'],
   socialChannels: ['Facebook', 'Instagram', 'LINE', 'TikTok'],
 }
+
+export const CHAT_CONFIG = {
+  // FR-CHAT-13
+  messageMinLength: 1,
+  messageMaxLength: 2_000,
+  // AC-CHAT-02A, AC-CHAT-02B, CON-CHAT-02
+  maxAttachmentsPerMessage: 1,
+  attachmentMaxSizeBytes: 10 * 1024 * 1024,
+  // FR-CHAT-14
+  automaticRetryLimit: 3,
+  // CON-CHAT-04, FR-CHAT-16
+  attachmentRetentionDays: 30,
+  // NFR-PERF-01
+  sendResponseLimitSeconds: 3,
+  // NFR-USE-01, AC-CHAT-09
+  usabilityTestUserCount: 5,
+  usabilityMinSuccessCount: 4,
+  // ASM-03
+  timezone: 'Asia/Bangkok',
+}
