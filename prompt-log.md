@@ -248,3 +248,11 @@
 - สรุป: เพิ่ม retry orchestration บน NotificationService contract โดยส่งครั้งแรกและ retry ได้ไม่เกิน 3 ครั้ง; เมื่อส่งไม่สำเร็จครบทุกครั้ง บันทึกสถานะแจ้งเตือนเป็น failed โดยคงคำขอเป็น pending; เพิ่มค่าจำนวน retry ใน config ตาม FR-RRS-16 และไม่สร้าง Notification API หรือ implementation ปลอม
 - Test: คำสั่งแรก `pytest -q tests/test_roommate_request.py` ไม่พบ path จาก repository root และไม่มี tests ทำงาน; คำสั่งที่ถูกต้อง `pytest -q backend/tests/test_roommate_request.py` → 23 passed, 3 skipped in 0.65s. `test_AC_RRS_11A_retries_three_times_and_keeps_request_pending` ยืนยันจำนวนการเรียก 4 ครั้ง (ครั้งแรก + 3 retries), สถานะคำขอยังคง pending และสถานะแจ้งเตือนเป็น failed; `test_AC_RRS_11A_stops_retrying_after_notification_succeeds` ยืนยันหยุด retry เมื่อส่งสำเร็จ
 - BLOCKED: ยังไม่มี Notification implementation จริงใน runtime; การส่งแจ้งเตือนจริงยังต้องรอระบบที่เป็นเจ้าของเชื่อมต่อ implementation ผ่าน contract นี้
+
+## 2026-11-13
+- คำสั่ง: `/verify specs/006-request-roommate/`
+- ไฟล์ที่แก้: `specs/006-request-roommate/rtm.md` (อัปเดต RTM เดิม); เพิ่มบันทึกนี้ต่อท้าย `prompt-log.md`
+- ผลทดสอบจริง: Backend `cd backend && pytest -v` → 23 passed, 3 skipped, 0 failed; Frontend `cd frontend && npm test -- --no-cache` → 5 test files passed, 18 passed, 0 failed
+- RTM ครอบคลุม 33 IDs: PASS 6, FAIL 10, BLOCKED 12, NOT VERIFIED 5
+- ข้อค้นพบใหม่: F-01 ถึง F-06 — ไม่มี API/persistence/runtime เชื่อมจริง; Notification placeholder รายงาน success โดยไม่ส่ง; Auth/Profile/status ใช้ค่า fallback หรือ input จาก caller; Notification UI ไม่แสดงรูปโปรไฟล์และ test ไม่ตรวจรูป/เวลา; test บาง Then ไม่ครบ; mockup ส่งคำขอมีช่องค้นหา UC-04 ซึ่งเป็น Out of scope
+- หมายเหตุ: Feature 006 ยังไม่สมบูรณ์; ไม่แก้ source code, tests, spec, plan หรือ tasks และไม่ commit/push
