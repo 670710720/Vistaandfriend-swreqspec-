@@ -137,8 +137,10 @@ def test_AC_RRS_08():
     assert len(service.requests) == 2
 
 
+
 def test_AC_RRS_09():
     service = RequestRoommateService()
+    requests_before = len(service.requests)
 
     with pytest.raises(ValueError, match="ไม่สามารถส่งคำขอเป็นเมทให้ตนเองได้"):
         service.create_request(
@@ -147,6 +149,9 @@ def test_AC_RRS_09():
             message="self request",
             receiver_status="looking_for_roommate",
         )
+
+    assert len(service.requests) == requests_before
+
 
 
 def test_AC_RRS_06A():
@@ -206,7 +211,17 @@ def test_AC_RRS_04B_accepts_exactly_500_unicode_code_points():
     )
 
     assert len(request.message) == 500
+def test_AC_RRS_04B_accepts_request_without_message():
+    service = RequestRoommateService(match_status_checker=no_active_match_checker)
 
+    request = service.create_request(
+        sender_id="student-a",
+        receiver_id="student-b",
+        receiver_status="looking_for_roommate",
+    )
+
+    assert request.message in (None, "")
+    assert len(service.requests) == 1
 
 def test_direct_roommate_request_accepts_500_unicode_code_points():
     message = "ก" * 499 + "😀"

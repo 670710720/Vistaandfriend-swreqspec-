@@ -1,15 +1,18 @@
+
 # RTM: ส่งคำขอเป็นเมท (Feature 006 — Request Roommate)
 
 อ้างอิง: [spec.md](./spec.md) SPEC-RRS-006 Draft v3 | [tasks.md](./tasks.md) | [test-cases.md](./test-cases.md) | [integration-contract.md](./integration-contract.md)
+
 ตรวจด้วย `/verify` เมื่อ 2026-11-13 22:34 (repository timezone)
-ผลทดสอบจริง: Backend 23 ผ่าน, 3 skipped, 0 failed | Frontend 18 ผ่าน, 5 test files, 0 failed
+
+ผลทดสอบจริง: Backend 23 passed, 3 skipped, 0 failed | Frontend 18 passed, 5 test files, 0 failed
 
 ## สถานะและขอบเขตหลักฐาน
 
-- **PASS / ครบ**: มี implementation และ test ผ่านที่ยืนยันพฤติกรรมตาม AC ในระดับที่ระบุ
-- **FAIL / ช่องโหว่**: implementation หรือ test ขัด/ไม่ครบ requirement
-- **BLOCKED**: ต้องอาศัยระบบหรือ contract ภายนอกที่ยังไม่มี
-- **NOT VERIFIED / ยังไม่ถึง**: task ยังไม่ทำหรือยังไม่มีหลักฐานทดสอบเพียงพอ
+- **PASS / ครบ:** มี implementation และ test ผ่านที่ยืนยันพฤติกรรมตาม AC ในระดับที่ระบุ
+- **FAIL / ช่องโหว่:** implementation หรือ test ขัด/ไม่ครบ requirement
+- **BLOCKED:** ต้องอาศัยระบบหรือ contract ภายนอกที่ยังไม่มี
+- **NOT VERIFIED / ยังไม่ถึง:** task ยังไม่ทำหรือยังไม่มีหลักฐานทดสอบเพียงพอ
 - ผล PASS ของ unit/UI component ไม่ยืนยันการทำงานแบบ end-to-end
 - ไม่พบ `specs/000-shared/`; จึงไม่มี shared constraints เพิ่มเติม
 
@@ -26,11 +29,11 @@
 | FR-RRS-07 | AC-RRS-04, AC-RRS-04A | T-01, T-05, T-07, T-08 | `RoommateRequest.status`; `frontend/src/pages/RoommateRequestListPage.jsx` แสดง label | `test_AC_RRS_04`, `test_AC_RRS_04A`, `test_AC_RRS_10_displays_all_request_statuses_from_real_request_data` ผ่าน | `mockup/request-list.html`:102-128 | **PASS** — ยืนยัน pending และแสดงสถานะใน component; ยังไม่ใช่ end-to-end |
 | FR-RRS-08 | AC-RRS-05 | T-03, T-09 | `RequestRoommateService.can_submit_request` ปฏิเสธ status ที่ไม่ active | `test_AC_RRS_05`, `test_missing_receiver_status_is_rejected` ผ่านจาก input ที่กำหนดใน test | `mockup/roommate-request.html`:104-105 เป็น static data | **FAIL** — ไม่มีการอ่านสถานะจริงและ Client ตั้ง default เป็น active (F-03) |
 | FR-RRS-09 | AC-RRS-06, AC-RRS-13, AC-RRS-13A | T-03, T-09, T-10 | ตรวจ pending ใน repository; `has_active_match` ใช้ injected checker และปฏิเสธเมื่อไม่ทราบผล | `test_AC_RRS_06` ผ่าน; AC-RRS-13/13A ไม่มี test ที่ผ่านจริง; `test_AC_RRS_13A` skipped | — | **BLOCKED** — Match data contract/provider จาก Feature 007/008/009 ไม่มีใน repo |
-| FR-RRS-10 | AC-RRS-09 | T-01, T-04 | `backend/app/validators/request_guard.py`: `ensure_not_self_request` | `test_AC_RRS_09` ผ่าน โดยยืนยัน exception แต่ไม่ assert จำนวนคำขอหลังปฏิเสธ (F-05) | — | **FAIL** — test ไม่ตรวจ Then ส่วน “ไม่บันทึกคำขอ” |
+| FR-RRS-10 | AC-RRS-09 | T-01, T-04 | `backend/app/validators/request_guard.py`: `ensure_not_self_request` | `test_AC_RRS_09` ผ่าน โดยยืนยัน exception และ assert ว่าจำนวนคำขอไม่เพิ่มขึ้น | — | **PASS** — unit test ยืนยันว่าการส่งคำขอให้ตนเองถูกปฏิเสธและไม่มี record ใหม่; ยังไม่ใช่หลักฐาน end-to-end |
 | FR-RRS-11 | AC-RRS-10 | T-07 | `frontend/src/pages/RoommateRequestListPage.jsx`: status normalization/render | `test_AC_RRS_10_displays_all_request_statuses_from_real_request_data`, `test_AC_RRS_10_displays_pending_status_when_request_is_waiting_for_response` ผ่าน | `mockup/request-list.html`:102-128 แสดง 4 สถานะตัวอย่าง | **PASS** — component แสดงสถานะที่กำหนด; API/data จริงยัง BLOCKED |
 | FR-RRS-12 | AC-RRS-11 | T-05, T-06 | `frontend/src/pages/NotificationsPage.jsx`; `frontend/src/components/RoommateRequestDetail.jsx` | `test_AC_RRS_11_displays_request_notification_list_and_detail` ผ่าน แต่ไม่ assert รูปโปรไฟล์หรือเวลา | `mockup/notifications.html`:216-238 มี SVG, ชื่อ, เวลา และรายละเอียด | **FAIL** — UI จริงแสดงอักษรย่อแทนรูปโปรไฟล์; ข้อมูลเวลา/รูปไม่ถูกตรวจ (F-04) |
 | FR-RRS-13 | AC-RRS-04A, AC-RRS-11A | T-05, T-06, T-12 | `RequestRoommateService.notify_recipient`; `NotificationsPage` และ `RoommateRequestDetail` | `test_AC_RRS_04A`, `test_AC_RRS_11A_retries_three_times_and_keeps_request_pending` ผ่านเมื่อ inject failure | `notifications.html` ไม่มี failure state แยก | **BLOCKED** — failure path unit-tested แต่ runtime ใช้ default ที่รายงาน success และไม่มี provider จริง (F-02) |
-| FR-RRS-14 | AC-RRS-04, AC-RRS-04B | T-01, T-02, T-11 | `backend/app/validators/request_validator.py`; `frontend/src/api/client.js`: Unicode code-point length; component validates input | `test_AC_RRS_04B`, `test_AC_RRS_04B_accepts_exactly_500_unicode_code_points`, FE 500/501 tests ผ่าน; default empty model ผ่าน | `mockup/roommate-request.html`:178-181 มี textarea/maxlength | **FAIL** — ไม่มี test ส่งคำขอจริงโดยละข้อความประกอบเพื่อยืนยันส่วน optional ของ AC-RRS-04 (F-05) |
+| FR-RRS-14 | AC-RRS-04, AC-RRS-04B | T-01, T-02, T-11 | `backend/app/validators/request_validator.py`; `frontend/src/api/client.js`: Unicode code-point length; component validates input | `test_AC_RRS_04B`, `test_AC_RRS_04B_accepts_exactly_500_unicode_code_points`, `test_AC_RRS_04B_accepts_request_without_message` ผ่าน; FE 500/501 tests ผ่าน | `mockup/roommate-request.html`:178-181 มี textarea/maxlength | **PASS (unit scope)** — ยืนยันการส่งคำขอโดยไม่ระบุข้อความและขีดจำกัด 500 ตัวอักษร; ยังไม่ใช่หลักฐาน end-to-end |
 | FR-RRS-15 | AC-RRS-06A | T-09 | ปัจจุบัน `can_submit_request` แล้วแยก `repository.add`; ไม่พบ transaction/lock | `test_AC_RRS_06A` ทดสอบ duplicate ที่มีอยู่ก่อน ไม่ได้จำลองการเปลี่ยนสถานะระหว่างเปิดหน้ากับยืนยัน | — | **NOT VERIFIED** — T-09 ยัง “พร้อมทำ”; atomic recheck ยังไม่มีหลักฐาน |
 | FR-RRS-16 | AC-RRS-11A | T-05, T-12 | `backend/app/services/notification_retry_service.py`: `send_request_notification`; `backend/app/config.py`: `MAX_NOTIFICATION_RETRIES` | `test_AC_RRS_11A_retries_three_times_and_keeps_request_pending`, `test_AC_RRS_11A_stops_retrying_after_notification_succeeds` ผ่าน; ยืนยันครั้งแรก + retry สูงสุด 3 ครั้ง | — | **BLOCKED** — retry orchestration ผ่าน unit test แต่ Notification provider จริงไม่มี |
 | NFR-RRS-01 | AC-RRS-07 | T-04 | `RequestGuard.ensure_authenticated`; service เรียกเฉพาะเมื่อมี `auth_checker` | `test_AC_RRS_07` skipped | — | **BLOCKED** — ไม่มี Authentication implementation/contract; sender ID ที่ไม่ว่างอย่างเดียวไม่ยืนยันการ login |
@@ -45,14 +48,15 @@
 | CON-RRS-05 | AC-RRS-03, AC-RRS-06, AC-RRS-06B | T-01, T-03, T-09, T-14 | repository ค้น pending ตาม sender/receiver; ไม่มี atomic storage | `test_AC_RRS_03`, `test_AC_RRS_06` ผ่านเฉพาะ sequential memory tests | — | **NOT VERIFIED** — ส่วน atomic/race ยังรอ T-09/T-14 |
 | CON-RRS-06 | AC-RRS-05, AC-RRS-06, AC-RRS-06A | T-01, T-03, T-09 | service ปฏิเสธ inactive/duplicate ก่อน add ใน memory | `test_AC_RRS_05`, `test_AC_RRS_06` ผ่านระดับ unit | — | **BLOCKED** — ยังไม่มี data source/atomic persistence จริง |
 | CON-RRS-07 | AC-RRS-08 | T-03, T-07 | repository แยก query pending ต่อ receiver; service ไม่จำกัดจำนวนผู้ส่ง | `test_AC_RRS_08` ผ่านและตรวจจำนวน 2 requests | `request-list.html` มีรายการหลายรายการตัวอย่าง | **PASS** — รองรับผู้ส่งหลายคนใน unit/in-memory scope |
-| CON-RRS-08 | AC-RRS-09 | T-01, T-04 | `RequestGuard.ensure_not_self_request` เปรียบเทียบ sender/receiver | `test_AC_RRS_09` ผ่านแต่ไม่ assert ว่าไม่มี record ใหม่ (F-05) | — | **FAIL** — Test ไม่ตรวจผล “ไม่บันทึก” ตาม Then |
+| CON-RRS-08 | AC-RRS-09 | T-01, T-04 | `RequestGuard.ensure_not_self_request` เปรียบเทียบ sender/receiver | `test_AC_RRS_09` ผ่าน โดยยืนยัน exception และ assert ว่าจำนวนคำขอไม่เพิ่มขึ้น | — | **PASS (unit scope)** — ยืนยันว่าคำขอที่ส่งให้ตนเองถูกปฏิเสธและไม่มี record ใหม่ |
 | CON-RRS-09 | AC-RRS-15 | T-07, T-08 | ไม่มี expiry/cleanup; request คงอยู่ใน repository | `test_AC_RRS_15_pending_request_remains_pending_after_time_passes` ผ่าน | `request-list.html` แสดง pending | **PASS** — ไม่มีการหมดอายุอัตโนมัติใน implementation ปัจจุบัน |
-| CON-RRS-10 | AC-RRS-04, AC-RRS-04B | T-01, T-02, T-11 | `backend/app/config.py`: 500; backend validator และ frontend code-point guard | Backend/Frontend 500 และ 501 tests ผ่าน; optional ผ่านเฉพาะ default model | `roommate-request.html`:178-181 | **PASS** — ขีดจำกัด 500 อยู่ใน config; การส่ง optional end-to-end ยังมีช่องว่าง F-05 |
+| CON-RRS-10 | AC-RRS-04, AC-RRS-04B | T-01, T-02, T-11 | `backend/app/config.py`: 500; backend validator และ frontend code-point guard | Backend/Frontend 500 และ 501 tests ผ่าน; `test_AC_RRS_04B_accepts_request_without_message` ผ่านใน service unit test | `roommate-request.html`:178-181 | **PASS (unit scope)** — ยืนยันขีดจำกัด 500 ตัวอักษรและการส่งคำขอโดยไม่ระบุข้อความ; ยังไม่มีหลักฐาน end-to-end |
 | CON-RRS-11 | AC-RRS-06A, AC-RRS-06B | T-09, T-14 | ไม่พบ transaction/lock; check และ add เป็นคนละขั้น | ไม่มี test ที่จำลอง race; `test_AC_RRS_06A` ไม่ได้จำลองสถานะเปลี่ยนก่อนยืนยัน | — | **NOT VERIFIED** — T-09/T-14 ยังไม่เสร็จ |
 | CON-RRS-12 | AC-RRS-13A | T-03, T-09, T-10 | `has_active_match` รับ optional checker; ไม่มี contract/provider ใน runtime | checker unit tests ผ่าน; `test_AC_RRS_13A` skipped | — | **BLOCKED** — ยังไม่มี Match/Cancellation data contract จริง |
 
-**สรุปสถานะ 33 IDs:** PASS 6 | FAIL 10 | BLOCKED 12 | NOT VERIFIED 5
-(PASS 3 FR + 3 CON; FAIL 8 FR + 1 NFR + 1 CON; BLOCKED 4 FR + 2 NFR + 6 CON; NOT VERIFIED 1 FR + 2 NFR + 2 CON)
+**สรุปสถานะ 33 IDs:** PASS 9 | FAIL 7 | BLOCKED 12 | NOT VERIFIED 5
+
+(PASS 5 FR + 4 CON; FAIL 6 FR + 1 NFR; BLOCKED 4 FR + 2 NFR + 6 CON; NOT VERIFIED 1 FR + 2 NFR + 2 CON)
 
 ## 2. ตามรอยย้อนกลับ (Code → Requirement)
 
@@ -77,6 +81,7 @@
 ## 3. ข้อค้นพบ
 
 ชนิดที่ใช้: โค้ดไม่มี FR / test อ่อน / mockup เกิน spec / BLOCKED integration
+
 ช่อง “ทีมตัดสิน” เว้นว่างเพื่อให้ทีมพิจารณา
 
 | F-ID | ชนิด | อยู่ที่ | ขัดกับ | รายละเอียด | ทีมตัดสิน |
@@ -85,14 +90,14 @@
 | F-02 | โค้ดไม่มี FR / ผลสำเร็จเท็จ | `backend/app/services/notification_service.py:NullNotificationService`; `frontend/src/api/client.js`; `frontend/src/components/RoommateRequestDetail.jsx` | FR-RRS-06/13/16 | Notification ที่ไม่ได้ configure ถูกคืน success; client fallback เมื่อไม่มี `fetch` ก็คืน `{ok:true}`; รายละเอียดแจ้งเตือนที่ไม่มีสถานะถูกแสดงเป็นสำเร็จ ทำให้ผล UI ไม่พิสูจน์ว่าผู้รับได้รับแจ้งเตือน | |
 | F-03 | BLOCKED integration / การเดาค่า | `frontend/src/pages/RequestRoommatePage.jsx`; `frontend/src/api/client.js`; `backend/app/models/roommate_request.py:normalize_receiver_status`; `request_guard.py` | CON-RRS-01/02/03/04, FR-RRS-03/08, NFR-RRS-01 | ใช้ sender ID default, receiver status default เป็นกำลังหาเมท, รับ status จาก caller และมี checker เป็น optional; Profile/Auth owners ยังไม่มี contract. ไม่ตรวจ recipient existence จริง และ alias status ยังไม่มี canonical mapping | |
 | F-04 | โค้ดไม่มี FR / test อ่อน | `frontend/src/components/RoommateRequestDetail.jsx`; `frontend/src/pages/NotificationsPage.jsx`; `frontend/src/__tests__/notifications-page.test.jsx` | FR-RRS-12, AC-RRS-11 | UI แสดง initials ไม่ใช่รูปโปรไฟล์; test ไม่ assert profile image หรือ timestamp แม้ AC กำหนดทั้งสองอย่าง | |
-| F-05 | test อ่อน | `backend/tests/test_roommate_request.py:test_AC_RRS_09`; `frontend/src/__tests__/request-roommate-page.test.jsx`; `backend/tests/test_roommate_request.py:test_AC_RRS_04` | FR-RRS-10, FR-RRS-14, CON-RRS-08, AC-RRS-04/09 | test self-request ตรวจ exception แต่ไม่ assert ว่าไม่มี record; test ส่งคำขอไม่ได้ยืนยันกรณีละข้อความประกอบ; FE AC-RRS-12 ตรวจเฉพาะข้อความ ไม่ได้พิสูจน์การพาไปหน้าสร้างโปรไฟล์ | |
+| F-05 | test อ่อน (เหลือบางส่วน) | `frontend/src/__tests__/request-roommate-page.test.jsx` | CON-RRS-02, AC-RRS-12 | FE `test_AC_RRS_12_requires_profile_before_requesting_roommate` ตรวจเฉพาะข้อความเมื่อไม่มีโปรไฟล์ แต่ยังไม่พิสูจน์การนำผู้ใช้ไปหน้าสร้างโปรไฟล์ | |
 | F-06 | mockup เกิน spec | `specs/006-request-roommate/mockup/roommate-request.html:94` | Out of scope: UC-04; FR-RRS-01 | Mockup มีช่องค้นหา “ค้นหาคนที่สนใจ” แม้ไม่กรองจริง แต่การค้นหาเมทถูกระบุเป็น Out of scope; spec ไม่มีหมวด UI ที่อนุมัติช่องนี้ | |
 
 ## 4. แก้แล้ว
 
 | F-ID | แก้อย่างไร | รู้ได้อย่างไร |
 |---|---|---|
-| — | ไม่มีข้อค้นพบเดิมที่บันทึกไว้เพื่อปิดในรอบนี้ | ไม่พบรายการ F-ID เดิมใน RTM ก่อนตรวจ |
+| F-05 (บางส่วน) | เพิ่ม assertion ใน `test_AC_RRS_09` ว่าจำนวนคำขอไม่เพิ่มขึ้นหลัง self-request ถูกปฏิเสธ และเพิ่ม `test_AC_RRS_04B_accepts_request_without_message` เพื่อทดสอบการส่งคำขอโดยไม่ระบุข้อความ | Backend test file `test_roommate_request.py` ผ่าน 24 passed, 3 skipped, 0 failed; ยังเหลือช่องว่าง FE AC-RRS-12 เรื่องการนำไปหน้าสร้างโปรไฟล์ |
 
 ## 5. สถานะ Tasks และ Integration
 
@@ -128,4 +133,5 @@
 - Frontend: `cd frontend && npm test -- --no-cache` → **5 test files passed, 18 passed, 0 failed**
 - Frontend tests ที่เกี่ยวข้องกับ Feature 006: `request-roommate-page.test.jsx`, `notifications-page.test.jsx`, `roommate-request-list-page.test.jsx`; อีก 2 files เป็น Feature อื่น
 - test-cases ทั้งหมดใน `test-cases.md` ยังระบุสถานะ “ร่าง”; จึงไม่ถือว่าทีมรับรอง TC
+- ผล Backend 24 passed, 3 skipped เป็นผลจากการทดสอบไฟล์ `test_roommate_request.py` โดยเฉพาะ ไม่ใช่ผลรัน Backend ทั้งชุด จึงยังไม่ใช้แทนผลสรุปด้านบน
 - Feature 006 **ยังไม่สมบูรณ์และห้ามสรุปว่า ready สำหรับใช้งานจริง**: API/store, Auth/Profile/Search/Match/Notification integrations, atomicity/concurrency และ usability ยังไม่มีหลักฐานผ่าน
