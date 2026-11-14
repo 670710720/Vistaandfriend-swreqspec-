@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>รายการคำขอเป็นเมท — ตัวอย่างหน้าจอ</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: #202a35;
+      background: #f3f6f7;
+      font-synthesis: none;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      width: 100vw;
+      margin: 0 0 24px calc(50% - 50vw);
+      padding: 18px max(24px, calc((100% - 920px) / 2));
+      background: #fff;
+      border-bottom: 1px solid #e4e9ec;
+    }
+    .brand { color: #176b62; font-weight: 800; letter-spacing: .02em; }
+    .main-menu { display: flex; flex-wrap: wrap; gap: 8px; }
+    .menu-item {
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: #4a5864;
+      font-size: .9rem;
+      text-decoration: none;
+    }
+    .menu-item.active { color: #125d55; background: #e5f4f0; font-weight: 700; }
+    main { width: min(100% - 32px, 820px); margin: 48px auto; }
+    .eyebrow { margin: 0 0 8px; color: #176b62; font-size: .85rem; font-weight: 700; }
+    h1 { margin: 0; font-size: clamp(1.7rem, 5vw, 2.3rem); }
+    .intro { margin: 10px 0 24px; color: #65727c; line-height: 1.65; }
+    .sample-label {
+      display: inline-flex;
+      margin-bottom: 16px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: #596672;
+      background: #f0f3f4;
+      font-size: .78rem;
+      font-weight: 700;
+    }
+    .list { display: grid; gap: 12px; }
+    .request {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+      border: 1px solid #e1e8e9;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgb(34 65 73 / 4%);
+    }
+    .request p { margin: 0; color: #66747d; font-size: .88rem; }
+    .request h2 { margin: 5px 0 0; font-size: 1.02rem; font-weight: 700; }
+    .status {
+      flex: 0 0 auto;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: .82rem;
+      font-weight: 700;
+    }
+    .pending { color: #805514; background: #fff2d6; }
+    .accepted { color: #176447; background: #e3f5eb; }
+    .rejected { color: #873e3e; background: #fbe9e8; }
+    .cancelled { color: #5f6872; background: #edf0f2; }
+    .note { margin: 18px 2px 0; color: #74808a; font-size: .84rem; line-height: 1.55; }
+    @media (max-width: 600px) {
+      .topbar { align-items: flex-start; flex-direction: column; padding: 16px; }
+      .main-menu { width: 100%; gap: 2px; }
+      .menu-item { padding: 8px 9px; font-size: .82rem; }
+      main { width: min(100% - 24px, 820px); margin: 28px auto; }
+      .request { align-items: flex-start; flex-direction: column; gap: 12px; padding: 16px; }
+      .status { align-self: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="main-menu" aria-label="เมนูหลัก">
+      <a class="menu-item" href="roommate-request.html">ส่งคำขอเป็นเมท</a>
+      <a class="menu-item" href="notifications.html">แจ้งเตือน</a>
+      <a class="menu-item active" href="request-list.html" aria-current="page">รายการคำขอ</a>
+    </nav>
+  </header>
+
+  <main>
+    <p class="eyebrow">สถานะคำขอ</p>
+    <h1>รายการคำขอเป็นเมท</h1>
+    <p class="intro">แสดงสถานะของคำขอที่เกี่ยวข้องกับคุณ</p>
+
+    <section class="list" aria-label="รายการคำขอตัวอย่าง" data-req="FR-RRS-11">
+      <article class="request">
+        <div>
+          <p>คำขอที่ส่งถึง</p>
+          <h2>พิมพ์ชนก ใจดี (ตัวอย่าง)</h2>
+        </div>
+        <span class="status pending">รอการตอบรับ</span>
+      </article>
+      <article class="request">
+        <div>
+          <p>คำขอที่ได้รับจาก</p>
+          <h2>ธนกร วัฒนชัย (ตัวอย่าง)</h2>
+        </div>
+        <span class="status accepted">ตอบรับ</span>
+      </article>
+      <article class="request">
+        <div>
+          <p>คำขอที่ได้รับจาก</p>
+          <h2>กมลชนก แสงทอง (ตัวอย่าง)</h2>
+        </div>
+        <span class="status rejected">ปฏิเสธ</span>
+      </article>
+      <article class="request">
+        <div>
+          <p>คำขอที่ส่งถึง</p>
+          <h2>ณัฐวุฒิ ใจเย็น (ตัวอย่าง)</h2>
+        </div>
+        <span class="status cancelled">ยกเลิก</span>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

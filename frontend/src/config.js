@@ -9,6 +9,7 @@ export const PROFILE_CONFIG = {
     maxSizeBytes: 5 * 1024 * 1024,
     allowedTypes: ['image/jpeg', 'image/png'],
   },
+
   phone: {
     digits: 10,
   },
@@ -31,3 +32,8 @@ export const PROFILE_CONFIG = {
   sleepBehaviors: ['กรน', 'กัดฟัน', 'นอนดิ้น', 'ไม่มีพฤติกรรมดังกล่าว', 'อื่น ๆ'],
   socialChannels: ['Facebook', 'Instagram', 'LINE', 'TikTok'],
 }
+
+// ค่าจาก SPEC-RRS-006: CON-RRS-10, FR-RRS-14
+export const ROOMMATE_REQUEST_CONFIG = {
+  maxMessageLength: 500,
+};

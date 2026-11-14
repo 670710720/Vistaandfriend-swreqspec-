@@ -1,6 +1,6 @@
 import { createElement } from 'react'
 
-export function Sidebar({ isLoggedIn, onOpenProfile, onOpenSearch }) {
+export function Sidebar({ isLoggedIn, onOpenProfile, onOpenSearch, onOpenRequest }) {
   if (!isLoggedIn) return null
 
   return createElement(
@@ -25,6 +25,16 @@ export function Sidebar({ isLoggedIn, onOpenProfile, onOpenSearch }) {
         type: 'button',
       },
       'ค้นหาเมท',
+    ),
+    createElement(
+      'button',
+      {
+        className:
+          'rounded-lg border border-teal-700 bg-white px-5 py-3 font-semibold text-teal-700 hover:bg-teal-50 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700',
+        onClick: onOpenRequest,
+        type: 'button',
+      },
+      'ส่งคำขอเป็นเมท',
     ),
   )
 }

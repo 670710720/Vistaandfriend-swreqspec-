@@ -71,6 +71,12 @@
 ## 2026-10-13
 - คำสั่ง: `/testcases AC-CCM /009-cancle-match จาก ac ทั้งหมด`
 - โหมด: ร่าง (ครอบคลุม AC-CCM-01, AC-CCM-02, AC-CCM-03, AC-CCM-03D, AC-CCM-03A, AC-CCM-03B, AC-CCM-03C, AC-CCM-03E, AC-CCM-04, AC-CCM-05, AC-CCM-05A, AC-CCM-05B, AC-CCM-06 และ AC-CCM-07 ใน SPEC-CCM-009)
+
+## 2026-11-13
+- คำสั่ง: `/implement T-05`
+- ไฟล์ที่สร้าง/แก้: `backend/app/services/notification_service.py`, `backend/app/controllers/roommate_request_controller.py`, `backend/app/controllers/__init__.py`, `backend/app/models/roommate_request.py`, `backend/app/services/request_roommate_service.py`, `backend/tests/test_roommate_request.py`, `specs/006-request-roommate/tasks.md`
+- ผล test: `pytest -q backend/tests/test_roommate_request.py` -> 10 passed, 3 skipped
+- ข้อสังเกต: T-05 ทำได้เฉพาะส่วนที่มี contract จริงใน repo; ส่วนการ retry การแจ้งเตือน 3 ครั้งยังเป็น BLOCKED และต้องรอ T-12 ไม่มีการสร้างข้อมูลผู้ใช้หรือโปรไฟล์ปลอมเพื่อให้ test ผ่าน
 - TC ID ที่เสนอ: TC-CCM-01-1, TC-CCM-01-2, TC-CCM-01-3, TC-CCM-01-4, TC-CCM-02-1, TC-CCM-02-2, TC-CCM-02-3, TC-CCM-03-1, TC-CCM-03-2, TC-CCM-03-3, TC-CCM-03D-1, TC-CCM-03D-2, TC-CCM-03D-3, TC-CCM-03A-1, TC-CCM-03A-2, TC-CCM-03A-3, TC-CCM-03B-1, TC-CCM-03B-2, TC-CCM-03B-3, TC-CCM-03C-1, TC-CCM-03C-2, TC-CCM-03C-3, TC-CCM-03C-4, TC-CCM-03E-1, TC-CCM-03E-2, TC-CCM-03E-3, TC-CCM-04-1, TC-CCM-04-2, TC-CCM-04-3, TC-CCM-05-1, TC-CCM-05-2, TC-CCM-05-3, TC-CCM-05A-1, TC-CCM-05A-2, TC-CCM-05A-3, TC-CCM-05B-1, TC-CCM-05B-2, TC-CCM-05B-3, TC-CCM-06-1, TC-CCM-06-2, TC-CCM-06-3, TC-CCM-06-4, TC-CCM-07-1, TC-CCM-07-2, TC-CCM-07-3, TC-CCM-07-4, TC-CCM-07-5
 - ผล test: ไม่ได้รัน เนื่องจากโหมดร่างห้ามเขียนโค้ด test
 - ประเด็นที่ spec ไม่ได้บอก: ผลการเปิดหน้าเมื่อยังไม่เข้าสู่ระบบหรือไม่มีสถานะจับคู่สำเร็จ (AC-CCM-01); การเลือกยกเลิกโดยยังไม่เลือกคู่ (AC-CCM-02); การยืนยันโดยไม่มีข้อความยืนยัน (AC-CCM-03); ผลแสดงเมื่อสถานะเปลี่ยนระหว่างตรวจแบบ atomic และข้อความปฏิเสธกรณีไม่ใช่สมาชิก (AC-CCM-03D); การแจ้งเตือนเมื่อบันทึกไม่สำเร็จและรายละเอียด/ระยะเวลาการแสดงสถานะ (AC-CCM-03A); รายละเอียดการลองใหม่เมื่อบันทึกล้มเหลว (AC-CCM-03B); ผลเมื่อ retry การแจ้งเตือนสำเร็จและการแจ้งผลสำเร็จหลัง retry (AC-CCM-03C); การเปิดแชทโดยไม่มีประวัติ (AC-CCM-03E); การไม่ยืนยันโดยไม่มีข้อความยืนยัน (AC-CCM-04); การค้นหาก่อนยกเลิกสำเร็จ (AC-CCM-05); ผลค้นหาเมื่อฝ่ายหนึ่งไม่เปิดสถานะให้ค้นหา (AC-CCM-05A); การส่งคำขอเมื่อฝ่ายหนึ่งไม่เปิดสถานะให้ค้นหา (AC-CCM-05B); รายละเอียดการปฏิเสธเมื่อผู้ใช้ไม่ได้เข้าสู่ระบบหรือสถานะไม่ใช่จับคู่สำเร็จ (AC-CCM-06); การใช้เกณฑ์กับผู้มีประสบการณ์หรือจำนวนผู้ทดสอบไม่ครบ 5 คน (AC-CCM-07)
@@ -163,6 +169,93 @@
 - โหมด/ผล: พบแถวที่ใช้ได้ TC-RMP-04A-1 ถึง TC-RMP-04A-3 แต่มีเพียง TC-RMP-04A-1 ที่ระบุ pytest; ยังไม่เขียน backend test เพราะไม่มี `backend/app/`, `backend/tests/`, fixture หรือสัญญา API/แผนทดสอบใน `plan.md` ให้ยึด และไม่ควรสมมติ interface ของระบบ
 - ผล test: ไม่ได้รัน เนื่องจากยังไม่มี backend test ที่เขียนได้อย่างไม่ต้องเดา
 - สิ่งที่ต้องให้ทีมกำหนดก่อน: backend ใช้ interface/ชั้นใดสำหรับตรวจข้อมูลห้องและป้องกันการสร้างโปรไฟล์เมื่อข้อมูลผิด แล้วระบุสัญญานี้ในแผนหรือจัดเตรียม backend implementation/fixture ให้ทดสอบได้
+## 2026-11-13
+- คำสั่ง: `/tasks specs/006-request-roommate/spec.md`
+- ผลลัพธ์: สร้าง tasks.md สำหรับ SPEC-RRS-006 แล้ว โดยมี 5 เฟส, 14 task, 0 task รอ Open Questions และเฟส 1 เป็นเฟสแรกที่ลองใช้งานได้จริง
+- ไฟล์: specs/006-request-roommate/tasks.md
+- หมายเหตุ: ไม่มี specs/000-shared/ หรือ mockup สำหรับฟีเจอร์นี้ จึงไม่เพิ่ม constraint หรือ UI จากไฟล์ร่วม และทุก AC ใน spec มี task ครอบคลุมแล้ว
+
+## 2026-11-13
+- คำสั่ง: ตรวจทานและแก้ไข `specs/006-request-roommate/tasks.md` รอบที่ 2 โดยไม่ implement
+- จุดที่แก้: แก้สรุปจำนวนเป็น 7 เฟส/14 task; แยกการทดสอบผู้ใช้ใหม่ตาม AC-RRS-14 ออกจากการทดสอบ concurrent duplicate ตาม NFR-RRS-05 ด้วย T-14; ขยาย T-09 ให้ครอบคลุม atomic validation, duplicate check, match-state และ race condition; ระบุว่า Q-RRS-02 ตอบแล้วและไม่มี task รอคำตอบ; จำกัดงานให้ไม่สร้างฟังก์ชันนอก scope
+- ตาราง AC และ Constraints: ตรวจเทียบกับ spec.md แล้วพบว่าครบ ไม่มีแถวว่าง จึงไม่แก้
+- ขอบเขต: ไม่แก้ spec.md และไม่เริ่ม implement
+
+## 2026-11-13
+- คำสั่ง: `/implement T-01 specs/006-request-roommate/tasks.md`
+- ไฟล์ที่สร้าง/แก้: backend/app/models/roommate_request.py, backend/app/services/request_roommate_service.py, backend/tests/test_roommate_request.py, specs/006-request-roommate/tasks.md
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest tests/test_roommate_request.py -q` → 5 passed in 0.02s
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี; task มีข้อมูลครบชัดตาม spec.md และ tasks.md และไม่มี Open Questions ที่ต้องปิดก่อน implement
+
+## 2026-11-13
+- คำสั่ง: `/implement T-02 specs/006-request-roommate/tasks.md`
+- ไฟล์ที่สร้าง/แก้: frontend/src/pages/RequestRoommatePage.jsx, frontend/src/api/client.js, frontend/src/__tests__/request-roommate-page.test.jsx, specs/006-request-roommate/tasks.md
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/request-roommate-page.test.jsx` → 3 tests passed, 1 file passed
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี; task ระบุชัดว่าต้องไม่สร้างฟังก์ชันค้นหาเมทใหม่และต้องเรียก API ผ่าน frontend/src/api/client.js
+
+## 2026-11-13
+- คำสั่ง: `/implement T-03 specs/006-request-roommate/tasks.md`
+- ไฟล์ที่สร้าง/แก้: backend/app/services/request_roommate_service.py, backend/app/repositories/roommate_request_repository.py, backend/app/repositories/__init__.py, backend/tests/test_roommate_request.py, specs/006-request-roommate/tasks.md
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest tests/test_roommate_request.py -q` → 9 passed, 1 skipped in 0.03s
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี; task ระบุชัดว่าต้องไม่สร้าง mock profile/mock match จริง และ AC-RRS-13A ถูกบล็อกชัดเจนเพราะยังไม่มี match data contract จาก Feature 008/009
+
+## 2026-11-13
+- คำสั่ง: `/implement T-04   ทำเฉพาะ T-04 ตาม tasks.md เท่านั้น`
+- ไฟล์ที่สร้าง/แก้: backend/app/validators/request_guard.py, backend/app/validators/__init__.py, backend/app/services/request_roommate_service.py, backend/tests/test_roommate_request.py, specs/006-request-roommate/tasks.md
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest tests/test_roommate_request.py -q` → 10 passed, 3 skipped in 0.04s
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี; repo ไม่มีระบบ Authentication/Profile จริง จึงป้องกัน self-request แบบจริงทำได้ แต่ AC-RRS-07 และ AC-RRS-12 ต้องถูกบล็อกและไม่สมมติข้อมูลปลอม
+
+## 2026-11-13
+- คำสั่ง: `/implement T-05`
+- ไฟล์ที่สร้าง/แก้: backend/app/services/notification_service.py, backend/app/controllers/roommate_request_controller.py, backend/app/controllers/__init__.py, backend/app/models/roommate_request.py, backend/app/services/request_roommate_service.py, backend/tests/test_roommate_request.py, specs/006-request-roommate/tasks.md
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec- && pytest -q backend/tests/test_roommate_request.py` → 10 passed, 3 skipped in 0.05s
+- สรุป: T-05 ทำได้เฉพาะส่วนที่มี contract จริงใน repo โดยแยกขั้นตอนบันทึกคำขอออกจากการส่งการแจ้งเตือน และคงสถานะคำขอเป็น "รอการตอบรับ" เมื่อแจ้งเตือนล้มเหลว ไม่สร้างข้อมูลผู้ใช้หรือโปรไฟล์ปลอมเพื่อให้ test ผ่าน; ส่วน retry การแจ้งเตือน 3 ครั้งยังเป็น BLOCKED และต้องรอ T-12
+
+## 2026-11-13
+- คำสั่ง: `/implement T-06`
+- ไฟล์ที่สร้าง/แก้: frontend/src/pages/NotificationsPage.jsx, frontend/src/components/RoommateRequestDetail.jsx, frontend/src/__tests__/notifications-page.test.jsx, specs/006-request-roommate/tasks.md
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/frontend && npm test -- --run src/__tests__/request-roommate-page.test.jsx src/__tests__/notifications-page.test.jsx` → 5 passed, 0 failed, 0 skipped
+- สรุป: T-06 ทำได้เฉพาะส่วน UI รายการแจ้งเตือนและรายละเอียดคำขอ โดยใช้ notification payload จาก contract T-05 และแสดงสถานะแจ้งเตือนล้มเหลวแบบไม่สมมติข้อมูลปลอม; ส่วนเชื่อม integration กับ notification service/API จริงยังต้องรอ feature อื่น
+
+## 2026-11-13
+- คำสั่ง: `/implement T-07`
+- ไฟล์ที่สร้าง/แก้: frontend/src/api/client.js, frontend/src/pages/RoommateRequestListPage.jsx, frontend/src/__tests__/roommate-request-list-page.test.jsx, specs/006-request-roommate/tasks.md
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec- && pytest backend/tests/test_roommate_request.py && cd frontend && npm test -- --run src/__tests__/request-roommate-page.test.jsx src/__tests__/notifications-page.test.jsx src/__tests__/roommate-request-list-page.test.jsx` → backend: 13 passed, 3 skipped; frontend: 3 files passed, 8 tests passed, 0 failed
+- สรุป: T-07 ทำได้เฉพาะส่วน UI และ label ของสถานะคำขอที่ดึงจาก request object จริง โดยไม่สร้างข้อมูลปลอมหรือสถานะเท็จ; รายการคำขอแสดงสถานะ รอการตอบรับ / ตอบรับ / ปฏิเสธ / ยกเลิก ตามข้อมูลจริง และได้เพิ่ม test สำหรับ AC-RRS-10 พร้อมยืนยันว่าไม่มีการเพิ่มฟังก์ชันตอบรับ/ปฏิเสธ/ยกเลิกในหน้านี้
+
+## 2026-11-13
+- คำสั่ง: `/implement T-08`
+- ไฟล์ที่สร้าง/แก้: backend/tests/test_roommate_request.py, specs/006-request-roommate/tasks.md
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest tests/test_roommate_request.py -q` → 14 passed, 0 failed, 3 skipped in 0.04s
+- สรุป: repo ปัจจุบันไม่มีโค้ด expiration/cleanup สำหรับคำขอ pending จึงไม่เพิ่มระบบใหม่ และยืนยันด้วย regression test ว่าคำขอที่มี created_at ย้อนกลับไป 30 วันยังคงสถานะ pending อย่างเดียวตาม CON-RRS-09 และ AC-RRS-15; ไม่แก้ spec.md และ plan.md
+
+## 2026-11-13
+- คำสั่ง: ปรับปรุง T-03 ให้ fail closed เมื่อยังไม่มี Match data contract
+- ไฟล์ที่แก้: backend/app/services/request_roommate_service.py, backend/tests/test_roommate_request.py, specs/006-request-roommate/tasks.md
+- ผล test: `cd /workspaces/Vistaandfriend-swreqspec-/backend && pytest tests/test_roommate_request.py -q` → 18 passed, 3 skipped
+- สรุป: `has_active_match` คืน `True` / `False` เมื่อมี checker และคืน `None` เมื่อไม่มี; การส่งคำขอถูกปฏิเสธเมื่อผลตรวจเป็น `None`; AC-RRS-13A ยังคง BLOCKED และ skip เพราะไม่มี Match contract จริง ไม่มีการสร้าง Match model, API หรือข้อมูล Match จำลอง
+
+## 2026-11-13
+- คำสั่ง: ปิดงาน T-11 หลังได้รับผลทดสอบล่าสุด
+- ไฟล์ที่เกี่ยวข้อง: backend/app/config.py, backend/app/validators/request_validator.py, backend/app/models/roommate_request.py, backend/tests/test_roommate_request.py, frontend/src/config.js, frontend/src/api/client.js, frontend/src/pages/RequestRoommatePage.jsx, frontend/src/__tests__/request-roommate-page.test.jsx, specs/006-request-roommate/tasks.md
+- สรุป: ตรวจข้อความประกอบไม่เกิน 500 Unicode code points ทั้ง Frontend และ Backend; เพิ่มการทดสอบ direct `RoommateRequest` constructor โดย 500 code points ผ่านและ 501 ถูกปฏิเสธ รวมภาษาไทยและ Emoji
+- ผลทดสอบล่าสุด: Backend 21 passed, 3 skipped; Frontend 5 passed, 0 failed. กรณี Backend ที่ skipped ไม่ได้นับหรือรายงานว่าเป็นกรณีที่ผ่าน
+
+## 2026-11-13
+- คำสั่ง: `/implement T-12`
+- การยืนยันก่อนเริ่ม: แจ้งทีมว่า repo มีเพียง Notification Protocol กับ in-memory/null implementations และการเชื่อม retry ต้องแก้ไฟล์สนับสนุนที่อยู่นอกช่อง “ไฟล์ที่แตะ” ของ T-12; ทีมอนุญาตให้ทำ retry wrapper บน contract ปัจจุบันและอนุญาตไฟล์สนับสนุน
+- ไฟล์ที่สร้าง/แก้: backend/app/config.py, backend/app/services/notification_retry_service.py, backend/app/services/request_roommate_service.py, backend/tests/test_roommate_request.py, specs/006-request-roommate/tasks.md, prompt-log.md
+- สรุป: เพิ่ม retry orchestration บน NotificationService contract โดยส่งครั้งแรกและ retry ได้ไม่เกิน 3 ครั้ง; เมื่อส่งไม่สำเร็จครบทุกครั้ง บันทึกสถานะแจ้งเตือนเป็น failed โดยคงคำขอเป็น pending; เพิ่มค่าจำนวน retry ใน config ตาม FR-RRS-16 และไม่สร้าง Notification API หรือ implementation ปลอม
+- Test: คำสั่งแรก `pytest -q tests/test_roommate_request.py` ไม่พบ path จาก repository root และไม่มี tests ทำงาน; คำสั่งที่ถูกต้อง `pytest -q backend/tests/test_roommate_request.py` → 23 passed, 3 skipped in 0.65s. `test_AC_RRS_11A_retries_three_times_and_keeps_request_pending` ยืนยันจำนวนการเรียก 4 ครั้ง (ครั้งแรก + 3 retries), สถานะคำขอยังคง pending และสถานะแจ้งเตือนเป็น failed; `test_AC_RRS_11A_stops_retrying_after_notification_succeeds` ยืนยันหยุด retry เมื่อส่งสำเร็จ
+- BLOCKED: ยังไม่มี Notification implementation จริงใน runtime; การส่งแจ้งเตือนจริงยังต้องรอระบบที่เป็นเจ้าของเชื่อมต่อ implementation ผ่าน contract นี้
+
+## 2026-11-13
+- คำสั่ง: `/verify specs/006-request-roommate/`
+- ไฟล์ที่แก้: `specs/006-request-roommate/rtm.md` (อัปเดต RTM เดิม); เพิ่มบันทึกนี้ต่อท้าย `prompt-log.md`
+- ผลทดสอบจริง: Backend `cd backend && pytest -v` → 23 passed, 3 skipped, 0 failed; Frontend `cd frontend && npm test -- --no-cache` → 5 test files passed, 18 passed, 0 failed
+- RTM ครอบคลุม 33 IDs: PASS 6, FAIL 10, BLOCKED 12, NOT VERIFIED 5
+- ข้อค้นพบใหม่: F-01 ถึง F-06 — ไม่มี API/persistence/runtime เชื่อมจริง; Notification placeholder รายงาน success โดยไม่ส่ง; Auth/Profile/status ใช้ค่า fallback หรือ input จาก caller; Notification UI ไม่แสดงรูปโปรไฟล์และ test ไม่ตรวจรูป/เวลา; test บาง Then ไม่ครบ; mockup ส่งคำขอมีช่องค้นหา UC-04 ซึ่งเป็น Out of scope
+- หมายเหตุ: Feature 006 ยังไม่สมบูรณ์; ไม่แก้ source code, tests, spec, plan หรือ tasks และไม่ commit/push
 ## 2026-11-11
 - คำสั่ง: `/tasks specs/004-search-roommate/spec.md`
 - โหมด: tasks (สร้างแผนงานย่อยตาม spec)
