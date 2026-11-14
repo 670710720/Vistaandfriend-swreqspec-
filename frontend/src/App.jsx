@@ -4,6 +4,7 @@ import { useAuth } from './hooks/useAuth.js'
 import ProfileEditPage from './pages/ProfileEditPage.jsx'
 import { validateProfile } from './profileValidation.js'
 import SearchRoommatePage from './pages/SearchRoommatePage.js'
+import RequestRoommatePage from './pages/RequestRoommatePage.jsx'
 import { Sidebar } from './navigation/sidebar.js'
 
 const initialValues = {
@@ -79,6 +80,10 @@ export default function App({ initialLoggedIn = true }) {
     return <SearchRoommatePage currentUserId="user-1" />
   }
 
+  if (currentView === 'request-roommate') {
+    return <RequestRoommatePage senderId="user-1" />
+  }
+
   return (
     <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
       <header className="mb-8">
@@ -98,12 +103,20 @@ export default function App({ initialLoggedIn = true }) {
           setFormOpen(false)
           setCurrentView('search-roommate')
         }}
+        onOpenRequest={() => {
+          setFormOpen(false)
+          setCurrentView('request-roommate')
+        }}
       />
       <nav aria-label="เมนูโปรไฟล์" className="mb-6 flex gap-3">
-  <button onClick={() => setEditOpen(true)} type="button">
-    แก้ไขโปรไฟล์
-  </button>
-</nav>
+        <button
+          className="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-50"
+          onClick={() => setEditOpen(true)}
+          type="button"
+        >
+          แก้ไขโปรไฟล์
+        </button>
+      </nav>
 
       {editOpen && (
         <ProfileEditPage

@@ -10,8 +10,8 @@ const sampleProfiles = [
 ]
 
 // AC-RRS-01: เลือกโปรไฟล์และเปิดฟอร์มส่งคำขอได้
-test('test_AC_RRS_01_selects_profile_and_submits_request_form', async () => {
-  const onSubmit = vi.fn().mockResolvedValue({ ok: true })
+test('test_AC_RRS_01_selects_profile_without_submitting_request', () => {
+  const onSubmit = vi.fn()
 
   render(<RequestRoommatePage profiles={sampleProfiles} senderId="student-current" onSubmit={onSubmit} />)
 
@@ -19,34 +19,22 @@ test('test_AC_RRS_01_selects_profile_and_submits_request_form', async () => {
   fireEvent.change(screen.getByLabelText('ข้อความประกอบ'), { target: { value: 'สวัสดี อยากเป็นเมท' } })
   fireEvent.click(screen.getByRole('button', { name: 'ส่งคำขอเป็นเมท' }))
 
-  await waitFor(() => {
-    expect(onSubmit).toHaveBeenCalledWith({
-      senderId: 'student-current',
-      receiverId: 'profile-2',
-      message: 'สวัสดี อยากเป็นเมท',
-      receiverStatus: 'หาเมท',
-    })
-  })
+  expect(onSubmit).not.toHaveBeenCalled()
 })
 
-// AC-RRS-04B: ข้อความไม่เกิน 500 Unicode code points ส่งได้
-test('test_AC_RRS_04B_accepts_message_with_exactly_500_unicode_code_points', async () => {
-  const onSubmit = vi.fn().mockResolvedValue({ ok: true })
+// AC-RRS-04B: ข้อความ 500 Unicode code points กรอกได้ แต่ไม่ส่งข้อมูล
+test('test_AC_RRS_04B_accepts_exactly_500_unicode_code_points_without_submitting', () => {
+  const onSubmit = vi.fn()
   const message = 'ก'.repeat(499) + '😀'
 
   render(<RequestRoommatePage profiles={sampleProfiles} senderId="student-current" onSubmit={onSubmit} />)
 
   fireEvent.change(screen.getByLabelText('ข้อความประกอบ'), { target: { value: message } })
+
+  expect(screen.getByLabelText('ข้อความประกอบ').value).toBe(message)
   fireEvent.click(screen.getByRole('button', { name: 'ส่งคำขอเป็นเมท' }))
 
-  await waitFor(() => {
-    expect(onSubmit).toHaveBeenCalledWith({
-      senderId: 'student-current',
-      receiverId: 'profile-1',
-      message,
-      receiverStatus: 'หาเมท',
-    })
-  })
+  expect(onSubmit).not.toHaveBeenCalled()
 })
 
 // AC-RRS-04B: ข้อความเกิน 500 Unicode code points ต้องไม่ถูกส่ง
@@ -88,5 +76,6 @@ test('test_AC_RRS_12_requires_profile_before_requesting_roommate', () => {
   render(<RequestRoommatePage profiles={[]} senderId="student-current" />)
 
   expect(screen.getByRole('alert').textContent).toContain('คุณยังไม่มีโปรไฟล์หาเมท')
-  expect(screen.queryByLabelText('ข้อความประกอบ')).toBeNull()
+  expect(screen.getByLabelText('ข้อความประกอบ')).toBeTruthy()
+  expect(screen.getByRole('button', { name: 'ส่งคำขอเป็นเมท' }).disabled).toBe(true)
 })
