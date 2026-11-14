@@ -1,1 +1,1 @@
-"""Application package for the roommate request feature."""
+"""Application package for roommate search and request features."""

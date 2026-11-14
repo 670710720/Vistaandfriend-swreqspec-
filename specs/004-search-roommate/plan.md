@@ -15,7 +15,12 @@
 1. ตรวจสอบฟิลด์ค้นหาและแหล่งข้อมูลให้สอดคล้องกับโปรไฟล์และความต้องการหาเมท
 2. ปรับกติกา AND/OR การจัดอันดับ และกรณีไม่เลือกตัวกรอง
 3. ปรับ pagination, การเริ่มหน้าใหม่ และข้อมูลที่เปิดเผยในรายละเอียดโปรไฟล์
-4. ปรับ requirements, acceptance criteria, assumptions และ traceability ให้สอดคล้องกับ v3
+4. ปรับ requirements, acceptance criteria, assumptions และ traceability ให้สอดคล้องกับ v3 และเพิ่มการอ้างอิง UI ID กับ mockup ของแต่ละหน้าจอให้ตรงกับหมวด "หน้าจอ (UI)" ใน spec.md:
+   - UI-SRS-01: ค้นหาเมทและระบุเงื่อนไข — mockups/UI-SRS-01-search-filters.html / mockups/UI-SRS-01-search-filters.png
+   - UI-SRS-02: รายการผลการค้นหาและแบ่งหน้า — mockups/UI-SRS-02-search-results.html / mockups/UI-SRS-02-search-results.png
+   - UI-SRS-03: รายละเอียดโปรไฟล์เมท — mockups/UI-SRS-03-profile-detail.html / mockups/UI-SRS-03-profile-detail.png
+   - UI-SRS-04: ยังไม่มีโปรไฟล์หาเมท — mockups/UI-SRS-04-no-roommate-profile.html / mockups/UI-SRS-04-no-roommate-profile.png
+   - UI-SRS-05: ไม่พบผลการค้นหา — mockups/UI-SRS-05-no-search-results.html / mockups/UI-SRS-05-no-search-results.png
 5. ตรวจ diff และ markdown consistency แล้ว commit เป็น `Draft v3`
 
 ## Notes and considerations

@@ -2,159 +2,247 @@
 - Feature: สร้างโปรไฟล์หาเมท (Create Roommate Profile)
 - Spec ID: SPEC-RMP-001
 - อ้างอิง: [plan.md](./plan.md)
-- วันที่: 2026-10-13
+- วันที่: 2026-11-12
 
 สรุป:
-- มี 5 เฟส รวม 5 task
-- มี 0 task ที่รอ Open Questions (Q-01 ถึง Q-03 ตอบแล้วใน spec.md)
-- ไม่มีเฟสที่ทำให้ระบบลองใช้งานจริงได้ตาม plan v1 เพราะแผนนี้กำหนดงานปรับปรุงเอกสาร spec เท่านั้น ไม่ได้กำหนดงานพัฒนา frontend/backend
+- มี 5 เฟส รวม 14 task
+- มี 2 task รอคำตอบ Q-05; อีก 4 task รอการกำหนดรายละเอียดทางเทคนิคที่ plan ยังไม่ระบุ
+- เฟสแรกที่ลองสร้างและส่งโปรไฟล์ได้คือเฟส 2 หลังเฟสฐานข้อมูลและ API เสร็จ และรายละเอียดระบบยืนยันตัวตน/จัดเก็บรูปได้รับการกำหนด
 
-> ขอบเขตของ tasks ชุดนี้เป็นการแตกงานจาก plan.md เท่านั้น ไม่ใช่แผน implement AC ในระบบ การทบทวน AC ในตารางตรวจความครบหมายถึงตรวจเอกสารและ traceability ไม่ใช่ยืนยันว่าพฤติกรรมในระบบผ่าน AC
+ลำดับงานในไฟล์นี้เป็นฐานข้อมูล → API → หน้าจอ ตามที่ทีมระบุ โดยส่วนหน้าจอเดิมเป็นงานที่มีอยู่แล้วและรอทีมตรวจ ไม่ได้หมายความว่าเชื่อมต่อ backend แล้ว
 
-## เฟส 0: ตรวจข้อมูลโปรไฟล์และ validation ที่ใช้อ้างอิง (FR-RMP-03, FR-RMP-04, FR-RMP-05)
+## เฟส 0: ฐานข้อมูลโปรไฟล์
 
-### T-01 ตรวจความสอดคล้องของข้อมูลและ validation
-- รองรับ: FR-RMP-03, FR-RMP-04, FR-RMP-05, CON-DATA-01, CON-VALID-01, CON-ROOM-01, AC-RMP-02, AC-RMP-02A, AC-RMP-03, AC-RMP-04, AC-RMP-04A
-- ตรวจด้วย: AC-RMP-02, AC-RMP-02A, AC-RMP-03, AC-RMP-04, AC-RMP-04A
-- ไฟล์ที่แตะ: specs/001-roommate-profile/spec.md
+### T-01 เตรียมการเชื่อมต่อ SQLite
+- รองรับ: FR-RMP-08, CON-DATA-01
+- ตรวจด้วย: ไม่มี AC ตรง ๆ เป็นงานพื้นฐานของ T-02
+- ไฟล์ที่แตะ: `backend/app/database.py`, `backend/app/main.py`, `backend/tests/test_database.py`
 - แบบหน้าจอ: ไม่มี
 - ต้องทำหลัง: ไม่มี
-- เสร็จเมื่อ: ส่วนข้อมูลโปรไฟล์และ validation ใน spec.md แยกพฤติกรรมการนอนของเจ้าของออกจากความต้องการของเมท และตรวจเทียบกับสเปก UC-02 และ UC-03 โดยไม่เพิ่มหรือลดกฎที่ไม่มีแหล่งอ้างอิง
-- สถานะ: เสร็จ รอทีมตรวจ
+- เสร็จเมื่อ: แอปสร้างการเชื่อมต่อ SQLite และเปิด session สำหรับงานโปรไฟล์ได้ โดย test การเชื่อมต่อผ่าน
+- สถานะ: พร้อมทำ
 
-#### จุดตรวจเฟส 0
-- test ที่ต้องผ่านทั้งหมด: ไม่มี code test ตาม plan.md; ตรวจความสอดคล้องของข้อมูลและ validation ใน spec.md กับ FR-RMP-03, FR-RMP-04, FR-RMP-05
-- เปิดระบบ: ไม่มีคำสั่งเปิดระบบใน plan.md; เฟสนี้เป็นงานเอกสาร
-- คนลองเองตาม AC-RMP-02:
-  Given ตรวจข้อความข้อมูลโปรไฟล์และกฎ validation ใน spec.md
-  When เทียบพฤติกรรมการนอนกับสเปก UC-03 และฟิลด์/validation กับสเปก UC-02
-  Then ระบุได้ชัดว่าพฤติกรรมการนอนเป็นของเจ้าของโปรไฟล์ และกฎข้อมูลไม่ขัดกับฟีเจอร์ที่อ้างอิง
-- ยังขาด: ไม่มีคำถามเปิดที่ยังไม่ได้คำตอบ; ไม่ได้ทดสอบพฤติกรรมใน frontend/backend ในเฟสเอกสารนี้
-
-## เฟส 1: ปรับ requirements และ AC เรื่องข้อมูลโปรไฟล์ (AC-RMP-01 ถึง AC-RMP-04A)
-
-### T-02 ปรับ requirements, assumptions และ acceptance criteria ให้ชัดเจน
-- รองรับ: FR-RMP-01, FR-RMP-02, FR-RMP-03, FR-RMP-04, FR-RMP-05, FR-RMP-06, FR-RMP-07, CON-AUTH-01, CON-PROFILE-01, CON-DATA-01, CON-VALID-01, CON-REL-01, CON-ROOM-01, AC-RMP-01, AC-RMP-01A, AC-RMP-02, AC-RMP-02A, AC-RMP-03, AC-RMP-04, AC-RMP-04A
-- ตรวจด้วย: AC-RMP-01, AC-RMP-01A, AC-RMP-02, AC-RMP-02A, AC-RMP-03, AC-RMP-04, AC-RMP-04A
-- ไฟล์ที่แตะ: specs/001-roommate-profile/spec.md
+### T-02 สร้างโมเดลข้อมูลโปรไฟล์และสถานะเริ่มต้น
+- รองรับ: FR-RMP-03, FR-RMP-04, FR-RMP-08, FR-RMP-11, CON-PROFILE-01, CON-DATA-01, CON-DISCOVER-01
+- ตรวจด้วย: AC-RMP-05B
+- ไฟล์ที่แตะ: `backend/app/models/roommate_profile.py`, `backend/app/database.py`, `backend/tests/test_roommate_profile_model.py`
 - แบบหน้าจอ: ไม่มี
 - ต้องทำหลัง: T-01
-- เสร็จเมื่อ: requirements, assumptions, open questions และ AC ที่เกี่ยวข้องอธิบายข้อกำหนดข้อมูลจำเป็น การตรวจข้อมูล และกรณีผิดพลาดสอดคล้องกัน โดยไม่สร้าง ID ใหม่หรือกำหนดพฤติกรรมนอก spec
-- สถานะ: พร้อมทำ
+- เสร็จเมื่อ: โมเดลแทนข้อมูลโปรไฟล์และเจ้าของตาม plan ได้ และโปรไฟล์ใหม่มีสถานะเริ่มต้น "ไม่เปิด" โดยไม่กำหนดวิธีเก็บรูปแทนทีม
+- สถานะ: รอทีมกำหนดวิธีจัดเก็บไฟล์รูปตามข้อสังเกตใน plan.md
 
-#### จุดตรวจเฟส 1
-- test ที่ต้องผ่านทั้งหมด: ไม่มี code test ตาม plan.md; ตรวจความสอดคล้องระหว่าง FR-RMP-01 ถึง FR-RMP-07 กับ AC-RMP-01, AC-RMP-01A, AC-RMP-02, AC-RMP-02A, AC-RMP-03, AC-RMP-04 และ AC-RMP-04A
-- เปิดระบบ: ไม่มีคำสั่งเปิดระบบใน plan.md; เฟสนี้เป็นงานเอกสาร
-- คนลองเองตาม AC-RMP-03:
-  Given อ่าน AC-RMP-03 และข้อกำหนดข้อมูลจำเป็นใน spec.md
-  When ตรวจว่ากรณีข้อมูลไม่ครบเชื่อมกับ FR-RMP-06 และ CON-REL-01
-  Then เอกสารระบุการแจ้งให้นักศึกษากรอกข้อมูลที่จำเป็นและไม่สร้างโปรไฟล์ โดยไม่มีผลลัพธ์อื่นที่ spec ไม่ได้กำหนด
-- ยังขาด: ไม่มีคำถามเปิดที่ยังไม่ได้คำตอบ; ยังไม่มีงาน implement AC ใน tasks ชุดนี้
+#### จุดตรวจเฟส 0
+- test ที่ต้องผ่านทั้งหมด: `cd backend && pytest -v` รวม `test_database.py` และ `test_roommate_profile_model.py`
+- เปิดระบบ: `cd backend && uvicorn app.main:app --reload`
+- คนลองเองตาม FR-RMP-08:
+  Given ฐานข้อมูล SQLite พร้อมใช้งาน
+  When เริ่มแอป backend และตรวจการเชื่อมต่อฐานข้อมูล
+  Then backend เชื่อมต่อ SQLite ได้และโมเดลโปรไฟล์พร้อมใช้งาน
+- ยังขาด: ต้องกำหนดวิธีจัดเก็บรูปก่อนทำส่วนฟิลด์/การบันทึกรูปใน T-02
 
-## เฟส 2: กำหนดสถานะเผยแพร่และการค้นพบโปรไฟล์ในเอกสาร (AC-RMP-05, AC-RMP-05A, AC-RMP-05B, AC-RMP-06, AC-RMP-08)
+## เฟส 1: API สร้างและตรวจสอบโปรไฟล์
 
-### T-03 ปรับข้อกำหนดสถานะเผยแพร่และการค้นพบโปรไฟล์
-- รองรับ: FR-RMP-08, FR-RMP-09, FR-RMP-10, FR-RMP-11, CON-DISCOVER-01, AC-RMP-05, AC-RMP-05A, AC-RMP-05B, AC-RMP-06, AC-RMP-08
-- ตรวจด้วย: AC-RMP-05, AC-RMP-05A, AC-RMP-05B, AC-RMP-06, AC-RMP-08
-- ไฟล์ที่แตะ: specs/001-roommate-profile/spec.md
+### T-03 รวมกฎข้อมูลโปรไฟล์ไว้ใน backend config
+- รองรับ: FR-RMP-03, FR-RMP-04, FR-RMP-05, CON-DATA-01, CON-VALID-01, CON-ROOM-01
+- ตรวจด้วย: ไม่มี AC ตรง ๆ เป็นงานพื้นฐานของ T-04
+- ไฟล์ที่แตะ: `backend/app/config.py`, `backend/tests/test_profile_config.py`
 - แบบหน้าจอ: ไม่มี
-- ต้องทำหลัง: T-02
-- เสร็จเมื่อ: requirements, assumptions, open questions และ AC ระบุแยกการสร้างโปรไฟล์ออกจากการเปิดสถานะค้นหา โดยโปรไฟล์ใหม่เริ่ม "ไม่เปิด" และค้นพบได้เมื่อเจ้าของเปิดสถานะตาม CON-DISCOVER-01
+- ต้องทำหลัง: T-01
+- เสร็จเมื่อ: ค่าจากตาราง "ค่าที่ตั้งได้" ใน plan.md อยู่ใน config พร้อมคอมเมนต์อ้าง ID โดยไม่มีค่าซ้ำฝังใน validation
 - สถานะ: พร้อมทำ
 
-#### จุดตรวจเฟส 2
-- test ที่ต้องผ่านทั้งหมด: ไม่มี code test ตาม plan.md; ตรวจความสอดคล้องระหว่าง FR-RMP-08 ถึง FR-RMP-11, CON-DISCOVER-01 และ AC-RMP-05, AC-RMP-05A, AC-RMP-05B, AC-RMP-06, AC-RMP-08
-- เปิดระบบ: ไม่มีคำสั่งเปิดระบบใน plan.md; เฟสนี้เป็นงานเอกสาร
-- คนลองเองตาม AC-RMP-05B:
-  Given อ่าน AC-RMP-05B และ CON-DISCOVER-01
-  When ตรวจสถานะเริ่มต้นของโปรไฟล์หลังสร้างสำเร็จและเงื่อนไขการเปิดเผย
-  Then เอกสารระบุสถานะ "ไม่เปิด" จนกว่าเจ้าของจะเปิดสถานะ และไม่กล่าวว่าโปรไฟล์ค้นพบได้ก่อนหน้านั้น
-- ยังขาด: ไม่มีคำถามเปิดที่ยังไม่ได้คำตอบ; ยังไม่ได้ทดสอบการบันทึกหรือการค้นหาในระบบจริง
-
-## เฟส 3: ปรับตาราง Traceability ให้ครอบคลุม FR และ AC (AC-RMP-01 ถึง AC-RMP-08)
-
-### T-04 ปรับปรุง traceability ของข้อกำหนด
-- รองรับ: FR-RMP-01, FR-RMP-02, FR-RMP-03, FR-RMP-04, FR-RMP-05, FR-RMP-06, FR-RMP-07, FR-RMP-08, FR-RMP-09, FR-RMP-10, FR-RMP-11, CON-AUTH-01, CON-PROFILE-01, CON-DATA-01, CON-VALID-01, CON-REL-01, CON-ROOM-01, CON-DISCOVER-01, AC-RMP-01, AC-RMP-01A, AC-RMP-02, AC-RMP-02A, AC-RMP-03, AC-RMP-04, AC-RMP-04A, AC-RMP-05, AC-RMP-05A, AC-RMP-05B, AC-RMP-06, AC-RMP-07, AC-RMP-08
-- ตรวจด้วย: AC-RMP-01, AC-RMP-01A, AC-RMP-02, AC-RMP-02A, AC-RMP-03, AC-RMP-04, AC-RMP-04A, AC-RMP-05, AC-RMP-05A, AC-RMP-05B, AC-RMP-06, AC-RMP-07, AC-RMP-08
-- ไฟล์ที่แตะ: specs/001-roommate-profile/spec.md
+### T-04 ตรวจข้อมูลที่ส่งเข้า API ก่อนสร้างโปรไฟล์
+- รองรับ: FR-RMP-05, FR-RMP-06, FR-RMP-07, CON-DATA-01, CON-VALID-01, CON-REL-01, CON-ROOM-01
+- ตรวจด้วย: AC-RMP-02A, AC-RMP-03, AC-RMP-04, AC-RMP-04A
+- ไฟล์ที่แตะ: `backend/app/roommate_profiles.py`, `backend/app/config.py`, `backend/tests/test_roommate_profile_validation.py`
 - แบบหน้าจอ: ไม่มี
 - ต้องทำหลัง: T-03
-- เสร็จเมื่อ: ตาราง traceability เชื่อม FR-RMP-01 ถึง FR-RMP-11 และ constraint ที่เกี่ยวข้องกับ AC ที่ตรวจได้ครบ โดยไม่มี FR หรือ AC ตกหล่นหรืออ้าง ID ที่ไม่มีใน spec
+- เสร็จเมื่อ: API ปฏิเสธข้อมูลที่ขาดหรือผิดตาม spec, ส่งรายละเอียด validation ให้หน้าจอได้ และ validation tests ของ AC-RMP-02A/03/04/04A ผ่าน
+- สถานะ: พร้อมทำ
+
+### T-05 บันทึกโปรไฟล์แบบ atomic และป้องกันข้อมูลซ้ำจากการลองใหม่
+- รองรับ: FR-RMP-08, FR-RMP-09, FR-RMP-11, CON-REL-01, CON-DISCOVER-01, NFR-REL-01
+- ตรวจด้วย: AC-RMP-05, AC-RMP-05A, AC-RMP-05B
+- ไฟล์ที่แตะ: `backend/app/roommate_profiles.py`, `backend/app/models/roommate_profile.py`, `backend/tests/test_roommate_profile_api.py`
+- แบบหน้าจอ: ไม่มี
+- ต้องทำหลัง: T-02, T-04
+- เสร็จเมื่อ: ข้อมูลที่ผ่าน validation ถูกบันทึกให้เจ้าของ พร้อมสถานะเริ่มต้น "ไม่เปิด"; กรณีบันทึกล้มเหลวไม่เหลือข้อมูลบางส่วน และการลองใหม่สำเร็จแล้วมีโปรไฟล์เดียว
+- สถานะ: พร้อมทำ
+
+### T-06 ตรวจตัวตนเจ้าของและการมีโปรไฟล์เดิมใน API
+- รองรับ: FR-RMP-01, FR-RMP-08, CON-AUTH-01, CON-PROFILE-01, NFR-SEC-01
+- ตรวจด้วย: AC-RMP-01A
+- ไฟล์ที่แตะ: `backend/app/roommate_profiles.py`, `backend/tests/test_roommate_profile_auth.py`
+- แบบหน้าจอ: ไม่มี
+- ต้องทำหลัง: T-02, T-05
+- เสร็จเมื่อ: API ผูกโปรไฟล์กับนักศึกษาที่ผ่านการยืนยันตัวตนและปฏิเสธการสร้างโปรไฟล์ที่สอง โดยไม่รับ student_id จากข้อมูลที่ผู้ใช้กำหนดเอง
+- สถานะ: รอทีมกำหนดแหล่งตัวตน/สัญญา authentication ที่ backend ใช้ เนื่องจากยังไม่มีใน plan หรือโค้ดปัจจุบัน
+
+#### จุดตรวจเฟส 1
+- test ที่ต้องผ่านทั้งหมด: `cd backend && pytest -v` รวม tests ของ T-03 ถึง T-06
+- เปิดระบบ: `cd backend && uvicorn app.main:app --reload`
+- คนลองเองตาม AC-RMP-05:
+  Given ส่งข้อมูลโปรไฟล์ที่ครบและถูกต้องผ่าน API ด้วยตัวตนที่ผ่านการยืนยัน
+  When เรียก API สร้างโปรไฟล์
+  Then backend บันทึกโปรไฟล์และส่งผลการสร้างสำเร็จ
+- ยังขาด: T-02 และ T-06 ยังรอการตัดสินใจทางเทคนิค; ยังไม่มีการกำหนดรูปแบบรับ/จัดเก็บรูปและระบบ authentication
+
+## เฟส 2: หน้าจอสร้างและตรวจข้อมูลโปรไฟล์
+
+### T-07 ตรวจรับหน้าจอ แบบฟอร์ม validation และ tests ที่มีอยู่
+- รองรับ: FR-RMP-01, FR-RMP-02, FR-RMP-03, FR-RMP-04, FR-RMP-05, FR-RMP-06, FR-RMP-07
+- ตรวจด้วย: AC-RMP-01, AC-RMP-02, AC-RMP-02A, AC-RMP-03, AC-RMP-04, AC-RMP-04A
+- ไฟล์ที่แตะ: `frontend/src/App.jsx`, `frontend/src/profileValidation.js`, `frontend/src/config.js`, `frontend/src/__tests__/profile-form.test.jsx`, `frontend/src/__tests__/setup.test.jsx`
+- แบบหน้าจอ: ไม่มี mockup; ไม่มี UI ID ใน spec
+- ต้องทำหลัง: T-04
+- เสร็จเมื่อ: โค้ดหน้าจอและ tests เดิม 8 tests ผ่านการตรวจรับจากทีม; งานนี้ยังไม่ถือว่าเชื่อม API หรือได้รับการอนุมัติข้อกำหนด
+- สถานะ: เสร็จ รอทีมตรวจ
+
+### T-08 ปรับตัวเลือกพฤติกรรมการนอนให้ตรงคำตอบ Q-06
+- รองรับ: FR-RMP-04, CON-DATA-01, CON-VALID-01
+- ตรวจด้วย: AC-RMP-02, AC-RMP-02A
+- ไฟล์ที่แตะ: `frontend/src/App.jsx`, `frontend/src/profileValidation.js`, `frontend/src/config.js`, `frontend/src/__tests__/profile-form.test.jsx`
+- แบบหน้าจอ: ไม่มี mockup; ไม่มี UI ID ใน spec
+- ต้องทำหลัง: T-07
+- เสร็จเมื่อ: ไม่มีตัวเลือก "อื่น ๆ" และเลือก "ไม่มีพฤติกรรมดังกล่าว" ร่วมกับตัวเลือกอื่นไม่ได้ โดย tests ยืนยันกฎจาก Q-06
+- สถานะ: พร้อมทำ
+
+### T-09 เชื่อมการยืนยันแบบฟอร์มกับ API สร้างโปรไฟล์
+- รองรับ: FR-RMP-08, FR-RMP-09, CON-AUTH-01
+- ตรวจด้วย: AC-RMP-05
+- ไฟล์ที่แตะ: `frontend/src/api/client.js`, `frontend/src/App.jsx`, `frontend/src/__tests__/profile-form.test.jsx`
+- แบบหน้าจอ: ไม่มี mockup; ไม่มี UI ID ใน spec
+- ต้องทำหลัง: T-05, T-06, T-08
+- เสร็จเมื่อ: หน้าจอส่งข้อมูลผ่าน API จริงและแสดงผลสำเร็จเมื่อ API บันทึกโปรไฟล์สำเร็จ โดย test ใช้ client จำลอง
+- สถานะ: รอทีมกำหนดรูปแบบส่งไฟล์รูปและยืนยันระบบ authentication/API contract
+
+### T-10 แสดง validation errors และให้ลองส่งข้อมูลใหม่
+- รองรับ: FR-RMP-05, FR-RMP-06, FR-RMP-07, FR-RMP-08, CON-DATA-01, CON-VALID-01, CON-REL-01, CON-ROOM-01, NFR-REL-01
+- ตรวจด้วย: AC-RMP-03, AC-RMP-04, AC-RMP-04A, AC-RMP-05A
+- ไฟล์ที่แตะ: `frontend/src/api/client.js`, `frontend/src/App.jsx`, `frontend/src/__tests__/profile-form.test.jsx`
+- แบบหน้าจอ: ไม่มี mockup; ไม่มี UI ID ใน spec
+- ต้องทำหลัง: T-04, T-05, T-08
+- เสร็จเมื่อ: หน้าจอแสดงข้อผิดพลาดจาก API ที่ช่องที่เกี่ยวข้อง ไม่แสดงผลสำเร็จเมื่อบันทึกผิดพลาด และให้ลองส่งใหม่ได้โดยไม่แสดงความสำเร็จซ้ำหรือสร้างโปรไฟล์ซ้ำ
+- สถานะ: พร้อมทำ
+
+### T-11 แสดงผลเมื่อมีโปรไฟล์แล้วและนำผู้ใช้ที่ยังไม่เข้าสู่ระบบไปหน้าเข้าสู่ระบบ
+- รองรับ: FR-RMP-01, FR-RMP-02, CON-AUTH-01, CON-PROFILE-01, NFR-SEC-01
+- ตรวจด้วย: AC-RMP-01A
+- ไฟล์ที่แตะ: `frontend/src/api/client.js`, `frontend/src/App.jsx`, `frontend/src/__tests__/setup.test.jsx`, `frontend/src/__tests__/profile-form.test.jsx`
+- แบบหน้าจอ: ไม่มี mockup; ไม่มี UI ID ใน spec
+- ต้องทำหลัง: T-06, T-09
+- เสร็จเมื่อ: เมื่อผู้ใช้เลือกเมนู ระบบไม่เปิดแบบฟอร์มให้ผู้มีโปรไฟล์เดิม และผู้ที่ยังไม่เข้าสู่ระบบถูกนำไปหน้าเข้าสู่ระบบพร้อมคำเตือนตามคำตอบ Q-04
+- สถานะ: รอทีมกำหนด authentication/navigation contract และวิธีตรวจสถานะโปรไฟล์ก่อนแสดงแบบฟอร์ม ซึ่ง plan ยังไม่ระบุ
+
+#### จุดตรวจเฟส 2
+- test ที่ต้องผ่านทั้งหมด: `cd frontend && npm test` และ `cd backend && pytest -v`; tests เดิมต้องยังผ่าน
+- เปิดระบบ: `cd backend && uvicorn app.main:app --reload`; `cd frontend && npm run dev`
+- คนลองเองตาม AC-RMP-05:
+  Given นักศึกษาเข้าสู่ระบบและกรอกข้อมูลโปรไฟล์ครบและถูกต้อง
+  When กดยืนยันการสร้างโปรไฟล์บนหน้าจอ
+  Then โปรไฟล์ถูกบันทึกผ่าน API และหน้าจอแสดงข้อความว่าสร้างโปรไฟล์สำเร็จ
+- ยังขาด: T-06, T-09 และ T-11 ต้องได้ข้อกำหนด authentication, การตรวจโปรไฟล์เดิม และการส่งรูปก่อนเชื่อมต่อใช้งานจริง
+
+## เฟส 3: ทดสอบ usability กับนักศึกษาใหม่
+
+### T-12 ประเมินการสร้างโปรไฟล์กับนักศึกษาใหม่ 5 คน
+- รองรับ: NFR-USE-01
+- ตรวจด้วย: AC-RMP-07
+- ไฟล์ที่แตะ: `frontend/src/App.jsx`
+- แบบหน้าจอ: ไม่มี mockup; ไม่มี UI ID ใน spec
+- ต้องทำหลัง: T-07, T-08, T-09, T-10
+- เสร็จเมื่อ: นักศึกษาใหม่ 5 คนทดลองสร้างโปรไฟล์โดยไม่รับคำแนะนำ และบันทึกผลได้ว่าอย่างน้อย 4 คนสร้างโปรไฟล์สำเร็จ
 - สถานะ: พร้อมทำ
 
 #### จุดตรวจเฟส 3
-- test ที่ต้องผ่านทั้งหมด: ไม่มี code test ตาม plan.md; ตรวจตาราง traceability ว่าครอบคลุม AC ทั้ง 13 ข้อ, FR-RMP-01 ถึง FR-RMP-11 และ constraint ทั้ง 7 ข้อ
-- เปิดระบบ: ไม่มีคำสั่งเปิดระบบใน plan.md; เฟสนี้เป็นงานเอกสาร
+- test ที่ต้องผ่านทั้งหมด: `cd frontend && npm test`; `cd backend && pytest -v`; และผลทดลอง usability ของผู้ใช้จริง
+- เปิดระบบ: `cd backend && uvicorn app.main:app --reload`; `cd frontend && npm run dev`
 - คนลองเองตาม AC-RMP-07:
-  Given ตรวจ AC-RMP-07 และ NFR-USE-01 ใน spec.md
-  When ตรวจตาราง traceability ว่ามี AC-RMP-07 เชื่อมกับ NFR-USE-01
-  Then เอกสารตามรอยข้อกำหนด usability ได้ครบ; การวัดผลกับนักศึกษาจริงยังไม่อยู่ในขอบเขต plan v1
-- ยังขาด: ไม่มีคำถามเปิดที่ยังไม่ได้คำตอบ; AC-RMP-07 ยังต้องทดสอบกับผู้ใช้จริงเมื่อมีระบบให้ลอง
+  Given นักศึกษาที่ไม่เคยใช้ฟังก์ชันนี้จำนวน 5 คน
+  When แต่ละคนสร้างโปรไฟล์หาเมทโดยไม่รับคำแนะนำ
+  Then อย่างน้อย 4 คนสร้างโปรไฟล์สำเร็จ
+- ยังขาด: ต้องใช้ผู้ทดสอบจริง 5 คนตาม NFR-USE-01; ไม่ลดจำนวนตัวอย่างเอง
 
-## เฟส 4: ตรวจ diff และความสอดคล้องของ Markdown (ทุก AC)
+## เฟสสุดท้าย: รอคำตอบ Q-05
 
-### T-05 ตรวจความครบถ้วนและส่งมอบ spec Draft v3
-- รองรับ: FR-RMP-01, FR-RMP-02, FR-RMP-03, FR-RMP-04, FR-RMP-05, FR-RMP-06, FR-RMP-07, FR-RMP-08, FR-RMP-09, FR-RMP-10, FR-RMP-11, AC-RMP-01, AC-RMP-01A, AC-RMP-02, AC-RMP-02A, AC-RMP-03, AC-RMP-04, AC-RMP-04A, AC-RMP-05, AC-RMP-05A, AC-RMP-05B, AC-RMP-06, AC-RMP-07, AC-RMP-08
-- ตรวจด้วย: AC-RMP-01, AC-RMP-01A, AC-RMP-02, AC-RMP-02A, AC-RMP-03, AC-RMP-04, AC-RMP-04A, AC-RMP-05, AC-RMP-05A, AC-RMP-05B, AC-RMP-06, AC-RMP-07, AC-RMP-08
-- ไฟล์ที่แตะ: specs/001-roommate-profile/spec.md
-- แบบหน้าจอ: ไม่มี
-- ต้องทำหลัง: T-04
-- เสร็จเมื่อ: diff ของ spec.md จำกัดอยู่ในขอบเขต plan.md, Markdown อ่านได้, ไม่มี ID หรือ traceability ขาดหาย และส่งมอบฉบับ Draft v3 ตามแผน
-- สถานะ: พร้อมทำ
+### T-13 เปิดสถานะให้ค้นหาตามมติของ Q-05
+- รองรับ: FR-RMP-10, FR-RMP-11, CON-DISCOVER-01
+- ตรวจด้วย: AC-RMP-06, AC-RMP-08
+- ไฟล์ที่แตะ: `backend/app/models/roommate_profile.py`, `backend/app/roommate_profiles.py`, `backend/tests/test_roommate_profile_discovery.py`
+- แบบหน้าจอ: ไม่มี; การค้นหาจริงเป็น UC-04 นอกขอบเขตนี้
+- ต้องทำหลัง: T-02, T-05
+- เสร็จเมื่อ: backend เปิดสถานะและปิดกลับได้เฉพาะตามมติ Q-05 และสถานะไม่เปิด/เปิดพร้อมให้ UC-04 ตรวจตาม AC
+- สถานะ: รอ Q-05
 
-#### จุดตรวจเฟส 4
-- test ที่ต้องผ่านทั้งหมด: ไม่มี code test ตาม plan.md; ตรวจ diff, Markdown consistency, AC/FR/Constraint traceability และ Open Questions
-- เปิดระบบ: ไม่มีคำสั่งเปิดระบบใน plan.md; เฟสนี้เป็นงานเอกสาร
-- คนลองเองตาม AC-RMP-01 ถึง AC-RMP-08:
-  Given ตรวจ spec.md ฉบับปรับปรุงและ traceability
-  When เทียบ AC ทั้ง 13 ข้อกับ requirements, constraints และผลลัพธ์ที่ระบุใน spec
-  Then ไม่พบ requirement ที่ไม่มีที่มา, ID ตกหล่น หรือข้อความขัดแย้ง; การลองพฤติกรรมจริงต้องรอแผนพัฒนา frontend/backend
-- ยังขาด: ไม่มีคำถามเปิดที่ยังไม่ได้คำตอบ; ไม่มีเฟสที่ทำให้ระบบลองใช้งานจริงได้ใน plan v1
+### T-14 เพิ่มจุดควบคุมสถานะในหน้าจอและทดสอบร่วมกับ UC-04
+- รองรับ: FR-RMP-10, FR-RMP-11, CON-DISCOVER-01
+- ตรวจด้วย: AC-RMP-06, AC-RMP-08
+- ไฟล์ที่แตะ: `frontend/src/api/client.js`, `frontend/src/App.jsx`, `frontend/src/__tests__/profile-form.test.jsx`
+- แบบหน้าจอ: ไม่มี mockup; ไม่มี UI ID ใน spec
+- ต้องทำหลัง: T-13
+- เสร็จเมื่อ: เจ้าของเปิดสถานะตามมติ Q-05 ได้ และทีมตรวจร่วมกับ UC-04 ว่าโปรไฟล์แสดงหรือไม่แสดงตามสถานะ โดยไม่สร้างฟังก์ชันค้นหาใหม่ใน UC-01
+- สถานะ: รอ Q-05
 
 ## ตารางตรวจความครบ: Acceptance Criteria
+
 | AC ID | task ที่ตรวจ AC นี้ |
 |---|---|
-| AC-RMP-01 | T-02, T-04, T-05 |
-| AC-RMP-01A | T-02, T-04, T-05 |
-| AC-RMP-02 | T-01, T-02, T-04, T-05 |
-| AC-RMP-02A | T-01, T-02, T-04, T-05 |
-| AC-RMP-03 | T-01, T-02, T-04, T-05 |
-| AC-RMP-04 | T-01, T-02, T-04, T-05 |
-| AC-RMP-04A | T-01, T-02, T-04, T-05 |
-| AC-RMP-05 | T-03, T-04, T-05 |
-| AC-RMP-05A | T-03, T-04, T-05 |
-| AC-RMP-05B | T-03, T-04, T-05 |
-| AC-RMP-06 | T-03, T-04, T-05 |
-| AC-RMP-07 | T-04, T-05 |
-| AC-RMP-08 | T-03, T-04, T-05 |
+| AC-RMP-01 | T-07 |
+| AC-RMP-01A | T-06, T-11 |
+| AC-RMP-02 | T-07, T-08 |
+| AC-RMP-02A | T-04, T-07, T-08 |
+| AC-RMP-03 | T-04, T-07, T-10 |
+| AC-RMP-04 | T-04, T-07, T-10 |
+| AC-RMP-04A | T-04, T-07, T-10 |
+| AC-RMP-05 | T-05, T-09 |
+| AC-RMP-05B | T-02, T-05, T-13 |
+| AC-RMP-05A | T-05, T-10 |
+| AC-RMP-06 | T-13, T-14 |
+| AC-RMP-07 | T-12 |
+| AC-RMP-08 | T-05, T-13, T-14 |
 
 ## ตารางตรวจความครบ: Constraints
-| Constraint ID | task ที่ทำให้เป็นจริง/ตรวจความสอดคล้อง |
+
+| Constraint ID | task ที่ทำให้เป็นจริง |
 |---|---|
-| CON-AUTH-01 | T-02, T-04 |
-| CON-PROFILE-01 | T-02, T-04 |
-| CON-DATA-01 | T-01, T-02, T-04 |
-| CON-VALID-01 | T-01, T-02, T-04 |
-| CON-REL-01 | T-01, T-02, T-04 |
-| CON-ROOM-01 | T-01, T-02, T-04 |
-| CON-DISCOVER-01 | T-03, T-04 |
+| CON-AUTH-01 | T-06, T-09, T-11 |
+| CON-PROFILE-01 | T-02, T-06, T-11 |
+| CON-DATA-01 | T-02, T-03, T-04, T-08 |
+| CON-VALID-01 | T-03, T-04, T-07, T-08, T-10 |
+| CON-REL-01 | T-04, T-05, T-10 |
+| CON-ROOM-01 | T-03, T-04, T-07, T-10 |
+| CON-DISCOVER-01 | T-02, T-05, T-13, T-14 |
 
 ## ตารางตรวจความครบ: Functional Requirements
+
 | FR ID | AC ที่ตรวจ FR นี้ | เฟส |
 |---|---|---|
-| FR-RMP-01 | AC-RMP-01 | เฟส 1 |
-| FR-RMP-02 | AC-RMP-01 | เฟส 1 |
-| FR-RMP-03 | AC-RMP-02 | เฟส 0, 1 |
-| FR-RMP-04 | AC-RMP-02 | เฟส 0, 1 |
-| FR-RMP-05 | AC-RMP-02A, AC-RMP-03, AC-RMP-04 | เฟส 0, 1 |
-| FR-RMP-06 | AC-RMP-03 | เฟส 1 |
-| FR-RMP-07 | AC-RMP-04 | เฟส 1 |
-| FR-RMP-08 | AC-RMP-05, AC-RMP-05A | เฟส 2 |
-| FR-RMP-09 | AC-RMP-05 | เฟส 2 |
-| FR-RMP-10 | AC-RMP-06 | เฟส 2 |
-| FR-RMP-11 | AC-RMP-05B, AC-RMP-06, AC-RMP-08 | เฟส 2 |
+| FR-RMP-01 | AC-RMP-01 | เฟส 2 |
+| FR-RMP-02 | AC-RMP-01 | เฟส 2 |
+| FR-RMP-03 | AC-RMP-02 | เฟส 0, 2 |
+| FR-RMP-04 | AC-RMP-02 | เฟส 2 |
+| FR-RMP-05 | AC-RMP-02A, AC-RMP-03, AC-RMP-04 | เฟส 1, 2 |
+| FR-RMP-06 | AC-RMP-03 | เฟส 1, 2 |
+| FR-RMP-07 | AC-RMP-04, AC-RMP-04A | เฟส 1, 2 |
+| FR-RMP-08 | AC-RMP-05, AC-RMP-05A | เฟส 0, 1, 2 |
+| FR-RMP-09 | AC-RMP-05 | เฟส 1, 2 |
+| FR-RMP-10 | AC-RMP-06 | เฟสรอ Q-05 |
+| FR-RMP-11 | AC-RMP-05B, AC-RMP-06, AC-RMP-08 | เฟส 0, 1, เฟสรอ Q-05 |
 
 ## สิ่งที่ยังไม่ทำ: Open Questions
-- Q-01 ข้อมูลใดบ้างที่เป็นข้อมูลจำเป็นสำหรับการสร้างโปรไฟล์? ตอบแล้วใน spec.md; ตรวจทบทวนใน T-01 และ T-02; ไม่มี task รอคำตอบ
-- Q-02 ความต้องการเกี่ยวกับเมทมีข้อมูลอะไรบ้าง? ตอบแล้วใน spec.md; ตรวจทบทวนใน T-01; ไม่มี task รอคำตอบ
-- Q-03 หลังจากสร้างโปรไฟล์สำเร็จ โปรไฟล์จะแสดงในผลการค้นหาทันทีหรือไม่? ตอบแล้วใน spec.md; ตรวจทบทวนใน T-03; ไม่มี task รอคำตอบ
+
+- Q-01 ข้อมูลใดบ้างที่เป็นข้อมูลจำเป็นสำหรับการสร้างโปรไฟล์? ตอบแล้วใน spec.md; ไม่มี task รอคำตอบ
+- Q-02 ความต้องการเกี่ยวกับเมทมีข้อมูลอะไรบ้าง? ตอบแล้วใน spec.md; ไม่มี task รอคำตอบ
+- Q-03 หลังจากสร้างโปรไฟล์สำเร็จ โปรไฟล์จะแสดงในผลการค้นหาทันทีหรือไม่? ตอบแล้วใน spec.md; ไม่มี task รอคำตอบ
+- Q-04 ถ้านักศึกษายังไม่ได้เข้าสู่ระบบแล้วเลือกเมนูสร้างโปรไฟล์หาเมท ระบบต้องทำอะไร (พาไปหน้าเข้าสู่ระบบ / ซ่อนเมนู / แสดงข้อความ)? ตอบแล้วใน spec.md ว่าพาไปหน้าเข้าสู่ระบบพร้อมเตือนว่าต้องเข้าสู่ระบบ; การนำไปใช้ใน T-11 ยังต้องกำหนดสัญญา authentication/navigation; ไม่มี task รอคำตอบ Q-04
+- Q-05 เจ้าของเปิดสถานะให้ค้นหาที่ไหนและอย่างไร (ตอนสร้าง หรือปุ่มหลังสร้าง) และปิดกลับได้ไหม? ยังไม่ได้คำตอบ; รอ T-13 และ T-14
+- Q-06 พฤติกรรมการนอนมีตัวเลือก "อื่น ๆ" ไหม และเลือก "ไม่มีพฤติกรรมดังกล่าว" ร่วมกับตัวเลือกอื่นได้ไหม? ตอบแล้วใน spec.md; T-08 แก้โค้ดเดิมให้ตรงคำตอบ
+- Q-07 ข้อมูลโปรไฟล์เก็บที่ไหน (ฐานข้อมูลอะไร มี backend ไหม)? ตอบแล้วใน spec.md ว่าใช้ SQLite และมี backend; ไม่มี task รอคำตอบ
+
+## ประเด็นทางเทคนิคที่ยังต้องกำหนดโดยทีม
+
+- plan.md ระบุว่ายังไม่ได้เลือกวิธีจัดเก็บไฟล์รูป และยังไม่ระบุรูปแบบรับรูปใน API; ห้ามเลือก BLOB, path หรือวิธีส่งรูปแทนทีมก่อนทำ T-02/T-09
+- plan.md กำหนดให้ตรวจตัวตน แต่ยังไม่ระบุแหล่ง identity/authentication; โค้ดปัจจุบันยังไม่มีระบบดังกล่าว จึงต้องกำหนดก่อนทำ T-06/T-11
+- AC-RMP-01A ต้องซ่อนแบบฟอร์มก่อนสร้างเมื่อมีโปรไฟล์เดิม แต่ plan.md ยังไม่มี API ตรวจสถานะโปรไฟล์ก่อนเปิดฟอร์ม; ต้องกำหนด contract ก่อนทำ T-06/T-11 โดยไม่เพิ่ม endpoint เอง
+- มี frontend baseline 8 tests ที่ผ่าน แต่ยังไม่มี backend tests (pytest เก็บได้ 0 tests); การทำงาน T-01 เป็นต้นไปต้องเพิ่ม backend tests ตาม AC และไม่ถือว่า baseline backend ผ่านแล้ว
+- AC-RMP-06/08 ตรวจผลการค้นหาจริงร่วมกับ UC-04 ตาม Out of scope; งานใน feature นี้จำกัดที่สถานะการเผยแพร่และการเชื่อมต่อทดสอบกับ UC-04
