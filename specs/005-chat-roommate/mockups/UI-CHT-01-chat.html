@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI-CHT-01 Chat Roommate</title>
+<style>
+  /* ส่วนที่ยืดหยุ่นได้: สี ฟอนต์ ระยะห่าง และการจัดวาง */
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,"Segoe UI","Noto Sans Thai",Tahoma,sans-serif;background:#eef2f4;color:#1d2b3a;padding:24px;line-height:1.55}
+  .note{max-width:1120px;margin:0 auto 18px;background:#fff7e6;border:1px dashed #d79a2b;border-radius:10px;padding:10px 14px;font-size:13px;color:#7a5414}
+  .row{display:flex;flex-wrap:wrap;gap:22px;justify-content:center;align-items:flex-start}
+  .state{width:min(100%,1120px)}
+  .state h2{font-size:14px;color:#5b6b7b;margin:0 0 8px 4px;font-weight:600}
+  .screen{background:#fff;border:1px solid #cfd8de;border-radius:18px;overflow:hidden;min-height:650px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+  .appbar{height:58px;background:#fff;border-bottom:1px solid #e4eaee;display:flex;align-items:center;justify-content:space-between;padding:0 22px}
+  .brand{font-weight:750;font-size:18px;color:#176b69}
+  .profile{font-size:13px;color:#536574}
+  .layout{display:grid;grid-template-columns:300px minmax(0,1fr);min-height:590px}
+  .sidebar{border-right:1px solid #e4eaee;background:#fbfcfd;padding:18px 14px}
+  .side-title{font-size:16px;font-weight:700;margin-bottom:12px}
+  .search{border:1px solid #d5dfe5;border-radius:9px;padding:9px 11px;color:#87949e;font-size:13px;background:#fff;margin-bottom:14px}
+  .contact{display:flex;gap:10px;align-items:center;padding:11px 9px;border-radius:11px;margin-bottom:5px}
+  .contact.active{background:#e8f4f3;border:1px solid #c9e5e2}
+  .avatar{width:38px;height:38px;border-radius:50%;background:#dce9ee;color:#31566a;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none}
+  .avatar.teal{background:#d8efeb;color:#176b69}
+  .contact-name{font-size:13px;font-weight:700}
+  .preview{font-size:11px;color:#7c8993;margin-top:2px}
+  .chat{display:flex;flex-direction:column;min-width:0;background:#fff}
+  .chat-head{height:70px;border-bottom:1px solid #e8edf0;display:flex;align-items:center;gap:12px;padding:0 22px}
+  .chat-head .name{font-weight:700;font-size:15px}
+  .sub{font-size:12px;color:#7c8993}
+  .history{flex:1;padding:24px 26px;background:#f8fafb;min-height:390px}
+  .date{text-align:center;color:#89959e;font-size:11px;margin:0 0 20px}
+  .message{max-width:68%;padding:11px 14px;border-radius:13px;margin:10px 0;font-size:13px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .message.received{background:#fff;border:1px solid #e3e9ed;border-top-left-radius:4px}
+  .message.sent{background:#e4f3f1;border:1px solid #d2e9e5;margin-left:auto;border-top-right-radius:4px}
+  .time{font-size:10px;color:#84919a;text-align:right;margin-top:5px}
+  .composer{padding:14px 20px;border-top:1px solid #e8edf0;background:#fff}
+  .compose-box{border:1px solid #d5dfe5;border-radius:12px;min-height:48px;padding:12px 14px;color:#929da5;font-size:13px}
+  .compose-actions{display:flex;justify-content:space-between;align-items:center;margin-top:9px}
+  .hint{font-size:11px;color:#87949e}
+  .btn{display:inline-block;background:#176f6c;color:#fff;border-radius:9px;padding:8px 20px;font-size:12px;font-weight:700}
+  .empty{display:flex;align-items:center;justify-content:center;text-align:center;min-height:520px;padding:30px}
+  .empty-inner{max-width:390px}
+  .empty-icon{width:64px;height:64px;border-radius:20px;background:#e8f4f3;color:#176b69;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px}
+  .empty h3{font-size:18px;margin-bottom:7px}
+  .empty p{font-size:13px;color:#74828c}
+  .alert{border-radius:12px;padding:14px 16px;background:#fbeae9;border:1px solid #e3a5a1;color:#8f2d27;font-size:13px;margin:0 22px 16px}
+  .alert b{display:block;font-size:15px;margin-bottom:3px}
+  .muted{color:#84919a;font-size:12px}
+  .disabled{background:#f2f4f5;color:#9aa4ab;border:1px solid #e1e6e9}
+  .state-caption{font-size:12px;color:#697985;margin:8px 4px 0}
+  @media(max-width:700px){
+    body{padding:12px}
+    .layout{grid-template-columns:1fr}
+    .sidebar{border-right:0;border-bottom:1px solid #e4eaee}
+    .contact:not(.active){display:none}
+    .screen{min-height:0}
+    .history{padding:18px 14px}
+    .message{max-width:88%}
+  }
+</style>
+</head>
+<body>
+<!-- MOCKUP สำหรับคุยกับผู้ใช้และ PO ไม่ใช่โค้ดจริง ห้ามคัดลอกไฟล์นี้ไปเป็นโค้ดทั้งไฟล์
+     ปรับสี ฟอนต์ และระยะห่างได้ตามโปรเจกต์ ส่วนข้อความ/องค์ประกอบที่ผูกกับ FR ให้ตรวจตาม spec
+     ข้อมูลชื่อและข้อความทั้งหมดเป็นข้อมูลตัวอย่าง -->
+<p class="note">🧩 MOCKUP UI-CHT-01 Chat Roommate | รองรับ FR-CHAT-01, FR-CHAT-02, FR-CHAT-08, FR-CHAT-12 | ข้อมูลทั้งหมดเป็นตัวอย่าง</p>
+
+<div class="row">
+  <!-- สถานะปกติ: เลือกคู่สนทนาและเปิดประวัติ -->
+  <section class="state">
+    <h2>สถานะปกติ: เลือกคู่สนทนาและแสดงประวัติแชท</h2>
+    <div class="screen">
+      <header class="appbar">
+        <div class="brand">Roommate Chat</div>
+        <div class="profile">ผู้ใช้ตัวอย่าง　⌄</div>
+      </header>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="side-title">แชทของฉัน</div>
+          <div class="search" data-req="FR-CHAT-01">รายชื่อคู่สนทนาจากระบบ</div>
+
+          <div class="contact active" data-req="FR-CHAT-01">
+            <div class="avatar teal">พ</div>
+            <div>
+              <div class="contact-name">พิมพ์ชนก (ตัวอย่าง)</div>
+              <div class="preview">ไว้คุยรายละเอียดเรื่องห้องกันนะ</div>
+            </div>
+          </div>
+          <div class="contact" data-req="FR-CHAT-01">
+            <div class="avatar">น</div>
+            <div>
+              <div class="contact-name">นภัส (ตัวอย่าง)</div>
+              <div class="preview">ขอบคุณมากค่ะ</div>
+            </div>
+          </div>
+          <div class="muted" style="padding:12px 8px">รายชื่อและสถานะเป็นข้อมูลตัวอย่าง</div>
+        </aside>
+
+        <main class="chat">
+          <div class="chat-head" data-req="FR-CHAT-02">
+            <div class="avatar teal">พ</div>
+            <div>
+              <div class="name">พิมพ์ชนก (ตัวอย่าง)</div>
+              <div class="sub">คู่สนทนา</div>
+            </div>
+          </div>
+
+          <div class="history" data-req="FR-CHAT-08">
+            <div class="date">วันนี้</div>
+            <div class="message received">
+              สวัสดีค่ะ สนใจคุยเรื่องการเป็นรูมเมทไหมคะ
+              <div class="time">10:20</div>
+            </div>
+            <div class="message sent">
+              สวัสดีค่ะ สนใจค่ะ อยากสอบถามรายละเอียดเพิ่มเติม
+              <div class="time">10:24</div>
+            </div>
+            <div class="message received">
+              ได้เลยค่ะ ไว้คุยรายละเอียดเรื่องห้องกันนะ
+              <div class="time">10:26</div>
+            </div>
+          </div>
+
+          <div class="composer">
+            <div class="compose-box" data-req="FR-CHAT-03">พิมพ์ข้อความ...</div>
+            <div class="compose-actions">
+              <span class="hint">ตัวอย่างหน้าจอสำหรับแสดงตำแหน่งช่องข้อความ</span>
+              <span class="btn" data-req="FR-CHAT-03">ส่งข้อความ</span>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <p class="state-caption">แสดงตัวอย่างเมื่อผู้ใช้เลือกคู่สนทนาที่ได้รับอนุญาต และระบบเปิดประวัติของคู่สนทนานั้น</p>
+  </section>
+
+  <!-- สถานะผิดพลาด: ผู้รับไม่มีสิทธิ์เริ่มแชท -->
+  <section class="state">
+    <h2>สถานะผิดพลาด: ระบบไม่อนุญาตให้เริ่มแชท (AC-CHAT-07)</h2>
+    <div class="screen">
+      <header class="appbar">
+        <div class="brand">Roommate Chat</div>
+        <div class="profile">ผู้ใช้ตัวอย่าง　⌄</div>
+      </header>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="side-title">เริ่มแชท</div>
+          <div class="search" data-req="FR-CHAT-01">รายชื่อผู้ใช้ที่ระบบส่งให้</div>
+          <div class="contact active">
+            <div class="avatar">ก</div>
+            <div>
+              <div class="contact-name">กานต์ (ตัวอย่าง)</div>
+              <div class="preview">เลือกผู้ใช้ตัวอย่าง</div>
+            </div>
+          </div>
+        </aside>
+
+        <main class="chat">
+          <div class="empty">
+            <div class="empty-inner">
+              <div class="empty-icon">💬</div>
+              <h3>ไม่สามารถเริ่มแชทได้</h3>
+              <p>ระบบไม่อนุญาตให้เริ่มบทสนทนากับผู้ใช้รายนี้</p>
+            </div>
+          </div>
+          <div class="alert" data-req="FR-CHAT-12">
+            <b>ไม่สามารถเริ่มแชทได้</b>
+            แสดงเหตุผลที่ได้รับจากระบบ เพื่อให้ผู้ใช้ทราบว่าไม่สามารถเปิดบทสนทนาได้
+          </div>
+          <div class="composer">
+            <div class="compose-box disabled">ไม่สามารถส่งข้อความได้</div>
+            <div class="compose-actions">
+              <span class="hint">ช่องส่งข้อความไม่พร้อมใช้งาน</span>
+              <span class="btn disabled">ส่งข้อความ</span>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <p class="state-caption">ข้อความเหตุผลจริงต้องมาจากผล API ไม่กำหนดถ้อยคำหรือเงื่อนไขเพิ่มเติมนอกเหนือจาก Spec</p>
+  </section>
+</div>
+</body>
+</html>
