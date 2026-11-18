@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from app.middleware.auth_guard import require_authenticated_user
 from app.services.profile_detail import ProfileDetailService
 
+router = APIRouter()
 app = FastAPI(title="Profile Detail API")
 service = ProfileDetailService()
 
@@ -27,7 +28,7 @@ class ProfileDetailResponse(BaseModel):
     phone_number: str | None = None
 
 
-@app.get("/profile-detail/{profile_user_id}", response_model=ProfileDetailResponse)
+@router.get("/profile-detail/{profile_user_id}", response_model=ProfileDetailResponse)
 def get_profile_detail(profile_user_id: str, current_user_id: str) -> ProfileDetailResponse:
     """Support FR-SRS-06 and CON-SRS-06 by returning approved detail data for an eligible profile."""
     current_user = require_authenticated_user(current_user_id)
@@ -36,3 +37,7 @@ def get_profile_detail(profile_user_id: str, current_user_id: str) -> ProfileDet
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     return ProfileDetailResponse(**detail)
+
+
+# Preserve the standalone FastAPI app used by existing Profile Detail tests.
+app.include_router(router)

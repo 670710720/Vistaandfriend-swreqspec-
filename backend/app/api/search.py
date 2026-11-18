@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from pydantic import BaseModel, Field
 
 from app.middleware.auth_guard import require_authenticated_user
 from app.services.search_roommate import SearchRoommateProfile, SearchRoommateService
 
+router = APIRouter()
 app = FastAPI(title="Search Roommate API")
 service = SearchRoommateService()
 
@@ -40,7 +41,7 @@ class SearchRoommateResponse(BaseModel):
         return cls(**profile.__dict__)
 
 
-@app.post("/search-roommates", response_model=list[SearchRoommateResponse])
+@router.post("/search-roommates", response_model=list[SearchRoommateResponse])
 def search_roommates(request: SearchRoommateRequest) -> list[SearchRoommateResponse]:
     """Support FR-SRS-04, FR-SRS-05, FR-SRS-08, FR-SRS-09, CON-SRS-03, CON-SRS-04, CON-SRS-01, NFR-SRS-01."""
     current_user_id = require_authenticated_user(request.current_user_id)
@@ -51,3 +52,7 @@ def search_roommates(request: SearchRoommateRequest) -> list[SearchRoommateRespo
         page=request.page,
     )
     return [SearchRoommateResponse.from_profile(profile) for profile in results]
+
+
+# Preserve the standalone FastAPI app used by existing Search tests.
+app.include_router(router)

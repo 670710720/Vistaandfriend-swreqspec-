@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import { PROFILE_CONFIG } from './config.js'
 import { useAuth } from './hooks/useAuth.js'
@@ -6,6 +7,7 @@ import { validateProfile } from './profileValidation.js'
 import SearchRoommatePage from './pages/SearchRoommatePage.js'
 import RequestRoommatePage from './pages/RequestRoommatePage.jsx'
 import { Sidebar } from './navigation/sidebar.js'
+import ChatListPage from './pages/ChatListPage.jsx'
 
 const initialValues = {
   nickname: '',
@@ -27,9 +29,10 @@ function FieldError({ id, errors }) {
   return <p className="mt-1 text-sm text-red-700" role="alert">{errors[id]}</p>
 }
 
-// รองรับ FR-RMP-01, FR-RMP-02 และ AC-RMP-01
+// รองรับ FR-RMP-01, FR-RMP-02, AC-RMP-01 และ FR-CHAT-01/02/08/12
 export default function App({ initialLoggedIn = true }) {
   const { isLoggedIn } = useAuth(initialLoggedIn)
+
   const [formOpen, setFormOpen] = useState(false)
   const [currentView, setCurrentView] = useState('profile')
   const [editOpen, setEditOpen] = useState(false)
@@ -76,12 +79,37 @@ export default function App({ initialLoggedIn = true }) {
     )
   }
 
+  if (
+    import.meta.env.DEV &&
+    import.meta.env.MODE === 'development' &&
+    import.meta.env.VITE_CHAT_DEMO_MODE === 'true'
+  ) {
+    return <ChatListPage />
+  }
+
   if (currentView === 'search-roommate') {
     return <SearchRoommatePage currentUserId="user-1" />
   }
 
   if (currentView === 'request-roommate') {
     return <RequestRoommatePage senderId="user-1" />
+  }
+
+  if (currentView === 'chat') {
+    return (
+      <>
+        <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6">
+          <button
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 font-semibold text-slate-800 hover:bg-slate-50"
+            onClick={() => setCurrentView('profile')}
+            type="button"
+          >
+            ← กลับไปหน้าโปรไฟล์
+          </button>
+        </div>
+        <ChatListPage />
+      </>
+    )
   }
 
   return (
@@ -108,7 +136,19 @@ export default function App({ initialLoggedIn = true }) {
           setCurrentView('request-roommate')
         }}
       />
-      <nav aria-label="เมนูโปรไฟล์" className="mb-6 flex gap-3">
+
+      <nav aria-label="เมนูเพิ่มเติม" className="mb-6 flex flex-wrap gap-3">
+        <button
+          className="rounded-lg border border-teal-700 bg-white px-5 py-3 font-semibold text-teal-700 hover:bg-teal-50 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
+          onClick={() => {
+            setFormOpen(false)
+            setCurrentView('chat')
+          }}
+          type="button"
+        >
+          แชทกับรูมเมท
+        </button>
+
         <button
           className="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-slate-50"
           onClick={() => setEditOpen(true)}
