@@ -10,12 +10,13 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from fastapi import Depends, FastAPI, File, Form, HTTPException, Query, Request, UploadFile
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import inspect
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session
 from starlette.responses import FileResponse
 
+from app.database import Base, create_database
 from app.controllers.chat_controller import (
     get_authenticated_user_id,
     get_chat_service,
@@ -33,7 +34,6 @@ from app.config import (
 )
 from app.models.chat_attachment import ChatAttachment
 from app.models.chat_message import (
-    Base,
     ChatMessage,
     ChatMessageCreate,
     ChatMessageRead,
@@ -122,11 +122,7 @@ def create_app(
     active_profile_checker = demo_provider or profile_checker
     active_contact_provider = demo_provider or contact_provider
 
-    engine = create_engine(
-        database_url,
-        connect_args={"check_same_thread": False} if "sqlite" in database_url else {},
-    )
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    engine, SessionLocal = create_database(database_url)
     Base.metadata.create_all(bind=engine)
 
     @asynccontextmanager
