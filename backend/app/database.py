@@ -5,6 +5,9 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.models.chat_message import Base
+from app.models.roommate_profile import RoommateProfile
+
+__all__ = ["Base", "RoommateProfile", "create_database"]
 
 
 def create_database(database_url: str) -> tuple[Engine, sessionmaker[Session]]:

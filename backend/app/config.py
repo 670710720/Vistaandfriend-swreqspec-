@@ -39,3 +39,6 @@ CHAT_USABILITY_MIN_SUCCESS_COUNT = 4
 
 # ASM-03: เขตเวลาที่ใช้เก็บวันและเวลาของข้อความ
 CHAT_TIMEZONE = "Asia/Bangkok"
+
+# FR-RMP-11, CON-DISCOVER-01: โปรไฟล์ใหม่ยังไม่เปิดให้ค้นหา
+PROFILE_DISCOVERY_DEFAULT = False
