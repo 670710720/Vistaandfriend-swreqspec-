@@ -1,5 +1,11 @@
 
 // ค่าจาก SPEC-RMP-001: CON-ROOM-01, CON-DATA-01, CON-VALID-01
+// FR-RMP-04, AC-RMP-02, AC-RMP-02A, CON-DATA-01, CON-VALID-01, Q-06
+export const SLEEP_BEHAVIOR_OPTIONS = ['กรน', 'กัดฟัน', 'นอนดิ้น', 'ไม่มีพฤติกรรมดังกล่าว', 'อื่น ๆ']
+export const SLEEP_MIN_SELECTIONS = 1
+export const SLEEP_NONE_EXCLUSIVE = 'ไม่มีพฤติกรรมดังกล่าว'
+export const SLEEP_OTHER_REQUIRES_DESCRIPTION = 'อื่น ๆ'
+
 export const PROFILE_CONFIG = {
   age: {
     min: 18,
@@ -29,7 +35,7 @@ export const PROFILE_CONFIG = {
     'จิตรกรรม',
   ],
   academicYears: ['1', '2', '3', '4', '5 ขึ้นไป'],
-  sleepBehaviors: ['กรน', 'กัดฟัน', 'นอนดิ้น', 'ไม่มีพฤติกรรมดังกล่าว', 'อื่น ๆ'],
+  sleepBehaviors: SLEEP_BEHAVIOR_OPTIONS,
   socialChannels: ['Facebook', 'Instagram', 'LINE', 'TikTok'],
 }
 
