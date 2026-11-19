@@ -76,6 +76,8 @@ PROFILE_YEAR_OPTIONS = ("1", "2", "3", "4", "5 ขึ้นไป")
 # FR-RMP-03, CON-VALID-01: ชนิดรูป ขนาด และการไม่ตรวจมิติภาพ
 PROFILE_IMAGE_FORMATS = ("image/jpeg", "image/png")
 PROFILE_IMAGE_MAX_MB = 5
+# Team decision for image validation: 1 MB = 1,000,000 bytes.
+PROFILE_IMAGE_MAX_BYTES = PROFILE_IMAGE_MAX_MB * 1_000_000
 PROFILE_IMAGE_CHECK_DIMENSIONS = False
 
 # FR-RMP-03, CON-VALID-01: รูปแบบเบอร์โทรศัพท์
