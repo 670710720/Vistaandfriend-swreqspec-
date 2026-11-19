@@ -1,12 +1,24 @@
 """Validation helpers for FR-RMP-05, FR-RMP-06, FR-RMP-07, and CON-VALID-01."""
 
+import json
 import re
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping
 
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Request,
+    UploadFile as FastAPIUploadFile,
+)
+from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette.datastructures import UploadFile
 
+from app.controllers.chat_controller import get_authenticated_user_id
 from app.config import (
     PROFILE_AGE_MAX,
     PROFILE_AGE_MIN,
@@ -28,6 +40,8 @@ from app.config import (
 )
 from app.models.roommate_profile import RoommateProfile
 
+router = APIRouter()
+
 
 class ProfileValidationError(ValueError):
     """Expose field-level create validation errors (FR-RMP-05/06/07)."""
@@ -43,6 +57,15 @@ class ProfileAlreadyExistsError(ValueError):
 
 class ProfilePersistenceError(RuntimeError):
     """Report failed atomic persistence without exposing database details (CON-REL-01, NFR-REL-01)."""
+
+
+def get_profile_db(request: Request) -> Generator[Session, None, None]:
+    """Provide the configured application session for FR-RMP-08 and CON-DATA-01."""
+    db = request.app.state.session_factory()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 def _parse_integer(value: object) -> int | None:
@@ -262,3 +285,47 @@ def save_roommate_profile(
         raise ProfilePersistenceError("ไม่สามารถบันทึกโปรไฟล์ได้ กรุณาลองใหม่") from error
 
     return profile
+
+
+@router.post("/api/roommate-profiles", status_code=201)
+def create_roommate_profile(
+    profile_data: str = Form(..., alias="profileData"),
+    profile_image: FastAPIUploadFile = File(..., alias="profileImage"),
+    db: Session = Depends(get_profile_db),
+    owner_id: str = Depends(get_authenticated_user_id),
+) -> JSONResponse:
+    """Create a profile only for trusted identity context (CON-AUTH-01, FR-RMP-08/09)."""
+    try:
+        payload_data = json.loads(profile_data)
+    except json.JSONDecodeError:
+        return JSONResponse(
+            status_code=422,
+            content={"errors": {"profileData": "ข้อมูลโปรไฟล์ไม่ถูกต้อง"}},
+        )
+    if not isinstance(payload_data, dict):
+        return JSONResponse(
+            status_code=422,
+            content={"errors": {"profileData": "ข้อมูลโปรไฟล์ไม่ถูกต้อง"}},
+        )
+
+    values: dict[str, object] = dict(payload_data)
+    values["profileImage"] = profile_image
+    try:
+        save_roommate_profile(db, owner_id=owner_id, values=values)
+    except ProfileValidationError as error:
+        return JSONResponse(status_code=422, content={"errors": error.errors})
+    except ProfileAlreadyExistsError as error:
+        return JSONResponse(
+            status_code=409,
+            content={"errors": {"profile": str(error)}},
+        )
+    except ProfilePersistenceError:
+        raise HTTPException(
+            status_code=503,
+            detail={"errors": {"profile": "ไม่สามารถบันทึกโปรไฟล์ได้ กรุณาลองใหม่"}},
+        )
+
+    return JSONResponse(
+        status_code=201,
+        content={"message": "สร้างโปรไฟล์สำเร็จ"},
+    )

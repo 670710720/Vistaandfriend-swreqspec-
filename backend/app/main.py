@@ -25,6 +25,7 @@ from app.controllers.chat_controller import (
 
 from app.api.profile_detail import router as profile_detail_router
 from app.api.search import router as search_router
+from app.roommate_profiles import router as roommate_profiles_router
 
 from app.config import (
     CHAT_ALLOWED_ATTACHMENT_TYPES,
@@ -143,6 +144,7 @@ def create_app(
     app.include_router(chat_router)
     app.include_router(search_router)
     app.include_router(profile_detail_router)
+    app.include_router(roommate_profiles_router)
 
 
     if demo_provider is not None:

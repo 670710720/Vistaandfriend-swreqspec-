@@ -956,4 +956,87 @@
 - ผลทดสอบ: `cd backend && pytest -v` ผ่าน 48 tests, ไม่ผ่าน 0; `cd frontend && npm test -- --run` ผ่าน 50 tests, ไม่ผ่าน 0. Backend แสดง Starlette deprecation warning เรื่อง `httpx`/`TestClient`.
 - ตามรอยข้อกำหนด 32 แถว: ครบ 18, ยังไม่ถึง 1, รอ Q-08 จำนวน 2, ช่องโหว่ 11.
 - ข้อค้นพบใหม่: F-01 ถึง F-08; คง G-1 ถึง G-4, G-6, G-7; ย้าย G-5 และ G-8 ไปหัวข้อแก้แล้วหลังตรวจ test inventory และ interface clarification.
+
+## 2026-11-19
+- คำสั่ง: `/implement T-08 specs/001-roommate-profile/tasks.md`; ผู้ใช้ระบุ `T-xx` ก่อน จึงถามยืนยัน task ID และได้รับคำตอบ `T-08`
+- ไฟล์ Frontend ที่แก้: `frontend/src/App.jsx`, `frontend/src/profileValidation.js`, `frontend/src/config.js`, `frontend/src/__tests__/profile-form.test.jsx`
+- ผลการทำงาน: เอาตัวเลือก "อื่น ๆ" และช่องกรอกเพิ่มเติมออก; ทำให้ "ไม่มีพฤติกรรมดังกล่าว" เลือกเดี่ยว และ validation ปฏิเสธค่าที่ไม่อยู่ในรายการหรือการเลือกแบบผสมตาม FR-RMP-04, CON-DATA-01, CON-VALID-01, Q-06
+- Tests: `test_AC_RMP_02_profile_form_accepts_required_fields_and_sleep_behavior`, `test_AC_RMP_02A_accept_valid_profile_values`, `test_AC_RMP_02A_rejects_invalid_sleep_behavior_selections`; `cd frontend && npm test` ผ่าน 104 tests ใน 9 files; `cd frontend && npm run build` ผ่าน; `git diff --check` ผ่าน; ไม่แก้ tests ที่ขึ้นต้น `test_TC_`
+- ไม่มี mockup ตาม task; จุดที่ทีมควรตรวจด้วยตาคือการเลือก "ไม่มีพฤติกรรมดังกล่าว" จะยกเลิกตัวเลือกอื่น และการเลือกตัวเลือกปกติจะยกเลิกตัวเลือกนี้
+- สถานะ T-08: เสร็จ รอทีมตรวจ; ไม่เริ่ม task ถัดไป
+
 - แก้เฉพาะ `specs/005-chat-roommate/rtm.md` และเพิ่มบันทึกนี้ต่อท้าย; ไม่แก้โค้ด, test, spec, plan หรือ tasks.
+
+## 2026-11-19
+- คำขอปรับ T-08: เพิ่มตัวเลือก "อื่น ๆ" และช่องคำอธิบาย; ทีมยืนยันว่าเมื่อเลือก "อื่น ๆ" ต้องกรอกคำอธิบาย และ "ไม่มีพฤติกรรมดังกล่าว" ต้องเลือกเดี่ยว
+- แก้เอกสาร requirement/plan/task เฉพาะส่วน Q-06, AC-RMP-02/02A/03, ค่าที่ตั้งได้ และเงื่อนไขเสร็จของ T-08; สถานะ T-08 เปลี่ยนเป็นรอทีมอนุมัติ spec/plan
+- ยังไม่แก้โค้ดหรือรันทดสอบรอบใหม่: รอทีมตรวจและอนุมัติเอกสารก่อน implementation ตามคำสั่ง; T-08 ยังไม่พร้อมทำ
+
+## 2026-11-19
+- คำสั่ง: `/implement T-08 specs/001-roommate-profile/tasks.md`; ทีมอนุมัติ Q-06 และเอกสารฉบับแก้แล้ว และอนุมัติ T-07 เป็นสถานะ `เสร็จ`
+- ไฟล์ Frontend ที่แก้: `frontend/src/App.jsx`, `frontend/src/profileValidation.js`, `frontend/src/config.js`, `frontend/src/__tests__/profile-form.test.jsx`
+- ผลการทำงาน: เพิ่มตัวเลือก "อื่น ๆ" พร้อมช่องคำอธิบายที่จำเป็น; คงกฎให้ "ไม่มีพฤติกรรมดังกล่าว" เลือกเดี่ยวตาม FR-RMP-04, CON-DATA-01, CON-VALID-01, Q-06
+- Tests: `test_AC_RMP_02_profile_form_accepts_required_fields_and_sleep_behavior`, `test_AC_RMP_02A_accept_valid_profile_values`, `test_AC_RMP_02A_rejects_invalid_sleep_behavior_selections`, `test_AC_RMP_03_requires_other_sleep_description`; `cd frontend && npm test` ผ่าน 105 tests ใน 9 files; `git diff --check` ผ่าน; ไม่แก้ tests ที่ขึ้นต้น `test_TC_`
+- ไม่มี mockup; ทีมควรตรวจด้วยตาว่าเมื่อเลือก "อื่น ๆ" ช่องคำอธิบายปรากฏและบังคับกรอก และเมื่อเลือก "ไม่มีพฤติกรรมดังกล่าว" ตัวเลือกอื่นถูกยกเลิก
+
+- สถานะ T-08: เสร็จ รอทีมตรวจ; ไม่เริ่ม task อื่น
+
+## 2026-11-19
+- คำสั่ง: `/verify specs/001-roommate-profile`
+- ผลทดสอบ: `cd frontend && npm test` ผ่าน 105 tests ใน 9 files; `cd backend && pytest -v` ยังรัน tests ไม่ได้ เพราะ collection error 4 จุดจาก dependency `python-multipart` ที่ไม่มี (เก็บได้ 65 items); ไม่ติดตั้ง dependency และไม่แก้โค้ด/tests
+- ตามรอยไปข้างหน้า 21 แถว: ครบ 2, ยังไม่ถึง 8, รอ Q-05 จำนวน 3, ช่องโหว่ 8
+- ข้อค้นพบคงค้าง F-02 และ F-07; เพิ่ม F-08 เรื่องสถานะ test cases ที่ยังรอ Q-04/Q-06/Q-07 ทั้งที่ตอบแล้ว; ย้าย F-06 ไป "แก้แล้ว" หลังตรวจโค้ดและ tests ตามคำตอบ Q-06
+- แก้เฉพาะ `specs/001-roommate-profile/rtm.md` และเพิ่มบันทึกนี้ต่อท้าย; ไม่แก้โค้ด, tests, spec, plan, tasks หรือ test-cases
+
+## 2026-11-19
+- คำสั่ง: `/implement-all specs/001-roommate-profile/tasks.md` — เฟส 0, T-01
+- ไฟล์ของ T-01: `backend/app/database.py`, `backend/app/main.py`, `backend/tests/test_database.py`
+- ผลการทำงาน: ย้ายการสร้าง engine และ session factory ไปไว้ใน helper ที่ใช้ซ้ำได้ และให้แอปใช้ helper เดิมโดยคงการตั้งค่า SQLite ไว้; test ตรวจทั้งการเชื่อมต่อและการเปิด session ด้วย SQLite ชั่วคราว
+- Tests: `cd backend && pytest -v` ผ่าน 111, ข้าม 3; `cd frontend && npm test` ผ่าน 105; `git diff --check` ผ่าน; มี Starlette deprecation warning เดิมเกี่ยวกับ `httpx`/`TestClient`
+- สถานะ T-01: เสร็จ รอทีมตรวจ
+- ยังไม่เริ่ม T-02: แม้สถานะใน tasks.md ระบุพร้อมทำ แต่จุดตรวจเฟส 0 ยังระบุว่าต้องกำหนดวิธีจัดเก็บรูป และ plan.md บอกว่าไม่กำหนดรูปแบบหรือวิธีจัดเก็บแทนทีม
+
+## 2026-11-19
+- คำสั่ง: ทำต่อ `/implement-all specs/001-roommate-profile/tasks.md` — เฟส 0, T-02
+- การตัดสินใจที่ถามทีม: ผู้ใช้ยืนยันให้จัดเก็บข้อมูลรูปโปรไฟล์เป็น BLOB ใน SQLite
+- ไฟล์ของ T-02: `backend/app/models/roommate_profile.py`, `backend/app/database.py`, `backend/app/config.py`, `backend/tests/test_roommate_profile_model.py`
+- ผลการทำงาน: เพิ่มโมเดลข้อมูลโปรไฟล์ตาม plan, ใช้ owner ID เป็น primary key เพื่อไม่ให้เจ้าของมีโปรไฟล์ซ้ำ, จัดเก็บรูปเป็น BLOB, และกำหนดสถานะค้นหาเริ่มต้นจาก `PROFILE_DISCOVERY_DEFAULT` ตาม FR-RMP-11/CON-DISCOVER-01
+- Tests: targeted `pytest tests/test_database.py tests/test_roommate_profile_model.py -v` ผ่าน 3; `cd backend && pytest -v` ผ่าน 113, ข้าม 3; `cd frontend && npm test` ผ่าน 105; `git diff --check` ผ่าน; มี Starlette deprecation warning เดิม
+- สถานะ T-02: เสร็จ รอทีมตรวจ
+- ขอบเขต: test ยืนยันสถานะเริ่มต้นและการเก็บ BLOB; การเชื่อมฐานข้อมูลโปรไฟล์เข้าผลค้นหา/API ไม่อยู่ในไฟล์ของ T-02 จึงยังไม่อ้างว่าทดสอบส่วนนี้แล้ว
+
+## 2026-11-19
+- บันทึกเพิ่มเติม T-02: หลังทีมยืนยันการเก็บรูปเป็น BLOB แล้ว ปรับจุดตรวจเฟส 0 ใน `tasks.md` ให้ระบุส่วน API/ผลค้นหาที่ยังไม่อยู่ในเฟสนี้ แทนข้อความเก่าที่ให้กำหนดวิธีเก็บรูป
+
+## 2026-11-19
+- คำสั่ง: `/implement-all specs/001-roommate-profile/tasks.md` — เฟส 1, T-03
+- ไฟล์: `backend/app/config.py`, `backend/tests/test_profile_config.py`
+- ผลการทำงาน: รวมค่าจำเป็นของโปรไฟล์และกฎจาก plan ไว้ใน backend config พร้อมคอมเมนต์อ้าง Requirement/Constraint
+- Tests: `test_T03_profile_config_covers_specified_validation_values`; `cd backend && pytest -v` ผ่าน 114, ข้าม 3; `cd frontend && npm test` ผ่าน 105; `git diff --check` ผ่าน; มี Starlette deprecation warning เดิม
+- สถานะ T-03: เสร็จ
+
+## 2026-11-19
+- คำสั่ง: `/implement-all specs/001-roommate-profile/tasks.md` — เฟส 1, T-04
+- การตัดสินใจที่ถามทีม: กำหนด 1 MB = 1,000,000 bytes และรับรูปผ่าน multipart/form-data
+- ไฟล์: `backend/app/roommate_profiles.py`, `backend/app/config.py`, `backend/tests/test_roommate_profile_validation.py`
+- ผลการทำงาน: เพิ่ม validation helper สำหรับฟิลด์จำเป็น อายุ เพศ คณะ ชั้นปี รูป เบอร์โทรศัพท์ จำนวนผู้พัก และพฤติกรรมการนอน; ใช้ค่าจาก config และยังไม่เพิ่ม endpoint
+- Tests: targeted 8 ผ่าน; `cd backend && pytest -v` ผ่าน 122, ข้าม 3; `cd frontend && npm test` ผ่าน 105; `git diff --check` ผ่าน; มี Starlette deprecation warning เดิม
+- สถานะ T-04: เสร็จ
+
+## 2026-11-19
+- คำสั่ง: `/implement-all specs/001-roommate-profile/tasks.md` — เฟส 1, T-05
+- ไฟล์: `backend/app/roommate_profiles.py`, `backend/tests/test_profile_api.py`
+- ผลการทำงาน: เพิ่ม persistence service ที่ตรวจข้อมูลก่อนเขียน, กำหนด owner ID แยกจาก payload, ใช้ transaction/rollback เมื่อ SQLite ล้มเหลว และบันทึกสถานะเริ่มต้นผ่าน model
+- Tests: targeted 3 ผ่าน; `cd backend && pytest -v` ผ่าน 125, ข้าม 3; `cd frontend && npm test` ผ่าน 105; `git diff --check` ผ่าน; มี Starlette deprecation warning เดิม
+- ขอบเขต: เป็น persistence service สำหรับให้ API ใช้; ยังไม่มี route สร้างโปรไฟล์ในแอปหลัก และยังไม่มีการยืนยัน authentication contract
+- สถานะ T-03/T-04/T-05: เสร็จ รอทีมตรวจ; ยังไม่เริ่ม T-06 เพราะรอแหล่ง identity/authentication
+
+## 2026-11-19
+- คำสั่ง: ทำต่อ `/implement-all specs/001-roommate-profile/tasks.md` — เฟส 1, T-06
+- การตัดสินใจที่ถามทีม: ใช้ `request.state.user_id` จาก trusted upstream middleware เป็น identity; API รับ multipart ที่มี JSON part `profileData` และ file part `profileImage`; สำเร็จตอบ 201 `{message}`, validation 422 `{errors}`, ไม่มี identity 401 และโปรไฟล์ซ้ำ 409
+- ไฟล์: `backend/app/roommate_profiles.py`, `backend/app/main.py`, `backend/tests/test_roommate_profile_auth.py`
+- ผลการทำงาน: เพิ่ม `POST /api/roommate-profiles`, ใช้ identity จาก trusted request context แทนค่าจาก payload, ปฏิเสธคำขอที่ไม่มี identity และป้องกันการสร้างโปรไฟล์ซ้ำ; route ถูกลงทะเบียนในแอป
+- Tests: `pytest tests/test_roommate_profile_auth.py -v` ผ่าน 2; `cd backend && pytest -v` ผ่าน 127, ข้าม 3; `cd frontend && npm test` ผ่าน 105; `git diff --check` ผ่าน; มี Starlette deprecation warning เดิมเกี่ยวกับ `httpx`/`TestClient`
+- ระหว่างตรวจพบ FastAPI ไม่รับ Starlette `UploadFile` เป็นชนิด field ของ route; เปลี่ยน annotation ของ endpoint เป็น `fastapi.UploadFile` แล้ว targeted/full tests ผ่าน
+- หมายเหตุ production: ยังไม่มี trusted upstream provider ในแอปปัจจุบัน; เมื่อไม่มี `request.state.user_id` API ปฏิเสธคำขอแบบ fail-closed ด้วย 401
+- สถานะ T-06: เสร็จ รอทีมตรวจ
