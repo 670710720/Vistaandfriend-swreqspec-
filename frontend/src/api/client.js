@@ -437,4 +437,19 @@ export async function sendChatMessageWithAttachment({ senderId, receiverId, text
     status: normalizedMessage.status ?? 'Sent',
   }
 
+// รองรับ FR-RPS-03 และ AC-RPS-02
+export async function saveRoommatePreference(payload) {
+  const response = await fetch('/api/roommate-preferences', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+
+  if (!response.ok) {
+    throw new Error('Unable to save roommate preference')
+  }
+
+  return response.json()
 }

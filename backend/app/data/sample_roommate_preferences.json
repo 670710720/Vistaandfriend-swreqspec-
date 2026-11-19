@@ -1,0 +1,20 @@
+[
+  {
+    "owner_id": "student-1001",
+    "has_profile": true,
+    "preference": {
+      "owner_id": "student-1001",
+      "room_occupants": 2,
+      "room_type": "airConditioned",
+      "sleep_behavior": "กรน",
+      "cleanliness": "สะอาดมาก",
+      "sleep_time": "22:00–00:00",
+      "additional_text": "ต้องการห้องเงียบและเรียบร้อย"
+    }
+  },
+  {
+    "owner_id": "student-404",
+    "has_profile": false,
+    "preference": null
+  }
+]

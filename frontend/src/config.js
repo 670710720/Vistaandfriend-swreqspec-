@@ -63,3 +63,15 @@ export const CHAT_CONFIG = {
   // ASM-03
   timezone: 'Asia/Bangkok',
 }
+
+// FR-RPS-03, FR-RPS-09, CON-RPS-03, CON-RPS-06
+export const ROOMMATE_PREFERENCE_CONFIG = {
+  roomOccupants: {
+    airConditioned: { min: 1, max: 4 },
+    fan: { min: 1, max: 3 },
+  },
+  sleepBehaviors: ['กรน', 'กัดฟัน', 'นอนดิ้น', 'ไม่มีพฤติกรรมดังกล่าว'],
+  cleanliness: ['สะอาดมาก', 'ปานกลาง', 'ยืดหยุ่น'],
+  sleepTime: ['ก่อน 22:00', '22:00–00:00', 'หลัง 00:00', 'ยืดหยุ่น'],
+  additionalText: { maxLength: 500 },
+}

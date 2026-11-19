@@ -133,10 +133,6 @@ export default function App({ initialLoggedIn = true }) {
 
       <Sidebar
         isLoggedIn={isLoggedIn}
-        onOpenProfile={() => {
-          setFormOpen(true)
-          setCurrentView('profile')
-        }}
         onOpenSearch={() => {
           setFormOpen(false)
           setCurrentView('search-roommate')
