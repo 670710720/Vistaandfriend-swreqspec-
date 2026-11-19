@@ -56,15 +56,64 @@ test('test_AC_RMP_02_profile_form_accepts_required_fields_and_sleep_behavior', (
   expect(screen.getByLabelText('รูปแบบห้อง').value).toBe('airConditioned')
   expect(screen.getByLabelText('จำนวนผู้พัก').value).toBe('1')
   expect(screen.getByLabelText('กรน').checked).toBe(true)
+  expect(screen.getByLabelText('อื่น ๆ').checked).toBe(false)
+
+  fireEvent.click(screen.getByLabelText('อื่น ๆ'))
+  expect(screen.getByLabelText('อื่น ๆ').checked).toBe(true)
+  expect(screen.getByLabelText('ระบุพฤติกรรมการนอนเพิ่มเติม').required).toBe(true)
+  fireEvent.change(screen.getByLabelText('ระบุพฤติกรรมการนอนเพิ่มเติม'), {
+    target: { value: 'นอนละเมอ' },
+  })
+  expect(screen.getByLabelText('ระบุพฤติกรรมการนอนเพิ่มเติม').value).toBe('นอนละเมอ')
+  expect(screen.getByLabelText('กรน').checked).toBe(true)
+
+  fireEvent.click(screen.getByLabelText('ไม่มีพฤติกรรมดังกล่าว'))
+  expect(screen.getByLabelText('ไม่มีพฤติกรรมดังกล่าว').checked).toBe(true)
+  expect(screen.getByLabelText('กรน').checked).toBe(false)
+  expect(screen.getByLabelText('อื่น ๆ').checked).toBe(false)
+
+  fireEvent.click(screen.getByLabelText('กัดฟัน'))
+  expect(screen.getByLabelText('กัดฟัน').checked).toBe(true)
+  expect(screen.getByLabelText('ไม่มีพฤติกรรมดังกล่าว').checked).toBe(false)
 })
 
 // AC-RMP-02A: ค่าที่ผ่าน validation ต้องให้ดำเนินการยืนยันการสร้างโปรไฟล์ต่อได้
 test('test_AC_RMP_02A_accept_valid_profile_values', () => {
   openProfileForm()
   fillValidProfile()
+  fireEvent.click(screen.getByLabelText('อื่น ๆ'))
+  fireEvent.change(screen.getByLabelText('ระบุพฤติกรรมการนอนเพิ่มเติม'), {
+    target: { value: 'นอนละเมอ' },
+  })
   fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
 
   expect(screen.getByRole('status').textContent).toContain('สามารถดำเนินการยืนยันการสร้างโปรไฟล์ได้')
+})
+
+// AC-RMP-02A: พฤติกรรมที่ไม่อยู่ในรายการหรือเลือกตัวเลือกพิเศษร่วมกันต้องไม่ผ่าน validation
+test('test_AC_RMP_02A_rejects_invalid_sleep_behavior_selections', () => {
+  const mixedNoneSelection = validateProfile(
+    validProfileValues({ sleepBehaviors: ['ไม่มีพฤติกรรมดังกล่าว', 'กรน'] }),
+  )
+  const missingOtherDescription = validateProfile(
+    validProfileValues({ sleepBehaviors: ['อื่น ๆ'] }),
+  )
+
+  expect(mixedNoneSelection.sleepBehaviors).toBe(
+    'ไม่สามารถเลือก "ไม่มีพฤติกรรมดังกล่าว" ร่วมกับรายการอื่นได้',
+  )
+  expect(missingOtherDescription.otherSleepBehavior).toBe('กรุณาระบุพฤติกรรมการนอนเพิ่มเติม')
+})
+
+// AC-RMP-03: เมื่อเลือก "อื่น ๆ" แต่ไม่ระบุคำอธิบาย ต้องแจ้งให้กรอกและไม่แสดงผลสำเร็จ
+test('test_AC_RMP_03_requires_other_sleep_description', () => {
+  openProfileForm()
+  fillValidProfile()
+  fireEvent.click(screen.getByLabelText('อื่น ๆ'))
+  fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
+
+  expect(screen.getByText('กรุณาระบุพฤติกรรมการนอนเพิ่มเติม')).toBeTruthy()
+  expect(screen.queryByRole('status')).toBeNull()
 })
 
 // AC-RMP-03: เมื่อข้อมูลจำเป็นไม่ครบ ต้องแจ้งให้กรอกและไม่แสดงผลสำเร็จ

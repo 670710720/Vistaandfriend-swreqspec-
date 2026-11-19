@@ -1,6 +1,12 @@
-import { PROFILE_CONFIG } from './config.js'
+import {
+  PROFILE_CONFIG,
+  SLEEP_BEHAVIOR_OPTIONS,
+  SLEEP_MIN_SELECTIONS,
+  SLEEP_NONE_EXCLUSIVE,
+  SLEEP_OTHER_REQUIRES_DESCRIPTION,
+} from './config.js'
 
-// รองรับ FR-RMP-05, FR-RMP-06, FR-RMP-07 และ CON-DATA-01, CON-VALID-01, CON-ROOM-01
+// รองรับ FR-RMP-05, FR-RMP-06, FR-RMP-07, AC-RMP-02A, CON-DATA-01, CON-VALID-01, CON-ROOM-01, Q-06
 export function validateProfile(values) {
   const errors = {}
 
@@ -66,11 +72,21 @@ export function validateProfile(values) {
     }
   }
 
-  if (!values.sleepBehaviors.length) {
+  if (values.sleepBehaviors.length < SLEEP_MIN_SELECTIONS) {
     errors.sleepBehaviors = 'กรุณาเลือกพฤติกรรมการนอนอย่างน้อยหนึ่งรายการ'
+  } else if (values.sleepBehaviors.some((behavior) => !SLEEP_BEHAVIOR_OPTIONS.includes(behavior))) {
+    errors.sleepBehaviors = 'กรุณาเลือกพฤติกรรมการนอนจากรายการที่กำหนด'
+  } else if (
+    values.sleepBehaviors.includes(SLEEP_NONE_EXCLUSIVE) &&
+    values.sleepBehaviors.some((behavior) => behavior !== SLEEP_NONE_EXCLUSIVE)
+  ) {
+    errors.sleepBehaviors = 'ไม่สามารถเลือก "ไม่มีพฤติกรรมดังกล่าว" ร่วมกับรายการอื่นได้'
   }
 
-  if (values.sleepBehaviors.includes('อื่น ๆ') && !values.otherSleepBehavior.trim()) {
+  if (
+    values.sleepBehaviors.includes(SLEEP_OTHER_REQUIRES_DESCRIPTION) &&
+    !String(values.otherSleepBehavior ?? '').trim()
+  ) {
     errors.otherSleepBehavior = 'กรุณาระบุพฤติกรรมการนอนเพิ่มเติม'
   }
 

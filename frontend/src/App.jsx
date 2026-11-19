@@ -1,6 +1,10 @@
 
 import { useState } from 'react'
-import { PROFILE_CONFIG } from './config.js'
+import {
+  PROFILE_CONFIG,
+  SLEEP_NONE_EXCLUSIVE,
+  SLEEP_OTHER_REQUIRES_DESCRIPTION,
+} from './config.js'
 import { useAuth } from './hooks/useAuth.js'
 import ProfileEditPage from './pages/ProfileEditPage.jsx'
 import { validateProfile } from './profileValidation.js'
@@ -29,7 +33,7 @@ function FieldError({ id, errors }) {
   return <p className="mt-1 text-sm text-red-700" role="alert">{errors[id]}</p>
 }
 
-// รองรับ FR-RMP-01, FR-RMP-02, AC-RMP-01 และ FR-CHAT-01/02/08/12
+// รองรับ FR-RMP-01, FR-RMP-02, FR-RMP-04, AC-RMP-01, AC-RMP-02, AC-RMP-02A และ FR-CHAT-01/02/08/12
 export default function App({ initialLoggedIn = true }) {
   const { isLoggedIn } = useAuth(initialLoggedIn)
 
@@ -45,12 +49,18 @@ export default function App({ initialLoggedIn = true }) {
     setValid(false)
   }
 
+  // รองรับ FR-RMP-04, AC-RMP-02, CON-DATA-01, CON-VALID-01, Q-06
   function toggleSleepBehavior(behavior) {
     setValues((current) => {
       const selected = current.sleepBehaviors.includes(behavior)
-      const sleepBehaviors = selected
-        ? current.sleepBehaviors.filter((item) => item !== behavior)
-        : [...current.sleepBehaviors, behavior]
+      const withoutExclusive = current.sleepBehaviors.filter(
+        (item) => item !== SLEEP_NONE_EXCLUSIVE,
+      )
+      const sleepBehaviors = behavior === SLEEP_NONE_EXCLUSIVE
+        ? (selected ? [] : [behavior])
+        : selected
+          ? withoutExclusive.filter((item) => item !== behavior)
+          : [...withoutExclusive, behavior]
       return { ...current, sleepBehaviors }
     })
     setValid(false)
@@ -168,7 +178,6 @@ export default function App({ initialLoggedIn = true }) {
             roomType: 'airConditioned',
             occupants: 2,
             sleepBehaviors: ['กรน', 'นอนดิ้น'],
-            otherSleepBehavior: '',
             isSearchable: true,
           }}
         />
@@ -320,12 +329,13 @@ export default function App({ initialLoggedIn = true }) {
                 ))}
               </div>
               <FieldError errors={errors} id="sleepBehaviors" />
-              {values.sleepBehaviors.includes('อื่น ๆ') && (
+              {values.sleepBehaviors.includes(SLEEP_OTHER_REQUIRES_DESCRIPTION) && (
                 <label className="mt-4 block text-sm font-medium text-slate-800">
                   ระบุพฤติกรรมการนอนเพิ่มเติม
                   <input
                     className="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5"
                     onChange={(event) => update('otherSleepBehavior', event.target.value)}
+                    required
                     value={values.otherSleepBehavior}
                   />
                   <FieldError errors={errors} id="otherSleepBehavior" />
