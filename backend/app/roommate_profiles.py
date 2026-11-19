@@ -3,6 +3,8 @@
 import re
 from collections.abc import Mapping
 
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 from starlette.datastructures import UploadFile
 
 from app.config import (
@@ -16,6 +18,7 @@ from app.config import (
     PROFILE_PHONE_DIGITS,
     PROFILE_PHONE_SEPARATORS,
     PROFILE_REQUIRED_FIELDS,
+    PROFILE_SOCIAL_CHANNELS,
     PROFILE_YEAR_OPTIONS,
     ROOM_OCCUPANCY_LIMITS,
     SLEEP_BEHAVIOR_OPTIONS,
@@ -23,6 +26,23 @@ from app.config import (
     SLEEP_NONE_EXCLUSIVE,
     SLEEP_OTHER_REQUIRES_DESCRIPTION,
 )
+from app.models.roommate_profile import RoommateProfile
+
+
+class ProfileValidationError(ValueError):
+    """Expose field-level create validation errors (FR-RMP-05/06/07)."""
+
+    def __init__(self, errors: dict[str, str]) -> None:
+        self.errors = errors
+        super().__init__("Profile data failed validation")
+
+
+class ProfileAlreadyExistsError(ValueError):
+    """Prevent a second profile for the same owner (CON-PROFILE-01)."""
+
+
+class ProfilePersistenceError(RuntimeError):
+    """Report failed atomic persistence without exposing database details (CON-REL-01, NFR-REL-01)."""
 
 
 def _parse_integer(value: object) -> int | None:
@@ -59,6 +79,10 @@ def validate_profile_payload(values: Mapping[str, object]) -> dict[str, str]:
         elif value is None or (isinstance(value, str) and not value.strip()):
             errors[field] = "กรุณากรอกข้อมูลให้ครบถ้วน"
 
+    nickname = values.get("nickname")
+    if "nickname" not in errors and not isinstance(nickname, str):
+        errors["nickname"] = "กรุณากรอกชื่อเล่นเป็นข้อความ"
+
     age = _parse_integer(values.get("age"))
     if "age" not in errors:
         if age is None or not PROFILE_AGE_MIN <= age <= PROFILE_AGE_MAX:
@@ -87,13 +111,26 @@ def validate_profile_payload(values: Mapping[str, object]) -> dict[str, str]:
 
     phone = values.get("phone")
     if "phone" not in errors:
-        phone_value = str(phone)
-        for separator in PROFILE_PHONE_SEPARATORS:
-            phone_value = phone_value.replace(separator, "")
-        if not phone_value.isascii() or not phone_value.isdigit() or len(phone_value) != PROFILE_PHONE_DIGITS:
+        if not isinstance(phone, str):
             errors["phone"] = (
                 f"เบอร์โทรศัพท์ต้องมีตัวเลข {PROFILE_PHONE_DIGITS} หลัก"
             )
+        else:
+            phone_value = phone
+            for separator in PROFILE_PHONE_SEPARATORS:
+                phone_value = phone_value.replace(separator, "")
+            if (
+                not phone_value.isascii()
+                or not phone_value.isdigit()
+                or len(phone_value) != PROFILE_PHONE_DIGITS
+            ):
+                errors["phone"] = (
+                    f"เบอร์โทรศัพท์ต้องมีตัวเลข {PROFILE_PHONE_DIGITS} หลัก"
+                )
+
+    other_sleep_behavior = values.get("otherSleepBehavior")
+    if other_sleep_behavior is not None and not isinstance(other_sleep_behavior, str):
+        errors["otherSleepBehavior"] = "กรุณาระบุพฤติกรรมการนอนเพิ่มเติม"
 
     room_type = values.get("roomType")
     occupancy_rule = ROOM_OCCUPANCY_LIMITS.get(room_type) if isinstance(room_type, str) else None
@@ -128,3 +165,100 @@ def validate_profile_payload(values: Mapping[str, object]) -> dict[str, str]:
             errors["otherSleepBehavior"] = "กรุณาระบุพฤติกรรมการนอนเพิ่มเติม"
 
     return errors
+
+
+def save_roommate_profile(
+    db: Session,
+    owner_id: str,
+    values: Mapping[str, object],
+) -> RoommateProfile:
+    """Persist validated profile data atomically (FR-RMP-08/11, CON-REL-01, CON-DISCOVER-01, NFR-REL-01)."""
+    errors = validate_profile_payload(values)
+    if errors:
+        raise ProfileValidationError(errors)
+
+    if db.get(RoommateProfile, owner_id) is not None:
+        db.rollback()
+        raise ProfileAlreadyExistsError("นักศึกษามีโปรไฟล์หาเมทอยู่แล้ว")
+
+    age = _parse_integer(values["age"])
+    occupants = _parse_integer(values["occupants"])
+    profile_image = values["profileImage"]
+    sleep_behaviors = values["sleepBehaviors"]
+    if (
+        age is None
+        or occupants is None
+        or not isinstance(profile_image, UploadFile)
+        or not isinstance(sleep_behaviors, (list, tuple))
+    ):
+        raise ProfileValidationError({"profile": "ข้อมูลโปรไฟล์ไม่ถูกต้อง"})
+
+    nickname = values.get("nickname")
+    gender = values.get("gender")
+    faculty = values.get("faculty")
+    academic_year = values.get("academicYear")
+    phone = values.get("phone")
+    room_type = values.get("roomType")
+    other_sleep_behavior = values.get("otherSleepBehavior")
+    if (
+        not isinstance(nickname, str)
+        or not isinstance(gender, str)
+        or not isinstance(faculty, str)
+        or not isinstance(academic_year, str)
+        or not isinstance(phone, str)
+        or not isinstance(room_type, str)
+        or (other_sleep_behavior is not None and not isinstance(other_sleep_behavior, str))
+    ):
+        raise ProfileValidationError({"profile": "ข้อมูลโปรไฟล์ไม่ถูกต้อง"})
+
+    social_values = values.get("social")
+    if social_values is not None and not isinstance(social_values, Mapping):
+        raise ProfileValidationError({"social": "ข้อมูลโซเชียลไม่ถูกต้อง"})
+
+    social_fields: dict[str, str | None] = {}
+    for channel in PROFILE_SOCIAL_CHANNELS:
+        field_name = channel.lower()
+        social_value = (
+            social_values.get(channel)
+            if isinstance(social_values, Mapping)
+            else values.get(field_name)
+        )
+        if social_value is not None and not isinstance(social_value, str):
+            raise ProfileValidationError({field_name: "ข้อมูลโซเชียลต้องเป็นข้อความ"})
+        social_fields[field_name] = social_value
+
+    try:
+        profile_image.file.seek(0)
+        image_bytes = profile_image.file.read()
+        profile_image.file.seek(0)
+    except OSError as error:
+        db.rollback()
+        raise ProfilePersistenceError("ไม่สามารถอ่านรูปโปรไฟล์ได้") from error
+
+    profile = RoommateProfile(
+        user_id=owner_id,
+        nickname=nickname,
+        age=age,
+        gender=gender,
+        faculty=faculty,
+        academic_year=academic_year,
+        profile_image=image_bytes,
+        phone=phone,
+        facebook=social_fields["facebook"],
+        instagram=social_fields["instagram"],
+        line=social_fields["line"],
+        tiktok=social_fields["tiktok"],
+        room_type=room_type,
+        room_occupants=occupants,
+        sleep_behaviors=list(sleep_behaviors),
+        other_sleep_behavior=other_sleep_behavior,
+    )
+
+    try:
+        db.add(profile)
+        db.commit()
+    except SQLAlchemyError as error:
+        db.rollback()
+        raise ProfilePersistenceError("ไม่สามารถบันทึกโปรไฟล์ได้ กรุณาลองใหม่") from error
+
+    return profile
