@@ -1,6 +1,9 @@
 
 import { useState } from 'react'
-import { createRoommateProfile } from './api/client.js'
+import {
+  createRoommateProfile,
+  fetchRoommateProfileStatus,
+} from './api/client.js'
 import {
   PROFILE_CONFIG,
   SLEEP_NONE_EXCLUSIVE,
@@ -34,8 +37,17 @@ function FieldError({ id, errors }) {
   return <p className="mt-1 text-sm text-red-700" role="alert">{errors[id]}</p>
 }
 
+// รองรับ CON-AUTH-01 และคำตอบ Q-04
+export function redirectToLogin({
+  showWarning = (message) => window.alert(message),
+  navigate = (path) => window.location.assign(path),
+} = {}) {
+  showWarning('กรุณาเข้าสู่ระบบก่อนสร้างโปรไฟล์')
+  navigate('/login')
+}
+
 // รองรับ FR-RMP-01, FR-RMP-02, FR-RMP-04, AC-RMP-01, AC-RMP-02, AC-RMP-02A และ FR-CHAT-01/02/08/12
-export default function App({ initialLoggedIn = true }) {
+export default function App({ initialLoggedIn = true, onLoginRequired = redirectToLogin }) {
   const { isLoggedIn } = useAuth(initialLoggedIn)
 
   const [formOpen, setFormOpen] = useState(false)
@@ -47,6 +59,8 @@ export default function App({ initialLoggedIn = true }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [created, setCreated] = useState(false)
   const [submitError, setSubmitError] = useState('')
+  const [isCheckingProfile, setIsCheckingProfile] = useState(false)
+  const [profileAccessError, setProfileAccessError] = useState('')
 
   function update(field, value) {
     setValues((current) => ({ ...current, [field]: value }))
@@ -88,6 +102,41 @@ export default function App({ initialLoggedIn = true }) {
     const nextErrors = validateProfile(values)
     setErrors(nextErrors)
     setValid(Object.keys(nextErrors).length === 0)
+  }
+
+  // รองรับ FR-RMP-01/02, CON-AUTH-01 และ CON-PROFILE-01
+  async function openCreateProfile() {
+    if (isCheckingProfile) return
+    setCurrentView('profile')
+    setFormOpen(false)
+    setProfileAccessError('')
+
+    if (!isLoggedIn) {
+      onLoginRequired()
+      return
+    }
+
+    setIsCheckingProfile(true)
+    try {
+      const hasProfile = await fetchRoommateProfileStatus()
+      if (hasProfile) {
+        setProfileAccessError('ไม่สามารถสร้างโปรไฟล์ใหม่ได้')
+        return
+      }
+      setFormOpen(true)
+    } catch (error) {
+      if (error?.status === 401) {
+        onLoginRequired()
+        return
+      }
+      setProfileAccessError(
+        error instanceof Error && error.message
+          ? error.message
+          : 'ไม่สามารถตรวจสอบโปรไฟล์ได้ กรุณาลองใหม่',
+      )
+    } finally {
+      setIsCheckingProfile(false)
+    }
   }
 
   // รองรับ FR-RMP-08, FR-RMP-09, AC-RMP-05 และ CON-AUTH-01
@@ -162,6 +211,13 @@ export default function App({ initialLoggedIn = true }) {
           <h1 className="mt-2 text-3xl font-bold text-slate-900">โปรไฟล์หาเมท</h1>
         </header>
         <p role="alert">กรุณาเข้าสู่ระบบก่อนใช้งานฟังก์ชันค้นหาเมท</p>
+        <button
+          className="mt-4 rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800"
+          onClick={onLoginRequired}
+          type="button"
+        >
+          สร้างโปรไฟล์หาเมท
+        </button>
       </main>
     )
   }
@@ -210,10 +266,7 @@ export default function App({ initialLoggedIn = true }) {
 
       <Sidebar
         isLoggedIn={isLoggedIn}
-        onOpenProfile={() => {
-          setFormOpen(true)
-          setCurrentView('profile')
-        }}
+        onOpenProfile={openCreateProfile}
         onOpenSearch={() => {
           setFormOpen(false)
           setCurrentView('search-roommate')
@@ -223,6 +276,13 @@ export default function App({ initialLoggedIn = true }) {
           setCurrentView('request-roommate')
         }}
       />
+
+      {isCheckingProfile && (
+        <p className="mb-4 text-sm text-slate-700" role="status">กำลังตรวจสอบโปรไฟล์...</p>
+      )}
+      {profileAccessError && (
+        <p className="mb-4 text-sm text-red-700" role="alert">{profileAccessError}</p>
+      )}
 
       <nav aria-label="เมนูเพิ่มเติม" className="mb-6 flex flex-wrap gap-3">
         <button

@@ -20,7 +20,7 @@
 | Vitest | ทีมเลือกเอง ไม่ได้มาจาก spec | มี frontend tests อยู่แล้ว; ใช้ทดสอบหน้าจอและ validation ตาม AC โดยสถานะ test cases ต้องให้ทีมตรวจเอง |
 | pytest | ทีมเลือกเอง ไม่ได้มาจาก spec | มีการตั้งค่า pytest ใน backend; ใช้ทดสอบการเชื่อมต่อฐานข้อมูล, validation และ API ตาม AC |
 
-รายละเอียดแหล่ง identity/authentication, วิธีส่งและจัดเก็บรูป และสัญญาตรวจโปรไฟล์เดิมยังไม่ระบุใน spec/plan; ทีมต้องกำหนดก่อน implement ส่วนที่พึ่งพารายละเอียดเหล่านี้ (CON-AUTH-01, CON-PROFILE-01, FR-RMP-03, FR-RMP-08).
+ทีมยืนยันให้ใช้ trusted upstream middleware ที่ใส่ `request.state.user_id` เป็นแหล่ง identity, รับรูปผ่าน multipart และเก็บเป็น BLOB ใน SQLite; `POST /api/roommate-profiles` ใช้ parts `profileData`/`profileImage` และ API ตรวจโปรไฟล์ปัจจุบันใช้ `GET /api/roommate-profiles/me` ตอบ `{ "hasProfile": boolean }` (CON-AUTH-01, CON-PROFILE-01, FR-RMP-03, FR-RMP-08). Production identity provider ยังไม่เชื่อมกับแอป
 
 ## 3. โมเดลข้อมูล
 
@@ -40,8 +40,8 @@
 
 | Method / path | Input/output หลัก | รองรับ |
 |---|---|---|
-| `POST /api/roommate-profiles` (ข้อเสนอทางเทคนิค) | Input: ข้อมูลโปรไฟล์และรูปแบบรูปที่ทีมกำหนด; เจ้าของต้องมาจากบริบท authentication ไม่รับการระบุเจ้าของแทน; Output: ผล validation, ผลบันทึก หรือข้อผิดพลาด | FR-RMP-03 ถึง FR-RMP-09; CON-AUTH-01, CON-PROFILE-01, CON-DATA-01, CON-VALID-01, CON-REL-01, CON-ROOM-01, NFR-REL-01 |
-| API ตรวจการเข้าสู่ระบบและโปรไฟล์เดิม (method/path รอทีมกำหนด) | Input: บริบทผู้ใช้; Output: ผลยืนยันตัวตนและมี/ไม่มีโปรไฟล์ เพื่อควบคุมการเปิดแบบฟอร์ม | FR-RMP-01, FR-RMP-02, CON-AUTH-01, CON-PROFILE-01, NFR-SEC-01 |
+| `POST /api/roommate-profiles` | Input: multipart parts `profileData` (JSON) และ `profileImage` (file); owner มาจาก trusted identity; Output: 201 `{message}`, 422 `{errors}`, 401 เมื่อไม่มี identity, 409 เมื่อมีโปรไฟล์แล้ว | FR-RMP-03 ถึง FR-RMP-09; CON-AUTH-01, CON-PROFILE-01, CON-DATA-01, CON-VALID-01, CON-REL-01, CON-ROOM-01, NFR-REL-01 |
+| `GET /api/roommate-profiles/me` | Input: trusted identity จาก middleware; Output: `{ "hasProfile": boolean }`; ตอบ 401 เมื่อไม่มี identity | FR-RMP-01, FR-RMP-02, CON-AUTH-01, CON-PROFILE-01, NFR-SEC-01 |
 | API เปลี่ยนสถานะให้ค้นหา (method/path และ input/output รอ Q-05) | ไม่กำหนดจนกว่าจะมีคำตอบเรื่องตำแหน่ง/วิธีเปิดและการปิดกลับ | FR-RMP-11, CON-DISCOVER-01 |
 
 การค้นหา/จับคู่จริงไม่สร้างเป็น API ของ UC-01; การตรวจว่าผลค้นหาแสดงโปรไฟล์ตามสถานะให้ประสานกับ UC-04 ตามขอบเขตใน spec (FR-RMP-10, CON-DISCOVER-01).
@@ -55,7 +55,7 @@
 | ผลการสร้าง | ไม่มี UI ID; ไม่มี mockup ทีมออกแบบเอง | แสดงข้อความเมื่อสร้างโปรไฟล์สำเร็จ; รายละเอียดข้อความยึด spec (FR-RMP-08, FR-RMP-09) |
 | จุดควบคุมสถานะให้ค้นหา | ไม่มี UI ID; ไม่มี mockup; ยังไม่กำหนดก่อนคำตอบ Q-05 | แยกจากการบันทึกโปรไฟล์และเป็นการกระทำของเจ้าของ; วิธีเปิด/ปิดยังรอ Q-05 (FR-RMP-11, CON-DISCOVER-01) |
 
-กรณียังไม่เข้าสู่ระบบต้องนำไปหน้าเข้าสู่ระบบพร้อมคำเตือนตามคำตอบ Q-04; spec ยังไม่มี AC เฉพาะกรณีนี้ จึงไม่สร้าง AC ID ใหม่ (CON-AUTH-01). ไม่มี mockup ใน `specs/001-roommate-profile/mockups/` หรือ `specs/000-shared/mockups/`; ไม่มี UI ID ใน spec.
+กรณียังไม่เข้าสู่ระบบเมื่อเลือกเมนูสร้างโปรไฟล์ ให้แสดง browser alert "กรุณาเข้าสู่ระบบก่อนสร้างโปรไฟล์" แล้วนำทางไป `/login` ตามคำตอบ Q-04; spec ยังไม่มี AC เฉพาะกรณีนี้ จึงไม่สร้าง AC ID ใหม่ (CON-AUTH-01). ไม่มี mockup ใน `specs/001-roommate-profile/mockups/` หรือ `specs/000-shared/mockups/`; ไม่มี UI ID ใน spec.
 
 ## 5. ตารางตรวจ Constraints
 
@@ -63,8 +63,8 @@
 
 | Constraint ID | ถูกนำไปใช้ที่ไหนใน plan | สถานะ |
 |---|---|---|
-| CON-AUTH-01 | API ตรวจ identity ก่อนสร้าง; เมื่อยังไม่ login นำไปหน้า login พร้อมเตือนตาม Q-04 | ยังไม่ได้ใช้จริง เพราะทีมต้องกำหนดแหล่ง identity/authentication ก่อน implement |
-| CON-PROFILE-01 | ตรวจว่าเจ้าของยังไม่มีโปรไฟล์ก่อนเปิดฟอร์ม/สร้าง; จำกัดหนึ่งโปรไฟล์ต่อเจ้าของตาม ASM-02 | ยังไม่ได้ใช้จริง เพราะทีมต้องกำหนดสัญญาตรวจโปรไฟล์เดิมก่อน implement |
+| CON-AUTH-01 | API สร้าง/ตรวจสถานะอ่าน `request.state.user_id`; UI นำผู้ใช้ที่ยังไม่ login ไป `/login` พร้อมเตือนตาม Q-04 | ทำแล้วตามสัญญาที่ทีมยืนยัน; production provider ยังไม่เชื่อม |
+| CON-PROFILE-01 | UI เรียก `GET /api/roommate-profiles/me` ก่อนเปิดแบบฟอร์ม; API สร้างยังบังคับหนึ่งโปรไฟล์ต่อเจ้าของ | ทำแล้ว |
 | CON-DATA-01 | ฟิลด์จำเป็นในโมเดลและ validation ก่อนยืนยัน/บันทึก | ใช้แล้ว |
 | CON-VALID-01 | ตรวจรูปแบบและค่าที่อนุญาตใน validation ฝั่ง backend; หน้าจอใช้ config ชุดเดียวกันตามค่าที่ตั้งได้ | ใช้แล้ว |
 | CON-REL-01 | ไม่สร้างโปรไฟล์เมื่อ validation ไม่ผ่าน; ทดสอบ AC-RMP-03, AC-RMP-04, AC-RMP-04A | ใช้แล้ว |
@@ -110,7 +110,7 @@
 
 ## 7. ลำดับงาน
 
-1. ให้ทีมกำหนดรายละเอียดทางเทคนิคที่ spec ยังไม่ระบุ ได้แก่ วิธีเก็บ/ส่งรูป, แหล่ง identity/authentication และสัญญาตรวจโปรไฟล์เดิม ก่อน implement ส่วนที่พึ่งพารายละเอียดเหล่านั้น (CON-AUTH-01, CON-PROFILE-01, FR-RMP-03, FR-RMP-08).
+1. ใช้ข้อตกลงทางเทคนิคที่ทีมยืนยัน: รูปส่งแบบ multipart และเก็บ BLOB, identity มาจาก `request.state.user_id`, และตรวจโปรไฟล์เดิมผ่าน `GET /api/roommate-profiles/me`; production identity provider ยังต้องเชื่อมก่อนใช้งานจริง (CON-AUTH-01, CON-PROFILE-01, FR-RMP-03, FR-RMP-08).
 2. จัด config สำหรับค่าที่ตั้งได้ และเตรียมการเชื่อมต่อ SQLite/โมเดลโปรไฟล์ โดยเก็บข้อมูลเฉพาะโปรไฟล์เจ้าของ (FR-RMP-03, FR-RMP-04, FR-RMP-08, CON-DATA-01, Q-07).
 3. ทำเมนู/แบบฟอร์มและการควบคุมการเข้าใช้ตามสถานะ login/โปรไฟล์เดิม โดยไม่เพิ่ม AC ใหม่สำหรับ Q-04 (FR-RMP-01, FR-RMP-02, CON-AUTH-01, CON-PROFILE-01).
 4. ทำ validation ฝั่ง backend และเชื่อม validation ฝั่งหน้าจอให้ครอบคลุม required fields, รูปแบบข้อมูล, พฤติกรรมการนอน และจำนวนผู้พัก (FR-RMP-03 ถึง FR-RMP-07, CON-DATA-01, CON-VALID-01, CON-ROOM-01, Q-06).

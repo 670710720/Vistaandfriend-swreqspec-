@@ -1058,3 +1058,15 @@
 - Tests ใหม่: `test_AC_RMP_03_displays_api_required_field_errors_on_related_fields`, `test_AC_RMP_04_displays_api_validation_errors_on_related_fields`, `test_AC_RMP_04A_displays_api_occupancy_errors_on_related_fields`, `test_AC_RMP_05A_allows_retry_after_api_save_failure`
 - Tests ทั้งชุด: `cd backend && pytest -v` ผ่าน 127, ข้าม 3; `cd frontend && npm test` ผ่าน 110; `git diff --check` ผ่าน; มี Starlette deprecation warning เดิมเกี่ยวกับ `httpx`/`TestClient`
 - สถานะ T-10: เสร็จ รอทีมตรวจ
+
+## 2026-11-20
+- คำสั่ง: ทำต่อ `/implement-all specs/001-roommate-profile/tasks.md` — เฟส 2, T-11
+- การตัดสินใจที่ถามทีม: ใช้ `GET /api/roommate-profiles/me` ตอบ `200 {"hasProfile": true|false}` โดยอ่าน identity จาก trusted `request.state.user_id`; ไม่มี identity ตอบ 401; เมนูนำทางไป `/login` พร้อม browser alert "กรุณาเข้าสู่ระบบก่อนสร้างโปรไฟล์"
+- ขอบเขตที่ทีมอนุมัติ: เพิ่ม backend endpoint และ test รวมถึงแก้ plan/tasks เพื่อบันทึกสัญญา T-11
+- หมายเหตุ: production upstream identity provider และหน้า login จริงยังอยู่นอกโค้ดปัจจุบัน; frontend จะใช้เส้นทาง `/login` ที่ทีมกำหนด
+- แนวทาง test ที่ถามทีมเพิ่ม: คง Given/When/Then ของ `test_TC_RMP_04A_2` แต่ปรับ test ให้รอผล API status ก่อนเริ่มกรอกฟอร์ม; ทีมอนุญาต
+- ไฟล์ของ T-11: `backend/app/roommate_profiles.py`, `backend/tests/test_roommate_profile_auth.py`, `frontend/src/api/client.js`, `frontend/src/api/client.test.js`, `frontend/src/App.jsx`, `frontend/src/__tests__/setup.test.jsx`, `frontend/src/__tests__/profile-form.test.jsx`, `specs/001-roommate-profile/plan.md`, `specs/001-roommate-profile/tasks.md`
+- ผลการทำงาน: เพิ่ม `GET /api/roommate-profiles/me` ที่ตอบ `hasProfile` สำหรับ trusted owner และ 401 เมื่อไม่มี identity; frontend ตรวจสถานะก่อนเปิดฟอร์ม, ปฏิเสธฟอร์มเมื่อมีโปรไฟล์ และเตือนก่อนนำผู้ใช้ที่ยังไม่ login ไป `/login`
+- Tests ใหม่: backend `test_AC_RMP_01A_profile_status_requires_trusted_identity`, `test_AC_RMP_01A_profile_status_reports_whether_trusted_owner_has_profile`; frontend `test_AC_RMP_01A_profile_status_uses_current_student_endpoint`, `test_AC_RMP_01A_profile_status_rejects_missing_identity`, `test_AC_RMP_01A_does_not_open_form_when_profile_already_exists`, `test_AC_RMP_01A_redirects_unauthenticated_student_with_warning`
+- Tests ทั้งชุด: `cd backend && pytest -v` ผ่าน 129, ข้าม 3; `cd frontend && npm test` ผ่าน 114; `git diff --check` ผ่าน; มี Starlette deprecation warning เดิมเกี่ยวกับ `httpx`/`TestClient`
+- สถานะ T-11: เสร็จ รอทีมตรวจ

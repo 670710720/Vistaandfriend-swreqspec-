@@ -4,6 +4,7 @@ import { CHAT_CONFIG } from '../config.js'
 import {
   fetchChatList,
   fetchChatMessages,
+  fetchRoommateProfileStatus,
   markChatMessageRead,
   openChat,
   sendChatMessage,
@@ -17,6 +18,24 @@ function makeJsonResponse(ok, payload, status = ok ? 200 : 500) {
     json: async () => payload,
   }
 }
+
+test('test_AC_RMP_01A_profile_status_uses_current_student_endpoint', async () => {
+  const fetchMock = vi.fn().mockResolvedValue(makeJsonResponse(true, { hasProfile: true }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(fetchRoommateProfileStatus()).resolves.toBe(true)
+  expect(fetchMock).toHaveBeenCalledWith('/api/roommate-profiles/me')
+})
+
+test('test_AC_RMP_01A_profile_status_rejects_missing_identity', async () => {
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(makeJsonResponse(
+    false,
+    { detail: 'กรุณาเข้าสู่ระบบ' },
+    401,
+  )))
+
+  await expect(fetchRoommateProfileStatus()).rejects.toMatchObject({ status: 401 })
+})
 
 afterEach(() => {
   vi.restoreAllMocks()

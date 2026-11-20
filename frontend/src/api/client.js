@@ -116,6 +116,27 @@ export async function createRoommateProfile(profileData, profileImage) {
   return result
 }
 
+// รองรับ FR-RMP-01/02, CON-AUTH-01 และ CON-PROFILE-01
+export async function fetchRoommateProfileStatus() {
+  const response = await fetch('/api/roommate-profiles/me')
+  const result = await response.json().catch(() => ({}))
+
+  if (!response.ok) {
+    const message = result?.detail?.message ?? result?.message
+    const error = new Error(
+      typeof message === 'string' ? message : 'ไม่สามารถตรวจสอบโปรไฟล์ได้ กรุณาลองใหม่',
+    )
+    error.status = response.status
+    throw error
+  }
+
+  if (typeof result?.hasProfile !== 'boolean') {
+    throw new Error('Profile status API returned an invalid response')
+  }
+
+  return result.hasProfile
+}
+
 // Roommate search API (Feature Search)
 export async function searchRoommates({ current_user_id, filters = {}, mode = 'AND', page = 1 }) {
   const response = await fetch('http://localhost:8000/search-roommates', {

@@ -1,6 +1,9 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
-import { vi } from 'vitest'
-import { createRoommateProfile } from '../api/client.js'
+import { afterEach, beforeEach, vi } from 'vitest'
+import {
+  createRoommateProfile,
+  fetchRoommateProfileStatus,
+} from '../api/client.js'
 import App from '../App.jsx'
 import ProfileEditPage from '../pages/ProfileEditPage.jsx'
 import ProfilePage from '../pages/ProfilePage.jsx'
@@ -9,15 +12,22 @@ import { validateProfile } from '../profileValidation.js'
 vi.mock('../api/client.js', async (importOriginal) => ({
   ...await importOriginal(),
   createRoommateProfile: vi.fn(),
+  fetchRoommateProfileStatus: vi.fn(),
 }))
+
+beforeEach(() => {
+  fetchRoommateProfileStatus.mockResolvedValue(false)
+})
 
 afterEach(() => {
   vi.clearAllMocks()
 })
 
-function openProfileForm() {
+async function openProfileForm() {
   render(<App />)
-  fireEvent.click(screen.getByRole('button', { name: 'สร้างโปรไฟล์หาเมท' }))
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'สร้างโปรไฟล์หาเมท' }))
+  })
 }
 
 function fillValidProfile() {
@@ -53,8 +63,8 @@ function validProfileValues(overrides = {}) {
 }
 
 // AC-RMP-02: แบบฟอร์มต้องรับข้อมูลโปรไฟล์และพฤติกรรมการนอนของผู้สร้าง
-test('test_AC_RMP_02_profile_form_accepts_required_fields_and_sleep_behavior', () => {
-  openProfileForm()
+test('test_AC_RMP_02_profile_form_accepts_required_fields_and_sleep_behavior', async () => {
+  await openProfileForm()
   fillValidProfile()
 
   expect(screen.getByLabelText('ชื่อเล่น').value).toBe('เมท')
@@ -89,8 +99,8 @@ test('test_AC_RMP_02_profile_form_accepts_required_fields_and_sleep_behavior', (
 })
 
 // AC-RMP-02A: ค่าที่ผ่าน validation ต้องให้ดำเนินการยืนยันการสร้างโปรไฟล์ต่อได้
-test('test_AC_RMP_02A_accept_valid_profile_values', () => {
-  openProfileForm()
+test('test_AC_RMP_02A_accept_valid_profile_values', async () => {
+  await openProfileForm()
   fillValidProfile()
   fireEvent.click(screen.getByLabelText('อื่น ๆ'))
   fireEvent.change(screen.getByLabelText('ระบุพฤติกรรมการนอนเพิ่มเติม'), {
@@ -104,7 +114,7 @@ test('test_AC_RMP_02A_accept_valid_profile_values', () => {
 // AC-RMP-05: ต้องส่งข้อมูลที่ตรวจผ่านไปยัง API และแสดงผลสำเร็จเมื่อ API ยืนยันการบันทึก
 test('test_AC_RMP_05_submits_profile_and_shows_success_after_api_confirmation', async () => {
   createRoommateProfile.mockResolvedValue({ message: 'สร้างโปรไฟล์สำเร็จ' })
-  openProfileForm()
+  await openProfileForm()
   fillValidProfile()
   fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
   await act(async () => {
@@ -135,7 +145,7 @@ test('test_AC_RMP_04_displays_api_validation_errors_on_related_fields', async ()
   apiError.status = 422
   apiError.errors = { nickname: 'ชื่อเล่นไม่ถูกต้อง' }
   createRoommateProfile.mockRejectedValue(apiError)
-  openProfileForm()
+  await openProfileForm()
   fillValidProfile()
   fireEvent.click(screen.getByLabelText('อื่น ๆ'))
   fireEvent.change(screen.getByLabelText('ระบุพฤติกรรมการนอนเพิ่มเติม'), {
@@ -158,7 +168,7 @@ test('test_AC_RMP_03_displays_api_required_field_errors_on_related_fields', asyn
   apiError.status = 422
   apiError.errors = { otherSleepBehavior: 'กรุณาระบุพฤติกรรมการนอนเพิ่มเติม' }
   createRoommateProfile.mockRejectedValue(apiError)
-  openProfileForm()
+  await openProfileForm()
   fillValidProfile()
   fireEvent.click(screen.getByLabelText('อื่น ๆ'))
   fireEvent.change(screen.getByLabelText('ระบุพฤติกรรมการนอนเพิ่มเติม'), {
@@ -180,7 +190,7 @@ test('test_AC_RMP_04A_displays_api_occupancy_errors_on_related_fields', async ()
   apiError.status = 422
   apiError.errors = { occupants: 'จำนวนผู้พักไม่สอดคล้องกับรูปแบบห้อง' }
   createRoommateProfile.mockRejectedValue(apiError)
-  openProfileForm()
+  await openProfileForm()
   fillValidProfile()
   fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
 
@@ -197,7 +207,7 @@ test('test_AC_RMP_05A_allows_retry_after_api_save_failure', async () => {
   createRoommateProfile
     .mockRejectedValueOnce(new Error('ไม่สามารถบันทึกโปรไฟล์ได้ กรุณาลองใหม่'))
     .mockResolvedValueOnce({ message: 'สร้างโปรไฟล์สำเร็จ' })
-  openProfileForm()
+  await openProfileForm()
   fillValidProfile()
   fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
 
@@ -233,8 +243,8 @@ test('test_AC_RMP_02A_rejects_invalid_sleep_behavior_selections', () => {
 })
 
 // AC-RMP-03: เมื่อเลือก "อื่น ๆ" แต่ไม่ระบุคำอธิบาย ต้องแจ้งให้กรอกและไม่แสดงผลสำเร็จ
-test('test_AC_RMP_03_requires_other_sleep_description', () => {
-  openProfileForm()
+test('test_AC_RMP_03_requires_other_sleep_description', async () => {
+  await openProfileForm()
   fillValidProfile()
   fireEvent.click(screen.getByLabelText('อื่น ๆ'))
   fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
@@ -244,8 +254,8 @@ test('test_AC_RMP_03_requires_other_sleep_description', () => {
 })
 
 // AC-RMP-03: เมื่อข้อมูลจำเป็นไม่ครบ ต้องแจ้งให้กรอกและไม่แสดงผลสำเร็จ
-test('test_AC_RMP_03_requires_missing_profile_fields', () => {
-  openProfileForm()
+test('test_AC_RMP_03_requires_missing_profile_fields', async () => {
+  await openProfileForm()
   fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
 
   expect(screen.getAllByRole('alert').length).toBeGreaterThan(0)
@@ -253,8 +263,8 @@ test('test_AC_RMP_03_requires_missing_profile_fields', () => {
 })
 
 // AC-RMP-04 และ AC-RMP-04A: ข้อมูลไม่ถูกต้องหรือจำนวนคนไม่เข้ากับชนิดห้องต้องไม่ผ่าน
-test('test_AC_RMP_04_and_04A_reject_invalid_profile_values', () => {
-  openProfileForm()
+test('test_AC_RMP_04_and_04A_reject_invalid_profile_values', async () => {
+  await openProfileForm()
   fillValidProfile()
   fireEvent.change(screen.getByLabelText('อายุ'), { target: { value: '17' } })
   fireEvent.change(screen.getByLabelText('เบอร์โทรศัพท์'), { target: { value: '123' } })
@@ -278,8 +288,8 @@ test('test_TC_RMP_04A_1_rejects_fan_room_over_capacity', () => {
 })
 
 // TC-RMP-04A-2: ยอมรับจำนวนผู้พักที่ขอบบนของห้องพัดลม
-test('test_TC_RMP_04A_2_accepts_fan_room_capacity_limit', () => {
-  openProfileForm()
+test('test_TC_RMP_04A_2_accepts_fan_room_capacity_limit', async () => {
+  await openProfileForm()
   fillValidProfile()
   fireEvent.change(screen.getByLabelText('รูปแบบห้อง'), { target: { value: 'fan' } })
   fireEvent.change(screen.getByLabelText('จำนวนผู้พัก'), { target: { value: '3' } })

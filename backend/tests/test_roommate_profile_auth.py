@@ -49,6 +49,35 @@ def test_AC_RMP_01A_rejects_request_without_trusted_identity(tmp_path):
     assert response.status_code == 401
 
 
+def test_AC_RMP_01A_profile_status_requires_trusted_identity(tmp_path):
+    app = create_app(database_url=f"sqlite:///{tmp_path / 'profile-status-unauthenticated.db'}")
+
+    with TestClient(app) as client:
+        response = client.get("/api/roommate-profiles/me")
+
+    assert response.status_code == 401
+
+
+def test_AC_RMP_01A_profile_status_reports_whether_trusted_owner_has_profile(tmp_path):
+    app = create_app(database_url=f"sqlite:///{tmp_path / 'profile-status-authenticated.db'}")
+
+    @app.middleware("http")
+    async def inject_test_identity(request, call_next):
+        request.state.user_id = "trusted-student"
+        return await call_next(request)
+
+    with TestClient(app) as client:
+        missing_profile_response = client.get("/api/roommate-profiles/me")
+        create_response = _post_profile(client)
+        existing_profile_response = client.get("/api/roommate-profiles/me")
+
+    assert missing_profile_response.status_code == 200
+    assert missing_profile_response.json() == {"hasProfile": False}
+    assert create_response.status_code == 201
+    assert existing_profile_response.status_code == 200
+    assert existing_profile_response.json() == {"hasProfile": True}
+
+
 def test_AC_RMP_01A_uses_trusted_identity_and_rejects_second_profile(tmp_path):
     app = create_app(database_url=f"sqlite:///{tmp_path / 'profile-authenticated.db'}")
 

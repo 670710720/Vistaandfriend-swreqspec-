@@ -329,3 +329,12 @@ def create_roommate_profile(
         status_code=201,
         content={"message": "สร้างโปรไฟล์สำเร็จ"},
     )
+
+
+@router.get("/api/roommate-profiles/me")
+def get_current_roommate_profile_status(
+    db: Session = Depends(get_profile_db),
+    owner_id: str = Depends(get_authenticated_user_id),
+) -> dict[str, bool]:
+    """Check current owner's profile before opening the form (FR-RMP-01/02, CON-AUTH-01, CON-PROFILE-01)."""
+    return {"hasProfile": db.get(RoommateProfile, owner_id) is not None}
