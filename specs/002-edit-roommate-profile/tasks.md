@@ -44,7 +44,7 @@
 - รองรับ: CON-ERP-01, CON-ERP-02, FR-ERP-01, FR-ERP-02, NFR-ERP-01, AC-ERP-01, AC-ERP-05, AC-ERP-06
 - ตรวจด้วย: AC-ERP-01, AC-ERP-05, AC-ERP-06
 - ไฟล์ที่แตะ: backend/app/profile_service.py, frontend/src/pages/ProfilePage.jsx, frontend/src/App.jsx
-- แบบหน้าจอ: ไม่มี
+- แบบหน้าจอ: UI-ERP-01: mockups/UI-ERP-01-profile.html
 - ต้องทำหลัง: T-02
 - เสร็จเมื่อ: เมื่อเข้าสู่ระบบและมีโปรไฟล์ ระบบแสดงข้อมูลปัจจุบันได้; เมื่อไม่มีโปรไฟล์ ระบบแจ้งและพาไปยังหน้าสร้างโปรไฟล์; เมื่อพยายามเข้าถึงโปรไฟล์ผู้อื่น ระบบปฏิเสธการแก้ไข
 - สถานะ: เสร็จ รอทีมตรวจ
@@ -73,7 +73,7 @@
 - รองรับ: CON-ERP-06, CON-ERP-07, FR-ERP-03, FR-ERP-04, FR-ERP-09, NFR-ERP-01, AC-ERP-02, AC-ERP-02A, AC-ERP-02B
 - ตรวจด้วย: AC-ERP-02, AC-ERP-02A, AC-ERP-02B
 - ไฟล์ที่แตะ: frontend/src/pages/ProfileEditPage.jsx, frontend/src/components/ProfileForm.jsx, frontend/src/App.jsx
-- แบบหน้าจอ: ไม่มี
+- แบบหน้าจอ: UI-ERP-02: mockups/UI-ERP-02-edit.html
 - ต้องทำหลัง: T-04
 - เสร็จเมื่อ: หน้าแก้ไขแสดงฟิลด์ที่อนุญาต, ปิด/ซ่อนฟิลด์ชื่อและเพศ, และอนุญาตเฉพาะเจ้าของให้เปลี่ยนสถานะเปิดให้ค้นหา
 - สถานะ: เสร็จ รอทีมตรวจ
@@ -102,7 +102,7 @@
 - รองรับ: CON-ERP-03, CON-ERP-04, CON-ERP-05, FR-ERP-05, FR-ERP-06, NFR-ERP-02, AC-ERP-03, AC-ERP-04A
 - ตรวจด้วย: AC-ERP-03, AC-ERP-04A
 - ไฟล์ที่แตะ: frontend/src/pages/ProfileEditPage.jsx, frontend/src/components/ValidationMessage.jsx
-- แบบหน้าจอ: ไม่มี
+- แบบหน้าจอ: UI-ERP-02: mockups/UI-ERP-02-edit.html
 - ต้องทำหลัง: T-06
 - เสร็จเมื่อ: ผู้ใช้เห็นข้อความแจ้งเตือนและฟอร์มยังคงข้อมูลเดิมไว้หลังการยืนยันไม่ผ่านหรือการบันทึกล้มเหลว โดยไม่มีการบันทึกข้อมูลบางส่วน
 - สถานะ: เสร็จ รอทีมตรวจ
@@ -131,7 +131,7 @@
 - รองรับ: FR-ERP-07, FR-ERP-08, FR-ERP-09, NFR-ERP-04, AC-ERP-04, AC-ERP-02B, AC-ERP-07, AC-ERP-07A
 - ตรวจด้วย: AC-ERP-04, AC-ERP-02B, AC-ERP-07, AC-ERP-07A
 - ไฟล์ที่แตะ: frontend/src/pages/ProfilePage.jsx, frontend/src/pages/ProfileEditPage.jsx, frontend/src/components/SuccessToast.jsx
-- แบบหน้าจอ: ไม่มี
+- แบบหน้าจอ: UI-ERP-01: mockups/UI-ERP-01-profile.html; UI-ERP-02: mockups/UI-ERP-02-edit.html
 - ต้องทำหลัง: T-08
 - เสร็จเมื่อ: หลังบันทึกข้อมูลสำเร็จ ผู้ใช้เห็นข้อความว่าแก้ไขโปรไฟล์สำเร็จ และปัจจุบันของหน้าโปรไฟล์/ผลค้นหาสอดคล้องกับสถานะแต่ละค่าที่อัปเดต
 - สถานะ: เสร็จ รอทีมตรวจ

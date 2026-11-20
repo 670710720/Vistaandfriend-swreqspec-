@@ -9,7 +9,9 @@
 1. ตรวจสอบความสอดคล้องของฟิลด์และ validation ระหว่างการสร้างกับการแก้ไขโปรไฟล์
 2. เพิ่มขอบเขตการแก้ไขสถานะเปิดให้ค้นหา พร้อมแยกสิทธิ์จากฟีเจอร์ปิดสถานะหาเมท
 3. ปรับ requirements, acceptance criteria, assumptions และ open questions ให้ครอบคลุมการเผยแพร่และการบันทึกล้มเหลว
-4. ปรับ traceability ให้ครอบคลุมข้อกำหนดและ acceptance criteria ใหม่
+4. ปรับ traceability ให้ครอบคลุมข้อกำหนดและ acceptance criteria ใหม่ รวมถึงการระบุ UI ID และไฟล์ mockup ของแต่ละหน้าจอ:
+   - UI-ERP-01: `mockups/UI-ERP-01-profile.html` สำหรับหน้าดูโปรไฟล์
+   - UI-ERP-02: `mockups/UI-ERP-02-edit.html` สำหรับหน้าแก้ไขโปรไฟล์
 5. ตรวจ diff/markdown consistency และ commit เป็น `Draft v3`
 
 ## Notes and considerations
