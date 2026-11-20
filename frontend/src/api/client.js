@@ -540,6 +540,35 @@ export async function sendChatMessageWithAttachment({ senderId, receiverId, text
     status: normalizedMessage.status ?? 'Sent',
   }
 }
+// รองรับ FR-RPS-02 และ AC-RPS-01
+export async function getRoommatePreferenceOptions() {
+  const response = await fetch('/api/roommate-preferences')
+  if (!response.ok) {
+    throw new Error('Unable to load roommate preference options')
+  }
+
+  const data = await response.json()
+  if (data?.status === 'missing_profile') {
+    return { status: 'missing_profile' }
+  }
+  const options = data?.options
+  if (
+    !options ||
+    typeof options !== 'object' ||
+    Array.isArray(options) ||
+    !options.roomOccupants ||
+    typeof options.roomOccupants !== 'object' ||
+    Array.isArray(options.roomOccupants) ||
+    !Array.isArray(options.sleepBehaviors) ||
+    !Array.isArray(options.cleanliness) ||
+    !Array.isArray(options.sleepTime) ||
+    typeof options.additionalText?.maxLength !== 'number'
+  ) {
+    throw new Error('Roommate preference options response is invalid')
+  }
+
+  return options
+}
 
 // รองรับ FR-RPS-03 และ AC-RPS-02
 export async function saveRoommatePreference(payload) {

@@ -2,9 +2,14 @@ from __future__ import annotations
 
 from typing import Any
 
+from app.services.roommate_preference_match import matches_roommate_preference
+
 
 def matches_filter(profile: Any, field_name: str, field_value: Any) -> bool:
     # Supports FR-SRS-03, FR-SRS-04, and FR-SRS-05 for multi-filter matching.
+    if field_name in {"sleep_behavior", "cleanliness", "sleep_time"}:
+        # Supports FR-RPS-08 and AC-RPS-05 by matching the latest saved preference.
+        return matches_roommate_preference(profile, field_name, field_value)
     if field_name == "age":
         return getattr(profile, "age", None) == int(field_value)
     if field_name == "gender":
@@ -17,12 +22,6 @@ def matches_filter(profile: Any, field_name: str, field_value: Any) -> bool:
         return getattr(profile, "room_type", None) == str(field_value)
     if field_name == "room_size":
         return getattr(profile, "room_size", None) == int(field_value)
-    if field_name == "sleep_behavior":
-        return getattr(profile, "sleep_behavior", None) == str(field_value)
-    if field_name == "cleanliness":
-        return getattr(profile, "cleanliness", None) == str(field_value)
-    if field_name == "sleep_time":
-        return getattr(profile, "sleep_time", None) == str(field_value)
     return False
 
 

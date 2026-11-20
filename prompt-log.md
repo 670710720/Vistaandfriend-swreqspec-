@@ -1258,3 +1258,92 @@
 - ใน `frontend/src/api/client.js` ปิด `sendChatMessageWithAttachment` ก่อนฟังก์ชัน `saveRoommatePreference` เพื่อให้ API client parse ได้
 - ผลตรวจ: Frontend 132 passed; Backend 145 passed, 3 skipped; `git diff --check` ผ่าน; ไม่พบ conflict markers
 - PR #5 ปิดแล้วและยังไม่ merge; ยังไม่ได้ push หรือ reopen PR
+
+## 2026-11-19
+- คำสั่ง: `/implement T-04 specs/003-roommate-preference/tasks.md`
+- คำตัดสินก่อนเริ่ม: ตามคำสั่งผู้ใช้ เปลี่ยนสถานะ T-01, T-02 และ T-03 จาก “เสร็จ รอทีมตรวจ” เป็น “เสร็จ”; ผู้ใช้อนุมัติขยายขอบเขตไฟล์ของ T-04
+- API contract ที่ยืนยันกับทีม: `GET /api/roommate-preferences`; มีโปรไฟล์ตอบ `{ "options": ROOMMATE_PREFERENCE_CONFIG }`; ไม่มีโปรไฟล์ตอบ `{ "status": "missing_profile" }`
+- ไฟล์ที่สร้างหรือแก้: `backend/app/roommate_preferences.py`, `backend/app/middleware/auth_guard.py`, `backend/app/main.py`, `backend/tests/test_roommate_preference.py`, `specs/003-roommate-preference/tasks.md`, `prompt-log.md`
+- ผล test: `cd backend && pytest -q tests/test_roommate_preference.py` -> 11 passed; `cd backend && pytest -q` -> 140 passed, 3 skipped
+- Constraint: CON-RPS-01 ตรวจ identity จาก trusted request state และปฏิเสธเมื่อไม่มีตัวตน; CON-RPS-02 ตรวจโปรไฟล์เจ้าของในฐานข้อมูลก่อนส่งตัวเลือก
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: API path, รูป response และการเพิ่ม `main.py`/test ในช่องไฟล์ที่แตะ เพราะ task เดิมไม่ได้ระบุไว้; ใช้ contract ที่ทีมยืนยันก่อนลงมือ
+
+## 2026-11-19
+- คำสั่ง: `/implement T-05 specs/003-roommate-preference/tasks.md`
+- คำตัดสินก่อนเริ่ม: ถือคำสั่ง “ทำเลย” เป็นการรับรอง T-04 และเปลี่ยนสถานะ T-04 เป็น “เสร็จ”; ผู้ใช้อนุญาตเพิ่ม `frontend/src/__tests__/roommate-preference.test.jsx` ในช่องไฟล์ที่แตะ
+- ไฟล์ที่สร้างหรือแก้สำหรับ T-05: `frontend/src/App.jsx`, `frontend/src/pages/RoommatePreferencePage.jsx`, `frontend/src/api/client.js`, `frontend/src/__tests__/roommate-preference.test.jsx`, `specs/003-roommate-preference/tasks.md`, `prompt-log.md`
+- ผล test: targeted `roommate-preference.test.jsx` -> 9 passed; `npm run build` ผ่าน; full frontend -> 108 passed, 7 failed (เดิมล้มเหลวใน `profile-form.test.jsx` 6 รายการและ `setup.test.jsx` 1 รายการ)
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ขออนุญาตเพิ่ม test file เพราะไม่อยู่ในรายการไฟล์เดิม; ไม่แก้เนื้อหา/assertions ของ `test_TC_RPS_01_2`
+- หมายเหตุ validation: `npm run build` เขียนผล build ลง `frontend/dist/`; มีการเปลี่ยนแปลง dist อยู่ก่อนแล้ว จึงคงไฟล์ผล build ล่าสุดไว้ ไม่ย้อนกลับ
+
+## 2026-11-19
+- คำสั่ง: แก้ baseline frontend ตามคำขอระหว่างทำ UC-03
+- สาเหตุ: `App` ไม่มีเมนู “สร้างโปรไฟล์หาเมท” ตาม FR-RMP-01 ทำให้ profile-form และ setup tests ล้มเหลว
+- ไฟล์ที่แก้: `frontend/src/App.jsx`
+- ผล test: targeted `profile-form.test.jsx` และ `setup.test.jsx` -> 16 passed; full frontend `npm test -- --run` -> 115 passed
+- ขอบเขต: เพิ่มเมนูเปิดแบบฟอร์มตาม FR-RMP-01; ไม่แก้ test และไม่เปลี่ยนสถานะ task ที่รอทีมตรวจ
+
+## 2026-11-19
+- บันทึกเพิ่มเติมจากการทบทวน baseline fix: เมนูสร้างโปรไฟล์แสดงเฉพาะผู้ใช้ที่เข้าสู่ระบบ เพื่อไม่ให้เปิดฟอร์มโดยละเมิด CON-AUTH-01; การนำผู้ใช้ที่ยังไม่เข้าสู่ระบบไปหน้า login ยังรอ T-11
+- ผลตรวจหลังปรับ: `cd frontend && npm test -- --run` -> 115 passed
+
+## 2026-11-20
+- คำสั่ง: `/implement T-18 specs/003-roommate-preference/tasks.md`
+- คำตัดสินก่อนเริ่ม: ทีมอนุมัติเปลี่ยน T-16 จาก “เสร็จ รอทีมตรวจ” เป็น “เสร็จ”; T-18 ขณะนี้มี prerequisite ครบและสถานะ “พร้อมทำ”
+- ไฟล์ที่สร้างหรือแก้: `backend/app/roommate_preferences.py`, `backend/tests/test_roommate_preference.py`, `specs/003-roommate-preference/tasks.md`, `prompt-log.md`
+- ผล test: `cd backend && pytest -q tests/test_roommate_preference.py` -> 13 passed
+- Constraint: CON-RPS-05 และ NFR-RPS-01 ถูกทำให้เป็นจริงโดย `PUT /api/roommate-preferences/{owner_id}` เปรียบเทียบ path owner กับ trusted authenticated identity และปฏิเสธผู้ใช้คนอื่นด้วย 403
+- Validation: endpoint ใช้ validation เดิมของ `receive_preference_for_owner` ก่อนบันทึกและใช้ `update_for_owner` เพื่ออัปเดตเฉพาะข้อมูลเดิมของเจ้าของ
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี ต้องการกำหนด HTTP contract เพิ่มเองจึงใช้รูป payload เดียวกับการรับข้อมูลความต้องการและเจ้าของมาจาก authenticated identity
+
+## 2026-11-20
+- คำสั่ง: `/implement T-19 specs/003-roommate-preference/tasks.md`
+- คำตัดสินก่อนเริ่ม: รับคำสั่ง “ทำเลย” เป็นการอนุมัติให้ T-16 และ T-18 ผ่าน prerequisite และเปลี่ยนเป็น “เสร็จ”; ทำ T-19 ตาม prerequisite T-16/T-18
+- ไฟล์ที่แก้: `backend/app/roommate_preferences.py`, `frontend/src/pages/RoommatePreferencePage.jsx`, `backend/tests/test_roommate_preference.py`, `frontend/src/__tests__/roommate-preference.test.jsx`, `specs/003-roommate-preference/tasks.md`, `prompt-log.md`
+- ผล test: targeted backend `15 passed`; targeted frontend `10 passed`; backend ทั้งหมด `144 passed, 3 skipped`; frontend ทั้งหมด `116 passed`
+- Constraint/FR: FR-RPS-06 และ FR-RPS-09 ทำให้บันทึกผ่าน callback persistence ก่อน mutation ใน store; เมื่อ callback ล้มเหลวข้อมูลเดิมยังไม่เปลี่ยน และหน้าจอแสดงข้อผิดพลาดพร้อมให้กดบันทึกซ้ำโดยไม่ reset ค่า
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี
+
+## 2026-11-20
+- คำสั่ง: ออกแบบ layout/style หน้า “ความต้องการหาเมท”
+- ไฟล์ที่แก้: `frontend/src/pages/RoommatePreferencePage.jsx`, `backend/app/main.py`
+- ผล: เพิ่ม card/header/grid/input/button style แบบ Tailwind, แสดงช่วงจำนวนคนในห้องใน pill และตัวนับข้อมูลเพิ่มเติม
+- Demo: เพิ่ม development identity และ seed โปรไฟล์ `student-1001` เพื่อให้ browser โหลดตัวเลือกความต้องการได้
+- ผลตรวจ: frontend targeted 12 passed; frontend ทั้งหมด 118 passed; backend 149 passed, 3 skipped; frontend build ผ่าน
+
+## 2026-11-20
+- คำสั่ง: `/implement T-20 specs/003-roommate-preference/tasks.md`
+- คำตัดสินก่อนเริ่ม: T-16 เป็น “เสร็จ” จึงผ่าน prerequisite; ทีมอนุญาตขยายไฟล์นอกช่อง T-20 ไปยัง `backend/app/services/filter_logic.py` และอนุญาตเพิ่ม `backend/tests/test_search_roommate.py`
+- ไฟล์ที่สร้างหรือแก้: `backend/app/services/roommate_preference_match.py`, `backend/app/roommate_preferences.py`, `backend/app/services/filter_logic.py`, `backend/tests/test_search_roommate.py`, `specs/003-roommate-preference/tasks.md`, `prompt-log.md`
+- ผล test: targeted search/preference `26 passed`; backend ทั้งหมด `146 passed, 3 skipped`
+- Constraint/FR: FR-RPS-08 ทำให้ preference ที่ save/update สำเร็จถูก publish เข้า registry สำหรับบริการค้นหาและจับคู่; persistence/loss ไม่เรียก publish จึงใช้ข้อมูลเดิม ไม่ใช้ข้อมูลที่ยังไม่บันทึกสำเร็จ
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ยืนยันขยายไฟล์ `filter_logic.py` เพื่อให้ AND/OR filter อ่านค่าจาก preference registry แล้วดำเนินการตามคำตอบทีม
+
+## 2026-11-20
+- คำสั่ง: `/implement T-21 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่แก้: `backend/app/roommate_preferences.py`, `backend/tests/test_roommate_preference.py`, `specs/003-roommate-preference/tasks.md`, `prompt-log.md`
+- ไฟล์ที่ใช้ร่วมซึ่งไม่ต้องแก้: `backend/app/middleware/auth_guard.py` ถูก dependency `get_authenticated_user_id` ใช้อยู่แล้วสำหรับ read/save/update
+- ผล test: targeted `18 passed`; backend ทั้งหมด `149 passed, 3 skipped`
+- Constraint/FR: CON-RPS-01 ปฏิเสธ request ที่ไม่มี authenticated identity ด้วย 401; CON-RPS-05 และ NFR-RPS-01 ปฏิเสธ owner ที่ไม่ตรงกับ path/payload ด้วย 403; endpoint อ่านข้อมูลแยกเจ้าของด้วย
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี; ใช้ trusted `request.state.user_id` ผ่าน auth guard เดิมและไม่รับ identity จาก payload
+
+## 2026-11-20
+- คำสั่ง: `/implement T-22 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่แก้: `frontend/src/pages/RoommatePreferencePage.jsx`, `frontend/src/App.jsx`, `frontend/src/api/client.js`, `frontend/src/__tests__/roommate-preference.test.jsx`, `specs/003-roommate-preference/tasks.md`, `prompt-log.md`
+- ผล test: targeted roommate-preference `12 passed`; frontend ทั้งหมด `118 passed`
+- Constraint/FR: CON-RPS-02 ทำให้ response `missing_profile` ถูกรับใน client และแสดงข้อความ “ยังไม่มีโปรไฟล์หาเมท” พร้อม callback เปิดหน้าสร้างโปรไฟล์; ผู้ที่มีโปรไฟล์ยังแสดงตัวเลือกตามปกติ
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี; ใช้ flow ภายในหน้าโปรไฟล์ที่มีอยู่แล้ว ไม่เพิ่ม route/auth/หน้าจอออกนอก UC-03
+
+## 2026-11-20
+- คำสั่ง: `/implement T-23 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `docs/test/roommate-preference-usability.md`
+- ผล: เพิ่มสคริปต์ usability สำหรับนักศึกษาใหม่ 5 คน พร้อมแบบบันทึกผลจริงและเกณฑ์อย่างน้อย 4 คนสำเร็จโดยไม่รับคำแนะนำ
+- ข้อจำกัด: ยังไม่สามารถอ้างหรือสร้างผลทดสอบจริงได้ จึงไม่เปลี่ยน T-23 เป็นเสร็จและไม่เติมผลสำเร็จจำลอง
+- สิ่งที่เกือบต้องเดาแต่ถามแทน: ไม่มี
+
+## 2026-11-20
+- คำสั่ง: แก้บั๊กกดบันทึกความต้องการหาเมทไม่ได้ (ทีมอนุมัติ bugfix ใน UC-03)
+- สาเหตุ: UI ส่ง `owner_id=student-1` แต่ development auth ใช้ `student-1001` ทำให้ backend ปฏิเสธด้วย HTTP 403; ยืนยันว่าเมื่อไม่ส่ง owner_id backend ผูกข้อมูลกับตัวตนที่ผ่านการยืนยันและบันทึกสำเร็จ
+- ไฟล์ที่แก้: `frontend/src/pages/RoommatePreferencePage.jsx`, `frontend/src/__tests__/roommate-preference.test.jsx`, `backend/tests/test_roommate_preference.py`, `prompt-log.md`
+- ผลตรวจ: frontend ทั้งหมด `118 passed`; roommate-preference backend `19 passed`; frontend build ผ่าน; POST โดยไม่ส่ง owner_id ตอบ HTTP 200 และกำหนด owner เป็น `student-1001`
+- Constraint: คงการตรวจสิทธิ์ CON-RPS-01/CON-RPS-05 ที่ backend; ใช้ authenticated identity เป็น owner แทนค่าที่ UI ส่ง

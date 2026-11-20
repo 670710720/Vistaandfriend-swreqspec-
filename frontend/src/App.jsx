@@ -19,6 +19,7 @@ import RequestRoommatePage from './pages/RequestRoommatePage.jsx'
 import { Sidebar } from './navigation/sidebar.js'
 import ChatListPage from './pages/ChatListPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
+import RoommatePreferencePage from './pages/RoommatePreferencePage.jsx'
 
 const initialValues = {
   nickname: '',
@@ -57,7 +58,7 @@ export default function App(props) {
   return <ProfileApp {...props} />
 }
 
-// รองรับ FR-RMP-01, FR-RMP-02, FR-RMP-04, AC-RMP-01, AC-RMP-02, AC-RMP-02A และ FR-CHAT-01/02/08/12
+// รองรับ FR-RMP-01, FR-RMP-02, FR-RMP-04, FR-RPS-01, FR-RPS-02, AC-RMP-01, AC-RMP-02, AC-RMP-02A และ FR-CHAT-01/02/08/12
 function ProfileApp({ initialLoggedIn = true, onLoginRequired = redirectToLogin }) {
   const { isLoggedIn } = useAuth(initialLoggedIn)
 
@@ -301,6 +302,18 @@ function ProfileApp({ initialLoggedIn = true, onLoginRequired = redirectToLogin 
     )
   }
 
+  if (currentView === 'roommate-preference') {
+    return (
+      <RoommatePreferencePage
+        onMissingProfile={() => {
+          setEditOpen(false)
+          setFormOpen(true)
+          setCurrentView('profile')
+        }}
+      />
+    )
+  }
+
   return (
     <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
       <header className="mb-8">
@@ -354,6 +367,17 @@ function ProfileApp({ initialLoggedIn = true, onLoginRequired = redirectToLogin 
           type="button"
         >
           แก้ไขโปรไฟล์
+        </button>
+
+        <button
+          className="rounded-lg border border-teal-700 bg-white px-5 py-3 font-semibold text-teal-700 hover:bg-teal-50"
+          onClick={() => {
+            setFormOpen(false)
+            setCurrentView('roommate-preference')
+          }}
+          type="button"
+        >
+          ความต้องการหาเมท
         </button>
       </nav>
 

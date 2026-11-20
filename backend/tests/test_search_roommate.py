@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 from app.api.profile_detail import app as detail_app
 from app.api.search import app
 from app.services.search_roommate import SearchRoommateProfile, SearchRoommateService
+from app.services.roommate_preference_match import set_saved_roommate_preference
 
 
 client = TestClient(app)
@@ -148,6 +149,94 @@ def test_AC_SRS_04_opens_profile_detail_with_allowed_fields_only():
     assert payload["social_links"] == {"Facebook": "fb-user-2", "Instagram": "ig-user-2"}
     assert payload["phone_number"] is None
     assert payload["faculty"] == "วิศวกรรมศาสตร์"
+
+
+def test_AC_RPS_05_uses_saved_preferences_immediately():
+    set_saved_roommate_preference(
+        "user-2",
+        {
+            "owner_id": "user-2",
+            "room_type": "fan",
+            "room_occupants": 3,
+            "sleep_behavior": "นอนดิ้น",
+            "cleanliness": "ปานกลาง",
+            "sleep_time": "หลัง 00:00",
+            "additional_text": "ห้องเงียบ",
+        },
+    )
+    profile = SearchRoommateProfile(
+        user_id="user-2",
+        name="น้องแอปเปิล",
+        age=21,
+        gender="หญิง",
+        faculty="วิศวกรรมศาสตร์",
+        academic_year="2",
+        room_type="ห้องแยก",
+        room_size=2,
+        sleep_behavior="กรน",
+        cleanliness="สะอาด",
+        sleep_time="22:30",
+    )
+    service = SearchRoommateService(profiles=[profile])
+
+    results = service.query_roommates(
+        "user-1",
+        filters={"sleep_behavior": "นอนดิ้น", "cleanliness": "ปานกลาง"},
+        mode="AND",
+    )
+
+    assert [item.user_id for item in results] == ["user-2"]
+
+
+def test_AC_RPS_05_2_uses_boundary_preferences():
+    set_saved_roommate_preference(
+        "user-4",
+        {
+            "owner_id": "user-4",
+            "room_type": "fan",
+            "room_occupants": 3,
+            "sleep_behavior": "นอนดิ้น",
+        },
+    )
+    set_saved_roommate_preference(
+        "user-5",
+        {
+            "owner_id": "user-5",
+            "room_type": "airConditioned",
+            "room_occupants": 4,
+            "sleep_behavior": "นอนดิ้น",
+        },
+    )
+
+    fan_profile = SearchRoommateProfile(
+        user_id="user-4",
+        name="user-4",
+        age=20,
+        gender="หญิง",
+        faculty="วิทยาศาสตร์",
+        academic_year="1",
+        room_type="ห้องแยก",
+        room_size=3,
+    )
+    air_profile = SearchRoommateProfile(
+        user_id="user-5",
+        name="user-5",
+        age=20,
+        gender="หญิง",
+        faculty="วิทยาศาสตร์",
+        academic_year="1",
+        room_type="ห้องแยก",
+        room_size=4,
+    )
+    service = SearchRoommateService(profiles=[fan_profile, air_profile])
+
+    results = service.query_roommates(
+        "user-1",
+        filters={"sleep_behavior": "นอนดิ้น"},
+        mode="AND",
+    )
+
+    assert {item.user_id for item in results} == {"user-4", "user-5"}
 
 
 def test_AC_SRS_06_rejects_search_requests_without_authenticated_user():

@@ -26,6 +26,7 @@ from app.controllers.chat_controller import (
 
 from app.api.profile_detail import router as profile_detail_router
 from app.api.search import router as search_router
+from app.roommate_preferences import router as roommate_preferences_router
 from app.roommate_profiles import router as roommate_profiles_router
 
 from app.config import (
@@ -41,6 +42,7 @@ from app.models.chat_message import (
     ChatMessageRead,
     ChatMessageReadReceipt,
 )
+from app.models.roommate_profile import RoommateProfile
 from app.repositories.chat_repository import ChatRepository
 from app.services.chat_contact_provider import (
     ChatContactProvider,
@@ -134,6 +136,25 @@ def create_app(
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         # FR-CHAT-10: migrate older databases before serving Read-aware message responses.
         _ensure_chat_read_column(engine)
+        if demo_mode:
+            with SessionLocal() as demo_db:
+                if demo_db.get(RoommateProfile, "student-1001") is None:
+                    demo_db.add(
+                        RoommateProfile(
+                            user_id="student-1001",
+                            nickname="นักศึกษา",
+                            age=22,
+                            gender="หญิง",
+                            faculty="วิศวกรรมศาสตร์",
+                            academic_year="ชั้นปีที่ 3",
+                            profile_image=b"profile",
+                            phone="0812345678",
+                            room_type="airConditioned",
+                            room_occupants=2,
+                            sleep_behaviors=["กรน"],
+                        )
+                    )
+                    demo_db.commit()
         yield
 
     app = FastAPI(
@@ -149,6 +170,7 @@ def create_app(
     app.include_router(search_router)
     app.include_router(profile_detail_router)
     app.include_router(roommate_profiles_router)
+    app.include_router(roommate_preferences_router)
 
     if demo_auth_enabled:
         @app.middleware("http")
@@ -167,9 +189,11 @@ def create_app(
     if demo_provider is not None:
         @app.middleware("http")
         async def set_development_demo_identity(request, call_next):
-            # CON-AUTH-01: demo principal is fixed by the server, never taken from sender_id.
+            # CON-AUTH-01, CON-RPS-01: development demo principal is fixed by the server.
             if request.url.path.startswith("/api/chat/"):
                 request.state.user_id = demo_provider.current_user_id
+            elif request.url.path.startswith("/api/roommate-preferences"):
+                request.state.user_id = "student-1001"
             return await call_next(request)
 
     def get_db() -> Generator[Session, None, None]:
