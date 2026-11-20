@@ -3,6 +3,7 @@ import { afterEach, beforeEach, vi } from 'vitest'
 import {
   createRoommateProfile,
   fetchRoommateProfileStatus,
+  updateRoommateProfileSearchVisibility,
 } from '../api/client.js'
 import App from '../App.jsx'
 import ProfileEditPage from '../pages/ProfileEditPage.jsx'
@@ -13,10 +14,12 @@ vi.mock('../api/client.js', async (importOriginal) => ({
   ...await importOriginal(),
   createRoommateProfile: vi.fn(),
   fetchRoommateProfileStatus: vi.fn(),
+  updateRoommateProfileSearchVisibility: vi.fn(),
 }))
 
 beforeEach(() => {
   fetchRoommateProfileStatus.mockResolvedValue(false)
+  updateRoommateProfileSearchVisibility.mockResolvedValue({ isSearchable: true })
 })
 
 afterEach(() => {
@@ -112,16 +115,23 @@ test('test_AC_RMP_02A_accept_valid_profile_values', async () => {
 })
 
 // AC-RMP-05: ต้องส่งข้อมูลที่ตรวจผ่านไปยัง API และแสดงผลสำเร็จเมื่อ API ยืนยันการบันทึก
-test('test_AC_RMP_05_submits_profile_and_shows_success_after_api_confirmation', async () => {
+test('test_AC_RMP_05_saves_profile_and_shows_the_created_profile', async () => {
   createRoommateProfile.mockResolvedValue({ message: 'สร้างโปรไฟล์สำเร็จ' })
   await openProfileForm()
   fillValidProfile()
+  fireEvent.change(screen.getByLabelText('Facebook'), { target: { value: '@mate' } })
   fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
   await act(async () => {
-    fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' }))
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกข้อมูล' }))
   })
 
-  expect(screen.getByRole('status').textContent).toBe('สร้างโปรไฟล์สำเร็จ')
+  expect(screen.getByRole('heading', { name: 'โปรไฟล์ของฉัน' })).toBeTruthy()
+  expect(screen.getByText('สร้างโปรไฟล์สำเร็จ')).toBeTruthy()
+  expect(screen.getByText('เมท')).toBeTruthy()
+  expect(screen.getByText('profile.png')).toBeTruthy()
+  expect(screen.getByText('ห้องแอร์')).toBeTruthy()
+  expect(screen.getByText('กรน')).toBeTruthy()
+  expect(screen.getByText('@mate')).toBeTruthy()
   expect(createRoommateProfile).toHaveBeenCalledWith(
     expect.objectContaining({
       nickname: 'เมท',
@@ -136,7 +146,7 @@ test('test_AC_RMP_05_submits_profile_and_shows_success_after_api_confirmation', 
     }),
     expect.objectContaining({ name: 'profile.png', type: 'image/png' }),
   )
-  expect(screen.queryByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' })).toBeNull()
+  expect(screen.queryByRole('button', { name: 'บันทึกข้อมูล' })).toBeNull()
 })
 
 // AC-RMP-04: ข้อผิดพลาดจาก API ต้องแสดงที่ช่องที่เกี่ยวข้องและไม่แสดงผลสำเร็จ
@@ -154,7 +164,7 @@ test('test_AC_RMP_04_displays_api_validation_errors_on_related_fields', async ()
   fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
 
   await act(async () => {
-    fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' }))
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกข้อมูล' }))
   })
 
   expect(screen.getByText('ชื่อเล่นไม่ถูกต้อง')).toBeTruthy()
@@ -177,7 +187,7 @@ test('test_AC_RMP_03_displays_api_required_field_errors_on_related_fields', asyn
   fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
 
   await act(async () => {
-    fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' }))
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกข้อมูล' }))
   })
 
   expect(screen.getByText('กรุณาระบุพฤติกรรมการนอนเพิ่มเติม')).toBeTruthy()
@@ -195,7 +205,7 @@ test('test_AC_RMP_04A_displays_api_occupancy_errors_on_related_fields', async ()
   fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
 
   await act(async () => {
-    fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' }))
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกข้อมูล' }))
   })
 
   expect(screen.getByText('จำนวนผู้พักไม่สอดคล้องกับรูปแบบห้อง')).toBeTruthy()
@@ -212,19 +222,81 @@ test('test_AC_RMP_05A_allows_retry_after_api_save_failure', async () => {
   fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
 
   await act(async () => {
-    fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' }))
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกข้อมูล' }))
   })
 
   expect(screen.getByRole('alert').textContent).toBe('ไม่สามารถบันทึกโปรไฟล์ได้ กรุณาลองใหม่')
   expect(screen.queryByText('สร้างโปรไฟล์สำเร็จ')).toBeNull()
-  expect(screen.getByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' }).disabled).toBe(false)
+  expect(screen.getByRole('button', { name: 'บันทึกข้อมูล' }).disabled).toBe(false)
 
   await act(async () => {
-    fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' }))
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกข้อมูล' }))
   })
 
-  expect(screen.getByRole('status').textContent).toBe('สร้างโปรไฟล์สำเร็จ')
+  expect(screen.getByText('สร้างโปรไฟล์สำเร็จ')).toBeTruthy()
   expect(createRoommateProfile).toHaveBeenCalledTimes(2)
+})
+
+test('test_AC_RMP_06_owner_can_toggle_profile_search_visibility', async () => {
+  createRoommateProfile.mockResolvedValue({ message: 'สร้างโปรไฟล์สำเร็จ' })
+  updateRoommateProfileSearchVisibility
+    .mockResolvedValueOnce({ isSearchable: true })
+    .mockResolvedValueOnce({ isSearchable: false })
+  await openProfileForm()
+  fillValidProfile()
+  fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกข้อมูล' }))
+  })
+
+  expect(screen.getByText('สถานะการค้นหา: ไม่เปิด')).toBeTruthy()
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'เปิดให้ค้นหา' }))
+  })
+
+  expect(screen.getByText('สถานะการค้นหา: เปิด')).toBeTruthy()
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'ปิดการค้นหา' }))
+  })
+
+  expect(screen.getByText('สถานะการค้นหา: ไม่เปิด')).toBeTruthy()
+  expect(updateRoommateProfileSearchVisibility).toHaveBeenNthCalledWith(1, true)
+  expect(updateRoommateProfileSearchVisibility).toHaveBeenNthCalledWith(2, false)
+})
+
+test('test_AC_RMP_08_new_profile_starts_hidden_from_search', async () => {
+  createRoommateProfile.mockResolvedValue({ message: 'สร้างโปรไฟล์สำเร็จ' })
+  await openProfileForm()
+  fillValidProfile()
+  fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกข้อมูล' }))
+  })
+
+  expect(screen.getByText('สถานะการค้นหา: ไม่เปิด')).toBeTruthy()
+  expect(updateRoommateProfileSearchVisibility).not.toHaveBeenCalled()
+})
+
+test('test_AC_RMP_06_visibility_api_failure_keeps_the_current_status', async () => {
+  createRoommateProfile.mockResolvedValue({ message: 'สร้างโปรไฟล์สำเร็จ' })
+  updateRoommateProfileSearchVisibility.mockRejectedValue(
+    new Error('ไม่สามารถเปลี่ยนสถานะการค้นหาได้ กรุณาลองใหม่'),
+  )
+  await openProfileForm()
+  fillValidProfile()
+  fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'บันทึกข้อมูล' }))
+  })
+
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'เปิดให้ค้นหา' }))
+  })
+
+  expect(screen.getByRole('alert').textContent).toBe(
+    'ไม่สามารถเปลี่ยนสถานะการค้นหาได้ กรุณาลองใหม่',
+  )
+  expect(screen.getByText('สถานะการค้นหา: ไม่เปิด')).toBeTruthy()
 })
 
 // AC-RMP-02A: พฤติกรรมที่ไม่อยู่ในรายการหรือเลือกตัวเลือกพิเศษร่วมกันต้องไม่ผ่าน validation

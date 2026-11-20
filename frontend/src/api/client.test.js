@@ -2,6 +2,8 @@ import { afterEach, expect, test, vi } from 'vitest'
 
 import { CHAT_CONFIG } from '../config.js'
 import {
+  createRoommateProfile,
+  DEMO_USER_SESSION_KEY,
   fetchChatList,
   fetchChatMessages,
   fetchRoommateProfileStatus,
@@ -9,6 +11,7 @@ import {
   openChat,
   sendChatMessage,
   sendChatMessageWithAttachment,
+  updateRoommateProfileSearchVisibility,
 } from './client.js'
 
 function makeJsonResponse(ok, payload, status = ok ? 200 : 500) {
@@ -37,9 +40,67 @@ test('test_AC_RMP_01A_profile_status_rejects_missing_identity', async () => {
   await expect(fetchRoommateProfileStatus()).rejects.toMatchObject({ status: 401 })
 })
 
+test('test_AC_RMP_06_updates_search_visibility_for_current_profile', async () => {
+  vi.stubEnv('DEV', true)
+  window.sessionStorage.setItem(DEMO_USER_SESSION_KEY, 'demo-student')
+  const fetchMock = vi.fn().mockResolvedValue(makeJsonResponse(true, { isSearchable: true }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(updateRoommateProfileSearchVisibility(true)).resolves.toEqual({
+    isSearchable: true,
+  })
+  expect(fetchMock).toHaveBeenCalledWith(
+    '/api/roommate-profiles/me/search-visibility',
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Demo-User-ID': 'demo-student',
+      },
+      body: JSON.stringify({ isSearchable: true }),
+    },
+  )
+})
+
 afterEach(() => {
+  window.sessionStorage.removeItem(DEMO_USER_SESSION_KEY)
   vi.restoreAllMocks()
   vi.unstubAllEnvs()
+})
+
+test('test_Q04_demo_identity_is_sent_for_profile_requests_in_development', async () => {
+  vi.stubEnv('DEV', true)
+  window.sessionStorage.setItem(DEMO_USER_SESSION_KEY, 'demo student')
+  const fetchMock = vi.fn()
+    .mockResolvedValueOnce(makeJsonResponse(true, { hasProfile: false }))
+    .mockResolvedValueOnce(makeJsonResponse(true, { message: 'สร้างโปรไฟล์สำเร็จ' }, 201))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(fetchRoommateProfileStatus()).resolves.toBe(false)
+  await createRoommateProfile({}, new File(['image'], 'profile.png', { type: 'image/png' }))
+
+  const demoHeaders = { 'X-Demo-User-ID': 'demo%20student' }
+  expect(fetchMock).toHaveBeenNthCalledWith(
+    1,
+    '/api/roommate-profiles/me',
+    { headers: demoHeaders },
+  )
+  expect(fetchMock).toHaveBeenNthCalledWith(
+    2,
+    '/api/roommate-profiles',
+    expect.objectContaining({ method: 'POST', headers: demoHeaders }),
+  )
+})
+
+test('test_Q04_demo_identity_is_not_sent_outside_development', async () => {
+  vi.stubEnv('DEV', false)
+  window.sessionStorage.setItem(DEMO_USER_SESSION_KEY, 'demo-student')
+  const fetchMock = vi.fn().mockResolvedValue(makeJsonResponse(true, { hasProfile: false }))
+  vi.stubGlobal('fetch', fetchMock)
+
+  await expect(fetchRoommateProfileStatus()).resolves.toBe(false)
+
+  expect(fetchMock).toHaveBeenCalledWith('/api/roommate-profiles/me')
 })
 
 test('test_feature_config_values', () => {

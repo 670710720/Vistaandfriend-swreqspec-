@@ -2,11 +2,12 @@
 - Feature: สร้างโปรไฟล์หาเมท (Create Roommate Profile)
 - Spec ID: SPEC-RMP-001
 - อ้างอิง: [plan.md](./plan.md)
-- วันที่: 2026-11-12
+- วันที่: 2026-11-20
 
 สรุป:
-- มี 5 เฟส รวม 14 task
-- มี 2 task รอคำตอบ Q-05; งานที่รอรายละเอียดทางเทคนิคจะเริ่มได้เมื่อทีมยืนยันข้อตกลงใน prompt-log และปรับสถานะ
+- มี 5 เฟส รวม 16 task
+- Q-05 ตอบแล้ว; T-13 และ T-14 ทำตามสัญญา API ที่ทีมยืนยัน
+- การตรวจ integration ว่าผลค้นหา UC-04 เปลี่ยนตามสถานะยังต้องทำแยก โดยไม่แก้ระบบค้นหาใน task นี้
 - เฟสแรกที่ลองสร้างและส่งโปรไฟล์ได้คือเฟส 2 หลังเฟสฐานข้อมูลและ API เสร็จ และรายละเอียดระบบยืนยันตัวตน/จัดเก็บรูปได้รับการกำหนด
 
 ลำดับงานในไฟล์นี้เป็นฐานข้อมูล → API → หน้าจอ ตามที่ทีมระบุ โดยส่วนหน้าจอเดิมเป็นงานที่มีอยู่แล้วและรอทีมตรวจ ไม่ได้หมายความว่าเชื่อมต่อ backend แล้ว
@@ -152,7 +153,7 @@
 - แบบหน้าจอ: ไม่มี mockup; ไม่มี UI ID ใน spec
 - ต้องทำหลัง: T-07, T-08, T-09, T-10
 - เสร็จเมื่อ: นักศึกษาใหม่ 5 คนทดลองสร้างโปรไฟล์โดยไม่รับคำแนะนำ และบันทึกผลได้ว่าอย่างน้อย 4 คนสร้างโปรไฟล์สำเร็จ
-- สถานะ: พร้อมทำ
+- สถานะ: ยังไม่ครบ
 
 #### จุดตรวจเฟส 3
 - test ที่ต้องผ่านทั้งหมด: `cd frontend && npm test`; `cd backend && pytest -v`; และผลทดลอง usability ของผู้ใช้จริง
@@ -163,25 +164,26 @@
   Then อย่างน้อย 4 คนสร้างโปรไฟล์สำเร็จ
 - ยังขาด: ต้องใช้ผู้ทดสอบจริง 5 คนตาม NFR-USE-01; ไม่ลดจำนวนตัวอย่างเอง
 
-## เฟสสุดท้าย: รอคำตอบ Q-05
+## เฟสสุดท้าย: เปิด/ปิดสถานะให้ค้นหา
 
 ### T-13 เปิดสถานะให้ค้นหาตามมติของ Q-05
 - รองรับ: FR-RMP-10, FR-RMP-11, CON-DISCOVER-01
 - ตรวจด้วย: AC-RMP-06, AC-RMP-08
-- ไฟล์ที่แตะ: `backend/app/models/roommate_profile.py`, `backend/app/roommate_profiles.py`, `backend/tests/test_roommate_profile_discovery.py`
+- ไฟล์ที่แตะ: `backend/app/models/roommate_profile.py`, `backend/app/roommate_profiles.py`, `backend/app/main.py`, `backend/tests/test_roommate_profile_discovery.py`
 - แบบหน้าจอ: ไม่มี; การค้นหาจริงเป็น UC-04 นอกขอบเขตนี้
 - ต้องทำหลัง: T-02, T-05
-- เสร็จเมื่อ: backend เปิดสถานะและปิดกลับได้เฉพาะตามมติ Q-05 และสถานะไม่เปิด/เปิดพร้อมให้ UC-04 ตรวจตาม AC
-- สถานะ: รอ Q-05
+- เสร็จเมื่อ: `PATCH /api/roommate-profiles/me/search-visibility` เปลี่ยนสถานะได้เฉพาะเจ้าของโปรไฟล์ปัจจุบัน, บันทึกสถานะ, คืน 401 เมื่อไม่มี identity และ 404 เมื่อไม่มีโปรไฟล์
+- สถานะ: เสร็จ รอทีมตรวจ
 
-### T-14 เพิ่มจุดควบคุมสถานะในหน้าจอและทดสอบร่วมกับ UC-04
-- รองรับ: FR-RMP-10, FR-RMP-11, CON-DISCOVER-01
-- ตรวจด้วย: AC-RMP-06, AC-RMP-08
-- ไฟล์ที่แตะ: `frontend/src/api/client.js`, `frontend/src/App.jsx`, `frontend/src/__tests__/profile-form.test.jsx`
+### T-14 เพิ่มจุดควบคุมสถานะในหน้าจอ; แยกทดสอบผลค้นหากับ UC-04
+- รองรับ: FR-RMP-09, FR-RMP-10, FR-RMP-11, CON-DISCOVER-01, ASM-06
+- ตรวจด้วย: AC-RMP-05, AC-RMP-06, AC-RMP-08
+- ไฟล์ที่แตะ: `frontend/src/api/client.js`, `frontend/src/api/client.test.js`, `frontend/src/App.jsx`, `frontend/src/config.js`, `frontend/src/__tests__/profile-form.test.jsx`
 - แบบหน้าจอ: ไม่มี mockup; ไม่มี UI ID ใน spec
 - ต้องทำหลัง: T-13
-- เสร็จเมื่อ: เจ้าของเปิดสถานะตามมติ Q-05 ได้ และทีมตรวจร่วมกับ UC-04 ว่าโปรไฟล์แสดงหรือไม่แสดงตามสถานะ โดยไม่สร้างฟังก์ชันค้นหาใหม่ใน UC-01
-- สถานะ: รอ Q-05
+- เสร็จเมื่อ: หลังบันทึกสำเร็จแสดงหน้าโปรไฟล์จากข้อมูลที่เพิ่งส่ง; เจ้าของเปิด/ปิดสถานะผ่านปุ่มที่เรียก API ได้; ไม่มีการแก้ระบบค้นหา UC-04 โดยการยืนยันผลค้นหาจริงเป็น integration test แยก
+- สถานะ: เสร็จ รอทีมตรวจ
+- หมายเหตุ: ทีมยังต้องทดสอบ integration กับ UC-04 แยกว่าผลค้นหาเปลี่ยนตามสถานะจริง
 
 ## ตารางตรวจความครบ: Acceptance Criteria
 
@@ -194,7 +196,7 @@
 | AC-RMP-03 | T-04, T-07, T-10 |
 | AC-RMP-04 | T-04, T-07, T-10 |
 | AC-RMP-04A | T-04, T-07, T-10 |
-| AC-RMP-05 | T-05, T-09 |
+| AC-RMP-05 | T-05, T-09, T-14 |
 | AC-RMP-05B | T-02, T-05, T-13 |
 | AC-RMP-05A | T-05, T-10 |
 | AC-RMP-06 | T-13, T-14 |
@@ -205,8 +207,8 @@
 
 | Constraint ID | task ที่ทำให้เป็นจริง |
 |---|---|
-| CON-AUTH-01 | T-06, T-09, T-11 |
-| CON-PROFILE-01 | T-02, T-06, T-11 |
+| CON-AUTH-01 | T-06, T-09, T-11, T-13 |
+| CON-PROFILE-01 | T-02, T-06, T-11, T-13 |
 | CON-DATA-01 | T-02, T-03, T-04, T-08 |
 | CON-VALID-01 | T-03, T-04, T-07, T-08, T-10 |
 | CON-REL-01 | T-04, T-05, T-10 |
@@ -225,22 +227,43 @@
 | FR-RMP-06 | AC-RMP-03 | เฟส 1, 2 |
 | FR-RMP-07 | AC-RMP-04, AC-RMP-04A | เฟส 1, 2 |
 | FR-RMP-08 | AC-RMP-05, AC-RMP-05A | เฟส 0, 1, 2 |
-| FR-RMP-09 | AC-RMP-05 | เฟส 1, 2 |
-| FR-RMP-10 | AC-RMP-06 | เฟสรอ Q-05 |
-| FR-RMP-11 | AC-RMP-05B, AC-RMP-06, AC-RMP-08 | เฟส 0, 1, เฟสรอ Q-05 |
+| FR-RMP-09 | AC-RMP-05 | เฟส 1, 2, เฟสสุดท้าย |
+| FR-RMP-10 | AC-RMP-06 | เฟสสุดท้าย |
+| FR-RMP-11 | AC-RMP-05B, AC-RMP-06, AC-RMP-08 | เฟส 0, 1, เฟสสุดท้าย |
 
 ## สิ่งที่ยังไม่ทำ: Open Questions
 
 - Q-01 ข้อมูลใดบ้างที่เป็นข้อมูลจำเป็นสำหรับการสร้างโปรไฟล์? ตอบแล้วใน spec.md; ไม่มี task รอคำตอบ
 - Q-02 ความต้องการเกี่ยวกับเมทมีข้อมูลอะไรบ้าง? ตอบแล้วใน spec.md; ไม่มี task รอคำตอบ
 - Q-03 หลังจากสร้างโปรไฟล์สำเร็จ โปรไฟล์จะแสดงในผลการค้นหาทันทีหรือไม่? ตอบแล้วใน spec.md; ไม่มี task รอคำตอบ
-- Q-04 ถ้านักศึกษายังไม่ได้เข้าสู่ระบบแล้วเลือกเมนูสร้างโปรไฟล์หาเมท ระบบต้องทำอะไร (พาไปหน้าเข้าสู่ระบบ / ซ่อนเมนู / แสดงข้อความ)? ตอบแล้วใน spec.md ว่าพาไปหน้าเข้าสู่ระบบพร้อมเตือนว่าต้องเข้าสู่ระบบ; T-11 ใช้ browser alert แล้วนำทางไป `/login` ตามที่ทีมยืนยัน
-- Q-05 เจ้าของเปิดสถานะให้ค้นหาที่ไหนและอย่างไร (ตอนสร้าง หรือปุ่มหลังสร้าง) และปิดกลับได้ไหม? ยังไม่ได้คำตอบ; รอ T-13 และ T-14
+- Q-04 ถ้านักศึกษายังไม่ได้เข้าสู่ระบบแล้วเลือกเมนูสร้างโปรไฟล์หาเมท ระบบต้องทำอะไร (พาไปหน้าเข้าสู่ระบบ / ซ่อนเมนู / แสดงข้อความ)? ตอบแล้วใน spec.md ว่าพาไปหน้า `/login` พร้อมเตือน; หน้า placeholder แสดงตาม ASM-05 และยังไม่ login จริง
+- Q-05 เจ้าของเปิดสถานะให้ค้นหาที่ไหนและอย่างไร (ตอนสร้าง หรือปุ่มหลังสร้าง) และปิดกลับได้ไหม? ตอบแล้วใน spec.md: ใช้ปุ่มหลังสร้างและปิดกลับได้; T-13/T-14 ทำตามสัญญา API ที่ทีมยืนยัน
 - Q-06 พฤติกรรมการนอนมีตัวเลือก "อื่น ๆ" ไหม และเลือก "ไม่มีพฤติกรรมดังกล่าว" ร่วมกับตัวเลือกอื่นได้ไหม? ตอบแล้วใน spec.md; T-08 แก้โค้ดเดิมให้ตรงคำตอบ
 - Q-07 ข้อมูลโปรไฟล์เก็บที่ไหน (ฐานข้อมูลอะไร มี backend ไหม)? ตอบแล้วใน spec.md ว่าใช้ SQLite และมี backend; ไม่มี task รอคำตอบ
 
 ## ประเด็นทางเทคนิคที่ยังต้องกำหนดโดยทีม
 
-- Production upstream authentication provider ยังไม่เชื่อม; API ใช้ `request.state.user_id` และ fail closed เมื่อไม่มี identity จึงต้องเชื่อม provider ก่อนใช้งานจริง (CON-AUTH-01)
-- หน้า login ปลายทาง `/login` ยังไม่ได้อยู่ใน frontend นี้; ต้องทดสอบการนำทางร่วมกับระบบ auth จริง (Q-04)
+- Production upstream authentication provider ยังไม่เชื่อม; ใช้ fake login และ dev-only identity สำหรับทดลองตาม ASM-05 ได้
 - AC-RMP-06/08 ตรวจผลการค้นหาจริงร่วมกับ UC-04 ตาม Out of scope; งานใน feature นี้จำกัดที่สถานะการเผยแพร่และการเชื่อมต่อทดสอบกับ UC-04
+
+## งานเพิ่มเติมตามมติทีม: placeholder สำหรับตรวจ redirect
+
+### T-15 เพิ่มหน้า placeholder `/login`
+- รองรับ: CON-AUTH-01, Q-04, ASM-05
+- ตรวจด้วย: `test_Q04_login_placeholder_route`
+- ไฟล์ที่แตะ: `frontend/src/App.jsx`, `frontend/src/pages/LoginPlaceholderPage.jsx`, `frontend/src/__tests__/login-placeholder.test.jsx`
+- แบบหน้าจอ: ไม่มี mockup; ใช้ข้อความตาม ASM-05
+- ต้องทำหลัง: T-11
+- เสร็จเมื่อ: เมื่อเปิด `/login` แสดงหัวข้อและข้อความ placeholder ตาม ASM-05; ไม่มีฟอร์มหรือการยืนยันตัวตน และไม่เรียก API โปรไฟล์; frontend tests ผ่าน
+- สถานะ: เสร็จ รอทีมตรวจ
+- หมายเหตุ: พฤติกรรม placeholder นี้ถูกปรับตามมติใหม่ใน T-16
+
+### T-16 เพิ่ม fake login สำหรับทดลองสร้างโปรไฟล์ในเครื่อง
+- รองรับ: CON-AUTH-01, CON-PROFILE-01, Q-04, ASM-05
+- ตรวจด้วย: `test_Q04_demo_login_accepts_nonempty_credentials`, backend tests สำหรับ dev-only identity
+- ไฟล์ที่แตะ: `backend/app/main.py`, `backend/tests/test_roommate_profile_auth.py`, `frontend/src/App.jsx`, `frontend/src/api/client.js`, `frontend/src/pages/LoginPlaceholderPage.jsx` (เปลี่ยนชื่อเป็น `LoginPage.jsx`), `frontend/src/__tests__/login-placeholder.test.jsx` (เปลี่ยนชื่อเป็น `login-page.test.jsx`), `frontend/src/api/client.test.js`
+- แบบหน้าจอ: ไม่มี mockup; ช่อง username/password และพฤติกรรมตาม ASM-05
+- ต้องทำหลัง: T-15
+- เสร็จเมื่อ: เมื่อกรอก username/password ที่ไม่ว่างแล้วกลับไป `/`; เก็บเฉพาะ username ใน session ของแท็บ; API โปรไฟล์ยอมรับ demo identity เฉพาะเมื่อ `APP_ENV=development` และ `ROOMMATE_DEMO_AUTH_ENABLED=true`; ปิด/ปฏิเสธใน environment อื่น; tests ผ่าน
+- สถานะ: เสร็จ รอทีมตรวจ
+- วิธีทดลองในเครื่อง: `cd backend && APP_ENV=development ROOMMATE_DEMO_AUTH_ENABLED=true uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`; อีก terminal รัน `cd frontend && npm run dev`

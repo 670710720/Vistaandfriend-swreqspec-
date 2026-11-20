@@ -1070,3 +1070,66 @@
 - Tests ใหม่: backend `test_AC_RMP_01A_profile_status_requires_trusted_identity`, `test_AC_RMP_01A_profile_status_reports_whether_trusted_owner_has_profile`; frontend `test_AC_RMP_01A_profile_status_uses_current_student_endpoint`, `test_AC_RMP_01A_profile_status_rejects_missing_identity`, `test_AC_RMP_01A_does_not_open_form_when_profile_already_exists`, `test_AC_RMP_01A_redirects_unauthenticated_student_with_warning`
 - Tests ทั้งชุด: `cd backend && pytest -v` ผ่าน 129, ข้าม 3; `cd frontend && npm test` ผ่าน 114; `git diff --check` ผ่าน; มี Starlette deprecation warning เดิมเกี่ยวกับ `httpx`/`TestClient`
 - สถานะ T-11: เสร็จ รอทีมตรวจ
+
+## 2026-11-20 03:07 UTC — คำสั่ง: ทำหน้า `/login` เพื่อเช็ก redirect
+
+- คำถามที่ AI ถาม: ต้องการหน้า placeholder, login จริง หรือ redirect ไป auth ภายนอก; และอนุญาตให้อัปเดตเอกสาร requirement หรือไม่
+- คำตอบของทีม: เลือก placeholder เท่านั้น ไม่มี auth จริง และอนุญาตให้อัปเดต spec/plan/tasks
+- คำถามเพิ่มเติม: placeholder ควรแสดงอะไร
+- คำตอบของทีม: ใช้หัวข้อ "เข้าสู่ระบบ" และข้อความ "หน้านี้ใช้ตรวจการนำทางเท่านั้น ยังไม่รองรับการเข้าสู่ระบบ"
+- สิ่งที่แก้ใน spec: ปรับเป็น Draft v5, เพิ่ม ASM-05 สำหรับ placeholder ชั่วคราว และบันทึกคำตอบ Q-04 โดยไม่เพิ่ม FR/AC
+
+## 2026-11-20 03:07 UTC — คำสั่ง: `/implement T-15 specs/001-roommate-profile/tasks.md`
+
+- งาน: เพิ่มหน้า placeholder `/login` สำหรับตรวจเส้นทาง redirect เท่านั้น
+- ไฟล์ที่แก้: `frontend/src/App.jsx`, `frontend/src/pages/LoginPlaceholderPage.jsx`, `frontend/src/__tests__/login-placeholder.test.jsx`, `specs/001-roommate-profile/spec.md`, `specs/001-roommate-profile/plan.md`, `specs/001-roommate-profile/tasks.md`
+- Test ใหม่: `test_Q04_login_placeholder_route` ตรวจข้อความที่ทีมยืนยัน ไม่มีช่องกรอก/ปุ่ม และไม่เรียก API โปรไฟล์
+- ผลทดสอบ: `cd frontend && npm test` ผ่าน 115 tests; `cd frontend && npm run build` ผ่าน; `git diff --check` ผ่าน
+- ขอบเขต: ไม่มีการทำ authentication จริงและไม่ได้แก้ backend
+- สถานะ T-15: เสร็จ รอทีมตรวจ
+
+## 2026-11-20 03:15 UTC — ปัญหา Vite proxy: `/api/roommate-profiles/me`
+
+- คำสั่งจากทีม: แก้ proxy error หากแก้ไม่ได้ให้นำส่วนที่ทำให้เกิด error ออก
+- ผลตรวจ: Vite proxy ส่งไป `http://localhost:8000` ถูกต้อง แต่ไม่มี backend รับการเชื่อมต่อที่ port 8000
+- การแก้ไข: เริ่ม backend ด้วย `uvicorn app.main:app --host 0.0.0.0 --port 8000`; `/openapi.json` ตอบ 200 และคำขอผ่าน Vite proxy ถึง endpoint แล้ว
+- ผล endpoint: `/api/roommate-profiles/me` ตอบ 401 เมื่อไม่มี trusted identity ซึ่งเป็นพฤติกรรมที่กำหนดไว้; ไม่ถอด API ตรวจโปรไฟล์ เพราะจำเป็นต่อ CON-PROFILE-01
+- ไฟล์โค้ด: ไม่มีการแก้ไข; backend server ทำงานอยู่ใน session นี้
+
+## 2026-11-20 03:31 UTC — คำสั่ง: ทำ fake login ให้ทดลองใช้งานได้
+
+- คำถามที่ AI ถาม: ต้องการเพียงหน้า UI หรือ full local demo; จะยอมรับ credentials แบบใด; สถานะ login อยู่ได้นานเท่าใด; หลังสำเร็จให้ไปหน้าใด
+- คำตอบของทีม: ทำ full local demo; รับ username/password ใดก็ได้เมื่อไม่ว่าง; จำสถานะใน session ของแท็บ; เมื่อสำเร็จกลับไป `/`
+- ขอบเขต: ไม่ใช่ authentication จริง; ไม่เก็บหรือส่ง password; backend รับ `X-Demo-User-ID` เฉพาะเมื่อ `APP_ENV=development` และ `ROOMMATE_DEMO_AUTH_ENABLED=true` และปฏิเสธเมื่อเปิดนอก development
+- สิ่งที่แก้: ปรับ ASM-05 และ Q-04 ใน spec v6, เพิ่มรายละเอียด API/UI/test ใน plan และ T-16 ใน tasks
+- ไฟล์โค้ด: `backend/app/main.py`, `backend/tests/test_roommate_profile_auth.py`, `frontend/src/App.jsx`, `frontend/src/api/client.js`, `frontend/src/pages/LoginPage.jsx`, `frontend/src/__tests__/login-page.test.jsx`, `frontend/src/api/client.test.js`
+- ผลทดสอบ: backend `pytest -q` ผ่าน 131, ข้าม 3; frontend `npm test` ผ่าน 119; `npm run build` ผ่าน; ตรวจผ่าน dev Vite proxy ได้ 200 เมื่อมี demo identity และ 401 เมื่อไม่มี
+- วิธีเปิด backend สำหรับ demo: `cd backend && APP_ENV=development ROOMMATE_DEMO_AUTH_ENABLED=true uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`
+
+## 2026-11-20 03:41 UTC — คำขอปรับขั้นบันทึกและหน้าโปรไฟล์หลังสร้าง
+
+- คำขอของทีม: คงปุ่มตรวจสอบข้อมูลและให้มีปุ่มบันทึกข้อมูล พร้อมแสดงหน้าโปรไฟล์เมื่อสร้างสำเร็จ
+- คำถามที่ AI ถาม: หน้าโปรไฟล์ควรอ่านข้อมูลจาก backend หรือแสดงข้อมูลที่เพิ่งกรอก; API ปัจจุบันไม่มี endpoint อ่านรายละเอียดโปรไฟล์
+- คำตอบของทีม: ให้มีทั้งปุ่ม "ตรวจสอบข้อมูล" และ "บันทึกข้อมูล"; แสดงข้อมูลที่เพิ่งกรอกจากแบบฟอร์มทันที ไม่เพิ่ม API
+- สิ่งที่แก้ใน spec: ปรับเป็น Draft v7; เพิ่ม ASM-06 สำหรับลำดับปุ่มและแหล่งข้อมูลของหน้าโปรไฟล์; ปรับ FR-RMP-09, AC-RMP-02A และ AC-RMP-05 ให้ตรวจพฤติกรรมที่ตกลง โดยใช้ ID เดิม
+- ยังไม่ได้แก้โค้ด, plan.md หรือ tasks.md; ต้องปรับแผนและ task ให้รองรับข้อกำหนดนี้ก่อนเริ่ม implement
+- สถานะ T-16: เสร็จ รอทีมตรวจ
+
+## 2026-11-20 04:44 UTC — คำสั่ง: ทำ T-13 และ T-14 ของ `specs/001-roommate-profile/tasks.md`
+
+- การตัดสินใจที่ใช้: ใช้ `PATCH /api/roommate-profiles/me/search-visibility` รับ `{"isSearchable": boolean}` และคืนสถานะใหม่; ไม่มี identity ตอบ 401 และไม่มีโปรไฟล์ตอบ 404
+- ขอบเขต: เพิ่ม API และ UI ควบคุมสถานะเท่านั้น; ไม่แก้ระบบค้นหา UC-04 โดยการยืนยันผลค้นหาจริงต้องทำ integration test แยก
+- ไฟล์ของ T-13: `backend/app/roommate_profiles.py`, `backend/app/main.py`, `backend/tests/test_roommate_profile_discovery.py`
+- ไฟล์ของ T-14: `frontend/src/config.js`, `frontend/src/api/client.js`, `frontend/src/api/client.test.js`, `frontend/src/App.jsx`, `frontend/src/__tests__/profile-form.test.jsx`
+- เอกสารที่อัปเดต: `specs/001-roommate-profile/plan.md`, `specs/001-roommate-profile/tasks.md`
+- Test เพิ่ม/ปรับ: `test_AC_RMP_06_owner_can_open_and_close_profile_search_visibility`, `test_AC_RMP_06_visibility_update_requires_identity_and_profile`, `test_AC_RMP_08_visibility_update_only_changes_the_authenticated_owner`, `test_AC_RMP_06_development_demo_identity_can_change_visibility`, `test_AC_RMP_06_updates_search_visibility_for_current_profile`, `test_AC_RMP_06_owner_can_toggle_profile_search_visibility`, `test_AC_RMP_08_new_profile_starts_hidden_from_search`, `test_AC_RMP_06_visibility_api_failure_keeps_the_current_status`; ไม่มีการแก้ test ที่ขึ้นต้น `test_TC_`
+- ผลทดสอบ: Backend ทั้งชุด 135 passed, 3 skipped; Frontend ทั้งชุด 123 passed; `npm run build` ผ่าน; `git diff --check` ผ่าน; มี Starlette deprecation warning เดิมเกี่ยวกับ `httpx`/`TestClient`
+- สถานะ T-13 และ T-14: เสร็จ รอทีมตรวจ
+- ข้อจำกัดคงเหลือ: ยังไม่มีหลักฐาน integration ว่าผลค้นหา UC-04 เปลี่ยนตามสถานะจริง; เป็นงานแยกตามขอบเขตที่ทีมเลือก
+
+## 2026-11-20 04:52 UTC — ตรวจปัญหากดสร้างโปรไฟล์แล้วแจ้งว่าไม่สามารถสร้างใหม่ได้
+
+- ผลตรวจ: ข้อความนี้แสดงเมื่อ `GET /api/roommate-profiles/me` ตอบ `hasProfile: true`; log ที่ส่งมามีเฉพาะ GET status และไม่มี POST create, จึงชี้ว่าแบบฟอร์มถูกปิดก่อนเรียก API สร้าง
+- สาเหตุที่เป็นไปได้จาก flow ปัจจุบัน: username demo ในแท็บนี้มีโปรไฟล์อยู่แล้ว; `CON-PROFILE-01` และ `AC-RMP-01A` ไม่อนุญาตให้สร้างโปรไฟล์ที่สองสำหรับ identity เดิม
+- การแก้ไขโค้ด: ไม่มี; แนะนำทดลองผ่าน `/login` ด้วย username ใหม่เพื่อสร้างโปรไฟล์ของ demo identity ใหม่ โดยไม่ลบหรือแก้ข้อมูลเดิม
+- Test: ไม่ได้รัน เนื่องจากไม่มีการแก้โค้ด

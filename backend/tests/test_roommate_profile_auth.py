@@ -1,5 +1,7 @@
 import json
+from urllib.parse import quote
 
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import func, select
 
@@ -26,7 +28,7 @@ def _profile_data():
     }
 
 
-def _post_profile(client: TestClient):
+def _post_profile(client: TestClient, headers: dict[str, str] | None = None):
     return client.post(
         "/api/roommate-profiles",
         data={"profileData": json.dumps(_profile_data(), ensure_ascii=False)},
@@ -37,6 +39,7 @@ def _post_profile(client: TestClient):
                 "image/png",
             )
         },
+        headers=headers,
     )
 
 
@@ -102,3 +105,46 @@ def test_AC_RMP_01A_uses_trusted_identity_and_rejects_second_profile(tmp_path):
     assert profile_count == 1
     assert stored_profile is not None
     assert stored_profile.user_id == "trusted-student"
+
+
+def test_Q04_development_demo_identity_can_create_and_check_profile(tmp_path):
+    app = create_app(
+        database_url=f"sqlite:///{tmp_path / 'profile-demo-auth.db'}",
+        demo_auth_enabled=True,
+        runtime_environment="development",
+    )
+    headers = {"X-Demo-User-ID": quote("demo student", safe="")}
+
+    with TestClient(app) as client:
+        missing_identity = client.get("/api/roommate-profiles/me")
+        before_create = client.get("/api/roommate-profiles/me", headers=headers)
+        create_response = _post_profile(client, headers=headers)
+        after_create = client.get("/api/roommate-profiles/me", headers=headers)
+
+    assert missing_identity.status_code == 401
+    assert before_create.status_code == 200
+    assert before_create.json() == {"hasProfile": False}
+    assert create_response.status_code == 201
+    assert after_create.status_code == 200
+    assert after_create.json() == {"hasProfile": True}
+
+
+def test_Q04_development_demo_identity_requires_explicit_development_flag(tmp_path):
+    app = create_app(
+        database_url=f"sqlite:///{tmp_path / 'profile-demo-auth-disabled.db'}",
+        runtime_environment="development",
+    )
+
+    with TestClient(app) as client:
+        response = client.get(
+            "/api/roommate-profiles/me",
+            headers={"X-Demo-User-ID": "demo-student"},
+        )
+
+    assert response.status_code == 401
+
+    with pytest.raises(RuntimeError, match="only run when APP_ENV=development"):
+        create_app(
+            demo_auth_enabled=True,
+            runtime_environment="production",
+        )

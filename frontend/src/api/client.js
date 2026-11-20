@@ -3,6 +3,15 @@ import { CHAT_CONFIG } from '../config.js'
 
 // รองรับ FR-RRS-01, FR-RRS-02, FR-RRS-11, FR-RRS-14, CON-RRS-07, CON-RRS-09, CON-RRS-10
 export const MAX_MESSAGE_LENGTH = ROOMMATE_REQUEST_CONFIG.maxMessageLength
+export const DEMO_USER_SESSION_KEY = 'vista_friend_demo_user'
+
+// รองรับ CON-AUTH-01 และ ASM-05
+function getDemoAuthHeaders() {
+  if (!import.meta.env.DEV || typeof window === 'undefined') return null
+  const username = window.sessionStorage.getItem(DEMO_USER_SESSION_KEY)
+  if (!username) return null
+  return { 'X-Demo-User-ID': encodeURIComponent(username) }
+}
 
 // รองรับ CON-RRS-10, FR-RRS-14
 export function getUnicodeCodePointLength(value) {
@@ -89,10 +98,14 @@ export async function createRoommateProfile(profileData, profileImage) {
   formData.append('profileData', JSON.stringify(profileData))
   formData.append('profileImage', profileImage)
 
-  const response = await fetch('/api/roommate-profiles', {
+  const options = {
     method: 'POST',
     body: formData,
-  })
+  }
+  const demoAuthHeaders = getDemoAuthHeaders()
+  if (demoAuthHeaders) options.headers = demoAuthHeaders
+
+  const response = await fetch('/api/roommate-profiles', options)
   const result = await response.json().catch(() => ({}))
 
   if (!response.ok) {
@@ -118,7 +131,10 @@ export async function createRoommateProfile(profileData, profileImage) {
 
 // รองรับ FR-RMP-01/02, CON-AUTH-01 และ CON-PROFILE-01
 export async function fetchRoommateProfileStatus() {
-  const response = await fetch('/api/roommate-profiles/me')
+  const demoAuthHeaders = getDemoAuthHeaders()
+  const response = demoAuthHeaders
+    ? await fetch('/api/roommate-profiles/me', { headers: demoAuthHeaders })
+    : await fetch('/api/roommate-profiles/me')
   const result = await response.json().catch(() => ({}))
 
   if (!response.ok) {
@@ -135,6 +151,39 @@ export async function fetchRoommateProfileStatus() {
   }
 
   return result.hasProfile
+}
+
+// รองรับ FR-RMP-11, CON-AUTH-01 และ CON-DISCOVER-01
+export async function updateRoommateProfileSearchVisibility(isSearchable) {
+  const options = {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ isSearchable }),
+  }
+  const demoAuthHeaders = getDemoAuthHeaders()
+  if (demoAuthHeaders) {
+    options.headers = { ...options.headers, ...demoAuthHeaders }
+  }
+
+  const response = await fetch('/api/roommate-profiles/me/search-visibility', options)
+  const result = await response.json().catch(() => ({}))
+
+  if (!response.ok) {
+    const message = result?.detail?.message ?? result?.message
+    const error = new Error(
+      typeof message === 'string' ? message : 'ไม่สามารถเปลี่ยนสถานะการค้นหาได้ กรุณาลองใหม่',
+    )
+    error.status = response.status
+    throw error
+  }
+
+  if (typeof result?.isSearchable !== 'boolean') {
+    throw new Error('Profile visibility API returned an invalid response')
+  }
+
+  return { isSearchable: result.isSearchable }
 }
 
 // Roommate search API (Feature Search)
