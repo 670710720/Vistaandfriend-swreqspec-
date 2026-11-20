@@ -6,6 +6,7 @@ from collections.abc import AsyncIterator, Generator
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import unquote
 
 from pydantic import ValidationError
 
@@ -111,6 +112,7 @@ def create_app(
     contact_provider: ChatContactProvider | None = None,
     *,
     demo_mode: bool = False,
+    demo_auth_enabled: bool = False,
     runtime_environment: str = "production",
     attachment_storage: AttachmentStorage | None = None,
 ) -> FastAPI:
@@ -118,6 +120,8 @@ def create_app(
     runtime_environment = runtime_environment.strip().lower()
     if demo_mode and runtime_environment != "development":
         raise RuntimeError("Chat demo mode can only run when APP_ENV=development")
+    if demo_auth_enabled and runtime_environment != "development":
+        raise RuntimeError("Demo authentication can only run when APP_ENV=development")
 
     demo_provider = DevelopmentDemoProvider() if demo_mode else None
     active_profile_checker = demo_provider or profile_checker
@@ -146,6 +150,19 @@ def create_app(
     app.include_router(profile_detail_router)
     app.include_router(roommate_profiles_router)
 
+    if demo_auth_enabled:
+        @app.middleware("http")
+        async def set_profile_demo_identity(request, call_next):
+            # CON-AUTH-01, ASM-05: accept a demo identity only for profile APIs in development.
+            if request.url.path in {
+                "/api/roommate-profiles",
+                "/api/roommate-profiles/me",
+                "/api/roommate-profiles/me/search-visibility",
+            }:
+                encoded_user_id = request.headers.get("x-demo-user-id")
+                if encoded_user_id:
+                    request.state.user_id = unquote(encoded_user_id)
+            return await call_next(request)
 
     if demo_provider is not None:
         @app.middleware("http")
@@ -416,4 +433,9 @@ def create_app(
 
 runtime_environment = os.getenv("APP_ENV", "production").strip().lower()
 demo_mode = os.getenv("CHAT_DEMO_MODE", "").strip().lower() == "true"
-app = create_app(demo_mode=demo_mode, runtime_environment=runtime_environment)
+demo_auth_enabled = os.getenv("ROOMMATE_DEMO_AUTH_ENABLED", "").strip().lower() == "true"
+app = create_app(
+    demo_mode=demo_mode,
+    demo_auth_enabled=demo_auth_enabled,
+    runtime_environment=runtime_environment,
+)

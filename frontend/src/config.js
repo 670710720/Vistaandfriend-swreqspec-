@@ -6,6 +6,9 @@ export const SLEEP_MIN_SELECTIONS = 1
 export const SLEEP_NONE_EXCLUSIVE = 'ไม่มีพฤติกรรมดังกล่าว'
 export const SLEEP_OTHER_REQUIRES_DESCRIPTION = 'อื่น ๆ'
 
+// FR-RMP-11, CON-DISCOVER-01: โปรไฟล์ใหม่ยังไม่เปิดให้ค้นหา
+export const PROFILE_DISCOVERY_DEFAULT = false
+
 export const PROFILE_CONFIG = {
   age: {
     min: 18,

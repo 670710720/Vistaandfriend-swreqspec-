@@ -14,6 +14,7 @@ from fastapi import (
     UploadFile as FastAPIUploadFile,
 )
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field, StrictBool
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette.datastructures import UploadFile
@@ -57,6 +58,10 @@ class ProfileAlreadyExistsError(ValueError):
 
 class ProfilePersistenceError(RuntimeError):
     """Report failed atomic persistence without exposing database details (CON-REL-01, NFR-REL-01)."""
+
+
+class ProfileSearchVisibilityUpdate(BaseModel):
+    is_searchable: StrictBool = Field(alias="isSearchable")
 
 
 def get_profile_db(request: Request) -> Generator[Session, None, None]:
@@ -329,3 +334,39 @@ def create_roommate_profile(
         status_code=201,
         content={"message": "สร้างโปรไฟล์สำเร็จ"},
     )
+
+
+@router.get("/api/roommate-profiles/me")
+def get_current_roommate_profile_status(
+    db: Session = Depends(get_profile_db),
+    owner_id: str = Depends(get_authenticated_user_id),
+) -> dict[str, bool]:
+    """Check current owner's profile before opening the form (FR-RMP-01/02, CON-AUTH-01, CON-PROFILE-01)."""
+    return {"hasProfile": db.get(RoommateProfile, owner_id) is not None}
+
+
+@router.patch("/api/roommate-profiles/me/search-visibility")
+def update_current_roommate_profile_search_visibility(
+    payload: ProfileSearchVisibilityUpdate,
+    db: Session = Depends(get_profile_db),
+    owner_id: str = Depends(get_authenticated_user_id),
+) -> dict[str, bool]:
+    """Allow an authenticated owner to change search visibility (FR-RMP-11, CON-DISCOVER-01)."""
+    profile = db.get(RoommateProfile, owner_id)
+    if profile is None:
+        raise HTTPException(
+            status_code=404,
+            detail={"message": "ไม่พบโปรไฟล์หาเมท"},
+        )
+
+    profile.is_searchable = payload.is_searchable
+    try:
+        db.commit()
+    except SQLAlchemyError as error:
+        db.rollback()
+        raise HTTPException(
+            status_code=503,
+            detail={"message": "ไม่สามารถเปลี่ยนสถานะการค้นหาได้ กรุณาลองใหม่"},
+        ) from error
+
+    return {"isSearchable": profile.is_searchable}

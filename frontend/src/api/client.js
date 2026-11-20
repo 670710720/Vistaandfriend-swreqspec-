@@ -3,6 +3,15 @@ import { CHAT_CONFIG } from '../config.js'
 
 // รองรับ FR-RRS-01, FR-RRS-02, FR-RRS-11, FR-RRS-14, CON-RRS-07, CON-RRS-09, CON-RRS-10
 export const MAX_MESSAGE_LENGTH = ROOMMATE_REQUEST_CONFIG.maxMessageLength
+export const DEMO_USER_SESSION_KEY = 'vista_friend_demo_user'
+
+// รองรับ CON-AUTH-01 และ ASM-05
+function getDemoAuthHeaders() {
+  if (!import.meta.env.DEV || typeof window === 'undefined') return null
+  const username = window.sessionStorage.getItem(DEMO_USER_SESSION_KEY)
+  if (!username) return null
+  return { 'X-Demo-User-ID': encodeURIComponent(username) }
+}
 
 // รองรับ CON-RRS-10, FR-RRS-14
 export function getUnicodeCodePointLength(value) {
@@ -82,6 +91,100 @@ export async function createRoommateRequest({
 
 export const requestRoommate = createRoommateRequest
 export const submitRoommateRequest = createRoommateRequest
+
+// รองรับ FR-RMP-08, FR-RMP-09, AC-RMP-05 และ CON-AUTH-01
+export async function createRoommateProfile(profileData, profileImage) {
+  const formData = new FormData()
+  formData.append('profileData', JSON.stringify(profileData))
+  formData.append('profileImage', profileImage)
+
+  const options = {
+    method: 'POST',
+    body: formData,
+  }
+  const demoAuthHeaders = getDemoAuthHeaders()
+  if (demoAuthHeaders) options.headers = demoAuthHeaders
+
+  const response = await fetch('/api/roommate-profiles', options)
+  const result = await response.json().catch(() => ({}))
+
+  if (!response.ok) {
+    const errors = result?.errors ?? result?.detail?.errors
+    const firstFieldError = errors && Object.values(errors).find(
+      (message) => typeof message === 'string' && message.trim(),
+    )
+    const message = result?.message ?? result?.detail?.message ?? firstFieldError
+    const error = new Error(
+      typeof message === 'string' ? message : 'ไม่สามารถสร้างโปรไฟล์ได้ กรุณาลองใหม่',
+    )
+    error.status = response.status
+    error.errors = errors ?? {}
+    throw error
+  }
+
+  if (typeof result?.message !== 'string' || !result.message.trim()) {
+    throw new Error('Profile API returned an invalid success response')
+  }
+
+  return result
+}
+
+// รองรับ FR-RMP-01/02, CON-AUTH-01 และ CON-PROFILE-01
+export async function fetchRoommateProfileStatus() {
+  const demoAuthHeaders = getDemoAuthHeaders()
+  const response = demoAuthHeaders
+    ? await fetch('/api/roommate-profiles/me', { headers: demoAuthHeaders })
+    : await fetch('/api/roommate-profiles/me')
+  const result = await response.json().catch(() => ({}))
+
+  if (!response.ok) {
+    const message = result?.detail?.message ?? result?.message
+    const error = new Error(
+      typeof message === 'string' ? message : 'ไม่สามารถตรวจสอบโปรไฟล์ได้ กรุณาลองใหม่',
+    )
+    error.status = response.status
+    throw error
+  }
+
+  if (typeof result?.hasProfile !== 'boolean') {
+    throw new Error('Profile status API returned an invalid response')
+  }
+
+  return result.hasProfile
+}
+
+// รองรับ FR-RMP-11, CON-AUTH-01 และ CON-DISCOVER-01
+export async function updateRoommateProfileSearchVisibility(isSearchable) {
+  const options = {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ isSearchable }),
+  }
+  const demoAuthHeaders = getDemoAuthHeaders()
+  if (demoAuthHeaders) {
+    options.headers = { ...options.headers, ...demoAuthHeaders }
+  }
+
+  const response = await fetch('/api/roommate-profiles/me/search-visibility', options)
+  const result = await response.json().catch(() => ({}))
+
+  if (!response.ok) {
+    const message = result?.detail?.message ?? result?.message
+    const error = new Error(
+      typeof message === 'string' ? message : 'ไม่สามารถเปลี่ยนสถานะการค้นหาได้ กรุณาลองใหม่',
+    )
+    error.status = response.status
+    throw error
+  }
+
+  if (typeof result?.isSearchable !== 'boolean') {
+    throw new Error('Profile visibility API returned an invalid response')
+  }
+
+  return { isSearchable: result.isSearchable }
+}
 
 // Roommate search API (Feature Search)
 export async function searchRoommates({ current_user_id, filters = {}, mode = 'AND', page = 1 }) {
@@ -436,6 +539,7 @@ export async function sendChatMessageWithAttachment({ senderId, receiverId, text
     ...normalizedMessage,
     status: normalizedMessage.status ?? 'Sent',
   }
+}
 
 // รองรับ FR-RPS-03 และ AC-RPS-02
 export async function saveRoommatePreference(payload) {
