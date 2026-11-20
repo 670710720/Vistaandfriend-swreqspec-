@@ -83,6 +83,39 @@ export async function createRoommateRequest({
 export const requestRoommate = createRoommateRequest
 export const submitRoommateRequest = createRoommateRequest
 
+// รองรับ FR-RMP-08, FR-RMP-09, AC-RMP-05 และ CON-AUTH-01
+export async function createRoommateProfile(profileData, profileImage) {
+  const formData = new FormData()
+  formData.append('profileData', JSON.stringify(profileData))
+  formData.append('profileImage', profileImage)
+
+  const response = await fetch('/api/roommate-profiles', {
+    method: 'POST',
+    body: formData,
+  })
+  const result = await response.json().catch(() => ({}))
+
+  if (!response.ok) {
+    const errors = result?.errors ?? result?.detail?.errors
+    const firstFieldError = errors && Object.values(errors).find(
+      (message) => typeof message === 'string' && message.trim(),
+    )
+    const message = result?.message ?? result?.detail?.message ?? firstFieldError
+    const error = new Error(
+      typeof message === 'string' ? message : 'ไม่สามารถสร้างโปรไฟล์ได้ กรุณาลองใหม่',
+    )
+    error.status = response.status
+    error.errors = errors ?? {}
+    throw error
+  }
+
+  if (typeof result?.message !== 'string' || !result.message.trim()) {
+    throw new Error('Profile API returned an invalid success response')
+  }
+
+  return result
+}
+
 // Roommate search API (Feature Search)
 export async function searchRoommates({ current_user_id, filters = {}, mode = 'AND', page = 1 }) {
   const response = await fetch('http://localhost:8000/search-roommates', {

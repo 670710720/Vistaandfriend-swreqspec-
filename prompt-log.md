@@ -1040,3 +1040,13 @@
 - ระหว่างตรวจพบ FastAPI ไม่รับ Starlette `UploadFile` เป็นชนิด field ของ route; เปลี่ยน annotation ของ endpoint เป็น `fastapi.UploadFile` แล้ว targeted/full tests ผ่าน
 - หมายเหตุ production: ยังไม่มี trusted upstream provider ในแอปปัจจุบัน; เมื่อไม่มี `request.state.user_id` API ปฏิเสธคำขอแบบ fail-closed ด้วย 401
 - สถานะ T-06: เสร็จ รอทีมตรวจ
+
+## 2026-11-20
+- ทีมยืนยันว่าตรวจและผ่านจุดตรวจเฟส 1 แล้ว; ปรับสถานะ T-03 ถึง T-06 ใน `specs/001-roommate-profile/tasks.md` เป็น "เสร็จ"
+- คำสั่ง: ทำต่อ `/implement-all specs/001-roommate-profile/tasks.md` — เฟส 2, T-09
+- ใช้สัญญาที่ทีมยืนยันไว้ก่อนหน้า: `POST /api/roommate-profiles`, multipart `profileData` (JSON) และ `profileImage` (file); สำเร็จ 201 `{message}`, validation 422 `{errors}`, ไม่มี identity 401 และโปรไฟล์ซ้ำ 409
+- ไฟล์ของ T-09: `frontend/src/api/client.js`, `frontend/src/App.jsx`, `frontend/src/__tests__/profile-form.test.jsx`
+- ผลการทำงาน: เพิ่ม client ส่ง multipart ไปยัง API, ให้หน้าจอยืนยันหลัง validation ผ่าน, แสดงข้อความสำเร็จเมื่อ API ยืนยัน และแสดงข้อผิดพลาดเมื่อคำขอล้มเหลว
+- Test: `test_AC_RMP_05_submits_profile_and_shows_success_after_api_confirmation`; targeted profile-form ผ่าน 16 tests
+- Tests ทั้งชุด: `cd backend && pytest -v` ผ่าน 127, ข้าม 3; `cd frontend && npm test` ผ่าน 106; `git diff --check` ผ่าน; มี Starlette deprecation warning เดิมเกี่ยวกับ `httpx`/`TestClient`
+- สถานะ T-09: เสร็จ รอทีมตรวจ

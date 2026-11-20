@@ -1,8 +1,19 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import { vi } from 'vitest'
+import { createRoommateProfile } from '../api/client.js'
 import App from '../App.jsx'
 import ProfileEditPage from '../pages/ProfileEditPage.jsx'
 import ProfilePage from '../pages/ProfilePage.jsx'
 import { validateProfile } from '../profileValidation.js'
+
+vi.mock('../api/client.js', async (importOriginal) => ({
+  ...await importOriginal(),
+  createRoommateProfile: vi.fn(),
+}))
+
+afterEach(() => {
+  vi.clearAllMocks()
+})
 
 function openProfileForm() {
   render(<App />)
@@ -88,6 +99,34 @@ test('test_AC_RMP_02A_accept_valid_profile_values', () => {
   fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
 
   expect(screen.getByRole('status').textContent).toContain('สามารถดำเนินการยืนยันการสร้างโปรไฟล์ได้')
+})
+
+// AC-RMP-05: ต้องส่งข้อมูลที่ตรวจผ่านไปยัง API และแสดงผลสำเร็จเมื่อ API ยืนยันการบันทึก
+test('test_AC_RMP_05_submits_profile_and_shows_success_after_api_confirmation', async () => {
+  createRoommateProfile.mockResolvedValue({ message: 'สร้างโปรไฟล์สำเร็จ' })
+  openProfileForm()
+  fillValidProfile()
+  fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' }))
+  })
+
+  expect(screen.getByRole('status').textContent).toBe('สร้างโปรไฟล์สำเร็จ')
+  expect(createRoommateProfile).toHaveBeenCalledWith(
+    expect.objectContaining({
+      nickname: 'เมท',
+      age: '18',
+      gender: 'หญิง',
+      faculty: 'วิทยาศาสตร์',
+      academicYear: '1',
+      phone: '0123456789',
+      roomType: 'airConditioned',
+      occupants: '1',
+      sleepBehaviors: ['กรน'],
+    }),
+    expect.objectContaining({ name: 'profile.png', type: 'image/png' }),
+  )
+  expect(screen.queryByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' })).toBeNull()
 })
 
 // AC-RMP-02A: พฤติกรรมที่ไม่อยู่ในรายการหรือเลือกตัวเลือกพิเศษร่วมกันต้องไม่ผ่าน validation

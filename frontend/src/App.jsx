@@ -1,5 +1,6 @@
 
 import { useState } from 'react'
+import { createRoommateProfile } from './api/client.js'
 import {
   PROFILE_CONFIG,
   SLEEP_NONE_EXCLUSIVE,
@@ -43,10 +44,14 @@ export default function App({ initialLoggedIn = true }) {
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState({})
   const [valid, setValid] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [created, setCreated] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   function update(field, value) {
     setValues((current) => ({ ...current, [field]: value }))
     setValid(false)
+    setSubmitError('')
   }
 
   // รองรับ FR-RMP-04, AC-RMP-02, CON-DATA-01, CON-VALID-01, Q-06
@@ -64,6 +69,7 @@ export default function App({ initialLoggedIn = true }) {
       return { ...current, sleepBehaviors }
     })
     setValid(false)
+    setSubmitError('')
   }
 
   function validate(event) {
@@ -71,6 +77,33 @@ export default function App({ initialLoggedIn = true }) {
     const nextErrors = validateProfile(values)
     setErrors(nextErrors)
     setValid(Object.keys(nextErrors).length === 0)
+  }
+
+  // รองรับ FR-RMP-08, FR-RMP-09, AC-RMP-05 และ CON-AUTH-01
+  async function createProfile() {
+    const nextErrors = validateProfile(values)
+    setErrors(nextErrors)
+    if (Object.keys(nextErrors).length > 0) {
+      setValid(false)
+      return
+    }
+
+    setValid(true)
+    setSubmitError('')
+    setIsSubmitting(true)
+    const { profileImage, ...profileData } = values
+    try {
+      await createRoommateProfile(profileData, profileImage)
+      setCreated(true)
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error && error.message
+          ? error.message
+          : 'ไม่สามารถสร้างโปรไฟล์ได้ กรุณาลองใหม่',
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const occupants = values.roomType
@@ -351,10 +384,14 @@ export default function App({ initialLoggedIn = true }) {
                     {channel}
                     <input
                       className="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5"
-                      onChange={(event) => setValues((current) => ({
-                        ...current,
-                        social: { ...current.social, [channel]: event.target.value },
-                      }))}
+                      onChange={(event) => {
+                        setValues((current) => ({
+                          ...current,
+                          social: { ...current.social, [channel]: event.target.value },
+                        }))
+                        setValid(false)
+                        setSubmitError('')
+                      }}
                       value={values.social[channel]}
                     />
                   </label>
@@ -369,11 +406,27 @@ export default function App({ initialLoggedIn = true }) {
               >
                 ตรวจสอบข้อมูล
               </button>
-              {valid && (
+              {created && (
+                <p className="text-sm font-medium text-teal-800" role="status">
+                  สร้างโปรไฟล์สำเร็จ
+                </p>
+              )}
+              {valid && !created && (
                 <p className="text-sm font-medium text-teal-800" role="status">
                   ข้อมูลถูกต้องและสามารถดำเนินการยืนยันการสร้างโปรไฟล์ได้
                 </p>
               )}
+              {valid && !created && (
+                <button
+                  className="rounded-lg bg-teal-700 px-5 py-3 font-semibold text-white hover:bg-teal-800 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={isSubmitting}
+                  onClick={createProfile}
+                  type="button"
+                >
+                  {isSubmitting ? 'กำลังสร้างโปรไฟล์...' : 'ยืนยันการสร้างโปรไฟล์'}
+                </button>
+              )}
+              {submitError && <p className="text-sm text-red-700" role="alert">{submitError}</p>}
             </div>
           </form>
         </section>
