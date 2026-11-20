@@ -50,6 +50,11 @@ export default function App({ initialLoggedIn = true }) {
 
   function update(field, value) {
     setValues((current) => ({ ...current, [field]: value }))
+    setErrors((current) => {
+      const nextErrors = { ...current }
+      delete nextErrors[field]
+      return nextErrors
+    })
     setValid(false)
     setSubmitError('')
   }
@@ -67,6 +72,12 @@ export default function App({ initialLoggedIn = true }) {
           ? withoutExclusive.filter((item) => item !== behavior)
           : [...withoutExclusive, behavior]
       return { ...current, sleepBehaviors }
+    })
+    setErrors((current) => {
+      const nextErrors = { ...current }
+      delete nextErrors.sleepBehaviors
+      delete nextErrors.otherSleepBehavior
+      return nextErrors
     })
     setValid(false)
     setSubmitError('')
@@ -96,10 +107,43 @@ export default function App({ initialLoggedIn = true }) {
       await createRoommateProfile(profileData, profileImage)
       setCreated(true)
     } catch (error) {
+      const serverErrors = (
+        error &&
+        typeof error === 'object' &&
+        error.errors &&
+        typeof error.errors === 'object'
+      )
+        ? error.errors
+        : {}
+      const visibleFields = [
+        'nickname',
+        'age',
+        'gender',
+        'faculty',
+        'academicYear',
+        'profileImage',
+        'phone',
+        'roomType',
+        'occupants',
+        'sleepBehaviors',
+        'otherSleepBehavior',
+      ]
+      const fieldErrors = Object.fromEntries(
+        Object.entries(serverErrors).filter(
+          ([field, message]) => visibleFields.includes(field) && typeof message === 'string',
+        ),
+      )
+      setErrors((current) => ({ ...current, ...fieldErrors }))
+      const hasUnmappedErrors = Object.keys(serverErrors).some(
+        (field) => !visibleFields.includes(field),
+      )
+      const message = error instanceof Error && error.message
+        ? error.message
+        : 'ไม่สามารถสร้างโปรไฟล์ได้ กรุณาลองใหม่'
       setSubmitError(
-        error instanceof Error && error.message
-          ? error.message
-          : 'ไม่สามารถสร้างโปรไฟล์ได้ กรุณาลองใหม่',
+        Object.keys(fieldErrors).length === 0 || hasUnmappedErrors
+          ? message
+          : '',
       )
     } finally {
       setIsSubmitting(false)

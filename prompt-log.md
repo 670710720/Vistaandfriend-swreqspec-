@@ -1050,3 +1050,11 @@
 - Test: `test_AC_RMP_05_submits_profile_and_shows_success_after_api_confirmation`; targeted profile-form ผ่าน 16 tests
 - Tests ทั้งชุด: `cd backend && pytest -v` ผ่าน 127, ข้าม 3; `cd frontend && npm test` ผ่าน 106; `git diff --check` ผ่าน; มี Starlette deprecation warning เดิมเกี่ยวกับ `httpx`/`TestClient`
 - สถานะ T-09: เสร็จ รอทีมตรวจ
+
+## 2026-11-20
+- คำสั่ง: ทำต่อ `/implement-all specs/001-roommate-profile/tasks.md` — เฟส 2, T-10
+- ไฟล์ของ T-10: `frontend/src/App.jsx`, `frontend/src/__tests__/profile-form.test.jsx`; ใช้ error payload จาก `frontend/src/api/client.js` ที่ T-09 เตรียมไว้
+- ผลการทำงาน: map ข้อผิดพลาดจาก API ไปยังช่องที่เกี่ยวข้อง, ล้าง error ของช่องเมื่อแก้ค่า, แสดงข้อผิดพลาดทั่วไปสำหรับ error ที่ไม่มีช่องตรงกัน และคงปุ่มให้ลองใหม่หลังบันทึกล้มเหลว โดยไม่แสดงข้อความสำเร็จจนกว่า API จะยืนยัน
+- Tests ใหม่: `test_AC_RMP_03_displays_api_required_field_errors_on_related_fields`, `test_AC_RMP_04_displays_api_validation_errors_on_related_fields`, `test_AC_RMP_04A_displays_api_occupancy_errors_on_related_fields`, `test_AC_RMP_05A_allows_retry_after_api_save_failure`
+- Tests ทั้งชุด: `cd backend && pytest -v` ผ่าน 127, ข้าม 3; `cd frontend && npm test` ผ่าน 110; `git diff --check` ผ่าน; มี Starlette deprecation warning เดิมเกี่ยวกับ `httpx`/`TestClient`
+- สถานะ T-10: เสร็จ รอทีมตรวจ

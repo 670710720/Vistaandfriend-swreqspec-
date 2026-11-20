@@ -129,6 +129,94 @@ test('test_AC_RMP_05_submits_profile_and_shows_success_after_api_confirmation', 
   expect(screen.queryByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' })).toBeNull()
 })
 
+// AC-RMP-04: ข้อผิดพลาดจาก API ต้องแสดงที่ช่องที่เกี่ยวข้องและไม่แสดงผลสำเร็จ
+test('test_AC_RMP_04_displays_api_validation_errors_on_related_fields', async () => {
+  const apiError = new Error('กรุณาตรวจสอบข้อมูล')
+  apiError.status = 422
+  apiError.errors = { nickname: 'ชื่อเล่นไม่ถูกต้อง' }
+  createRoommateProfile.mockRejectedValue(apiError)
+  openProfileForm()
+  fillValidProfile()
+  fireEvent.click(screen.getByLabelText('อื่น ๆ'))
+  fireEvent.change(screen.getByLabelText('ระบุพฤติกรรมการนอนเพิ่มเติม'), {
+    target: { value: 'นอนละเมอ' },
+  })
+  fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
+
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' }))
+  })
+
+  expect(screen.getByText('ชื่อเล่นไม่ถูกต้อง')).toBeTruthy()
+  expect(screen.queryByText('สร้างโปรไฟล์สำเร็จ')).toBeNull()
+  expect(createRoommateProfile).toHaveBeenCalledTimes(1)
+})
+
+// AC-RMP-03: ข้อผิดพลาดข้อมูลจำเป็นจาก API ต้องแสดงที่ช่องคำอธิบายพฤติกรรมการนอน
+test('test_AC_RMP_03_displays_api_required_field_errors_on_related_fields', async () => {
+  const apiError = new Error('กรุณาระบุพฤติกรรมการนอนเพิ่มเติม')
+  apiError.status = 422
+  apiError.errors = { otherSleepBehavior: 'กรุณาระบุพฤติกรรมการนอนเพิ่มเติม' }
+  createRoommateProfile.mockRejectedValue(apiError)
+  openProfileForm()
+  fillValidProfile()
+  fireEvent.click(screen.getByLabelText('อื่น ๆ'))
+  fireEvent.change(screen.getByLabelText('ระบุพฤติกรรมการนอนเพิ่มเติม'), {
+    target: { value: 'นอนละเมอ' },
+  })
+  fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
+
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' }))
+  })
+
+  expect(screen.getByText('กรุณาระบุพฤติกรรมการนอนเพิ่มเติม')).toBeTruthy()
+  expect(screen.queryByText('สร้างโปรไฟล์สำเร็จ')).toBeNull()
+})
+
+// AC-RMP-04A: ข้อผิดพลาดจำนวนผู้พักจาก API ต้องแสดงที่ช่องจำนวนผู้พัก
+test('test_AC_RMP_04A_displays_api_occupancy_errors_on_related_fields', async () => {
+  const apiError = new Error('จำนวนผู้พักไม่สอดคล้องกับรูปแบบห้อง')
+  apiError.status = 422
+  apiError.errors = { occupants: 'จำนวนผู้พักไม่สอดคล้องกับรูปแบบห้อง' }
+  createRoommateProfile.mockRejectedValue(apiError)
+  openProfileForm()
+  fillValidProfile()
+  fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
+
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' }))
+  })
+
+  expect(screen.getByText('จำนวนผู้พักไม่สอดคล้องกับรูปแบบห้อง')).toBeTruthy()
+  expect(screen.queryByText('สร้างโปรไฟล์สำเร็จ')).toBeNull()
+})
+
+// AC-RMP-05A: เมื่อบันทึกล้มเหลวต้องไม่แสดงผลสำเร็จและลองส่งใหม่ได้
+test('test_AC_RMP_05A_allows_retry_after_api_save_failure', async () => {
+  createRoommateProfile
+    .mockRejectedValueOnce(new Error('ไม่สามารถบันทึกโปรไฟล์ได้ กรุณาลองใหม่'))
+    .mockResolvedValueOnce({ message: 'สร้างโปรไฟล์สำเร็จ' })
+  openProfileForm()
+  fillValidProfile()
+  fireEvent.click(screen.getByRole('button', { name: 'ตรวจสอบข้อมูล' }))
+
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' }))
+  })
+
+  expect(screen.getByRole('alert').textContent).toBe('ไม่สามารถบันทึกโปรไฟล์ได้ กรุณาลองใหม่')
+  expect(screen.queryByText('สร้างโปรไฟล์สำเร็จ')).toBeNull()
+  expect(screen.getByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' }).disabled).toBe(false)
+
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'ยืนยันการสร้างโปรไฟล์' }))
+  })
+
+  expect(screen.getByRole('status').textContent).toBe('สร้างโปรไฟล์สำเร็จ')
+  expect(createRoommateProfile).toHaveBeenCalledTimes(2)
+})
+
 // AC-RMP-02A: พฤติกรรมที่ไม่อยู่ในรายการหรือเลือกตัวเลือกพิเศษร่วมกันต้องไม่ผ่าน validation
 test('test_AC_RMP_02A_rejects_invalid_sleep_behavior_selections', () => {
   const mixedNoneSelection = validateProfile(
