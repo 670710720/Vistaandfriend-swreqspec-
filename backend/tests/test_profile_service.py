@@ -2,7 +2,11 @@ import pytest
 
 from app.profile_model import RoommateProfile
 from app.profile_service import ProfileAccessResult, load_profile_for_user
-from app.sample_profiles import get_sample_profile_set
+from app.sample_profiles import (
+    get_sample_missing_profile_user_id,
+    get_sample_owner_preference,
+    get_sample_profile_set,
+)
 
 
 def test_AC_ERP_01_loads_current_profile_for_logged_in_user():
@@ -43,3 +47,14 @@ def test_AC_ERP_05_denies_access_to_other_users_profile():
     assert result.profile is None
     assert result.redirect_to_create is False
     assert "ไม่อนุญาต" in result.message
+
+
+def test_T03_roommate_preference_samples_cover_profile_and_missing_profile():
+    preference = get_sample_owner_preference()
+    missing_profile_user_id = get_sample_missing_profile_user_id()
+
+    assert preference is not None
+    assert preference.owner_id == "student-1001"
+    assert preference.room_occupants == 2
+    assert preference.room_type == "airConditioned"
+    assert missing_profile_user_id == "student-404"

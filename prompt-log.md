@@ -1133,3 +1133,128 @@
 - สาเหตุที่เป็นไปได้จาก flow ปัจจุบัน: username demo ในแท็บนี้มีโปรไฟล์อยู่แล้ว; `CON-PROFILE-01` และ `AC-RMP-01A` ไม่อนุญาตให้สร้างโปรไฟล์ที่สองสำหรับ identity เดิม
 - การแก้ไขโค้ด: ไม่มี; แนะนำทดลองผ่าน `/login` ด้วย username ใหม่เพื่อสร้างโปรไฟล์ของ demo identity ใหม่ โดยไม่ลบหรือแก้ข้อมูลเดิม
 - Test: ไม่ได้รัน เนื่องจากไม่มีการแก้โค้ด
+
+## 2026-11-19
+- คำสั่ง: `/tasks specs/003-roommate-preference/spec.md`
+- ผลลัพธ์: สร้าง `specs/003-roommate-preference/tasks.md` จำนวน 14 เฟส 23 task โดยจัดเป็น vertical slice ตามลำดับ AC จากการเปิดเมนูจนถึง usability test; 0 task รอ Open Questions
+- ขอบเขต: รายงานครบ AC-RPS-01 ถึง AC-RPS-08, Constraint CON-RPS-01 ถึง CON-RPS-06 และ FR-RPS-01 ถึง FR-RPS-09; no mockup/UI ID found for this feature
+- สิ่งที่ยังไม่ทำ: ไม่มีการเขียนโค้ดระบบหรือแก้ spec, plan, test-cases และ source; task ใด ๆ ยังรอคำสั่ง `/implement` หรือ `/implement-all`
+
+## 2026-11-19
+- คำสั่ง: `/implement T-01 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `backend/app/config.py`, `frontend/src/config.js`, `backend/tests/test_roommate_preference_config.py`, `frontend/src/__tests__/roommate-preference-config.test.jsx`, `specs/003-roommate-preference/tasks.md`
+- ผล test: backend `pytest -q tests/test_roommate_preference_config.py` ผ่าน 1 test; frontend `npm test -- --run src/__tests__/roommate-preference-config.test.jsx` ผ่าน 1 test
+- สิ่งที่เกือบต้องเดา: ต้องแยก config frontend/backend ตามโครงการจึงใช้ชื่อ `ROOMMATE_PREFERENCE_CONFIG` และอนุญาตเพิ่ม test แยกตามคำตอบของทีม
+
+## 2026-11-19
+- คำสั่ง: `/implement T-02 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `backend/app/models/roommate_preference.py`, `backend/app/roommate_preferences.py`, `backend/tests/test_roommate_preference.py`, `specs/003-roommate-preference/tasks.md`
+- ผล test: backend `pytest -q tests/test_roommate_preference.py` ผ่าน 2 test
+- สิ่งที่เกือบต้องเดา: ใช้โครง in-memory ตามรูปแบบ storage ที่มีอยู่ในโค้ดและผูกความต้องการด้วย `owner_id` เพื่อรองรับการแก้ไขเฉพาะเจ้าของ
+
+## 2026-11-19
+- คำสั่ง: `/implement-all` — แก้ baseline frontend หลัง implement-all หยุดเพราะ test ซ้ำปุ่ม
+- ไฟล์ที่แก้: `frontend/src/App.jsx`, `frontend/src/navigation/sidebar.js`
+- ผล test: frontend `npm test` ผ่าน 52/52; backend `pytest -q` ผ่าน 41 test
+- การแก้: ลบปุ่ม “สร้างโปรไฟล์หาเมท” ซ้ำออกจาก sidebar และคงปุ่มเดียวในเมนูโปรไฟล์ ไม่เปลี่ยนพฤติกรรมเปิด/ปิดฟอร์มที่ใช้ปุ่มเดิม
+
+## 2026-11-19
+- คำสั่ง: `/implement T-03 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `backend/app/sample_profiles.py`, `backend/app/data/sample_roommate_preferences.json`, `backend/tests/test_profile_service.py`, `specs/003-roommate-preference/tasks.md`
+- ผล test: `pytest -q` ผ่าน 42 test; `cd frontend && npm test` ผ่าน 52/52
+- สิ่งที่เกือบต้องเดา: ข้อมูลตัวอย่างแยกกรณีมีโปรไฟล์ (`student-1001`) และไม่มีโปรไฟล์ (`student-404`) และทีมอนุญาตให้เพิ่ม test ในไฟล์ test ที่มีอยู่แล้ว
+
+## 2026-11-19
+- คำสั่ง: `/implement T-06 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `backend/app/roommate_preferences.py`, `backend/tests/test_roommate_preference.py`, `specs/003-roommate-preference/tasks.md`
+- ผล test: targeted `pytest -q tests/test_roommate_preference.py` ผ่าน 3 test; backend 43 passed; frontend 52 passed
+- สิ่งที่เกือบต้องเดา: โครงรับ payload ใช้ `dict` และฟิลด์ 6 หัวข้อโดยไม่ทำ validation ตาม task อื่น ตามคำตอบของทีมอนุญาตเพิ่ม test ในไฟล์ existing
+
+## 2026-11-19
+- คำสั่ง: `/implement T-07 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `frontend/src/pages/RoommatePreferencePage.jsx`, `frontend/src/api/client.js`, `frontend/src/__tests__/roommate-preference.test.jsx`, `specs/003-roommate-preference/tasks.md`
+- ผล test: targeted T-07 1 passed; frontend 53 passed; backend 43 passed
+- สิ่งที่เกือบต้องเดา: ทีมอนุญาตกำหนด endpoint `POST /roommate-preferences` และ client ใช้ `/api/roommate-preferences` เพื่อให้ Vite proxy ส่งต่อตามการตั้งค่าที่มีอยู่
+
+## 2026-11-19
+- คำสั่ง: `/implement T-08 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `backend/app/roommate_preferences.py`, `backend/tests/test_roommate_preference.py`, `specs/003-roommate-preference/tasks.md`
+- ผล test: targeted `pytest -q tests/test_roommate_preference.py` ผ่าน 4 test; backend 44 passed; frontend 53 passed
+- สิ่งที่เกือบต้องเดา: validation อ่านช่วงค่าจาก `ROOMMATE_PREFERENCE_CONFIG` ตาม FR-RPS-09/CON-RPS-06 และทีมอนุญาตเพิ่ม test ในไฟล์ existing
+
+## 2026-11-19
+- คำสั่ง: `/implement T-09 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `frontend/src/pages/RoommatePreferencePage.jsx`, `frontend/src/__tests__/roommate-preference.test.jsx`, `specs/003-roommate-preference/tasks.md`
+- ผล test: `test_AC_RPS_02A_accepts_valid_room_capacity_boundaries` ผ่าน; frontend 54 passed; backend 44 passed
+- สิ่งที่เกือบต้องเดา: ช่วงค่าที่แสดงใช้ `ROOMMATE_PREFERENCE_CONFIG`; ทีมอนุญาตเพิ่ม test ในไฟล์ existing. ระหว่างทดสอบพบ accessible label เปลี่ยนเมื่อเพิ่มคำบอกช่วง จึงกำหนด `aria-label` เดิมให้ select เพื่อคงการเข้าถึงและไม่แก้ test เดิม
+
+## 2026-11-19
+- คำสั่ง: `/implement T-10 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `backend/app/roommate_preferences.py`, `backend/tests/test_roommate_preference.py`, `specs/003-roommate-preference/tasks.md`
+- ผล test: targeted T-10 5 passed; backend 45 passed; frontend 54 passed
+- สิ่งที่เกือบต้องเดา: กฎไม่สอดคล้องอ่านจาก config และก่อนสร้าง record ต้อง throw `ValueError` เพื่อไม่ให้ storage บันทึกข้อมูล
+
+## 2026-11-19
+- คำสั่ง: `/implement T-11 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `frontend/src/pages/RoommatePreferencePage.jsx`, `frontend/src/__tests__/roommate-preference.test.jsx`, `specs/003-roommate-preference/tasks.md`
+- ผล test: targeted T-11 3 passed; frontend 55 passed; backend 45 passed
+- สิ่งที่เกือบต้องเดา: หน้าไม่เปิดตัวเลือกเกินช่วงและปิดปุ่มยืนยันเมื่อยังไม่มีรูปแบบ/จำนวนที่ถูกต้อง; test ทีมห้องพัดลม 4 คนไม่ส่ง POST
+
+## 2026-11-19
+- คำสั่ง: `/implement T-12 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `backend/app/roommate_preferences.py`, `backend/tests/test_roommate_preference.py`, `specs/003-roommate-preference/tasks.md`
+- ผล test: targeted T-12 6 passed; backend 46 passed; frontend 55 passed
+- สิ่งที่เกือบต้องเดา: ว่างเป็น optional จึงแปลง `""` เป็น `None`, แต่ `"   "` เป็นข้อมูลกรอกช่องว่างและถูกปฏิเสธ; 500 ตัวอักษรผ่าน ส่วน 501 ปฏิเสธ
+
+## 2026-11-19
+- คำสั่ง: `/implement T-13 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `frontend/src/pages/RoommatePreferencePage.jsx`, `frontend/src/__tests__/roommate-preference.test.jsx`, `specs/003-roommate-preference/tasks.md`
+- ผล test: targeted T-13 5 passed; frontend 57 passed; backend 46 passed
+- สิ่งที่เกือบต้องเดา: หน้าจอใช้ config ความยาว 500 และไม่ส่ง POST สำหรับ 501 ตัวอักษรหรือ whitespace-only; 500 ตัวอักษรส่งข้อมูลได้
+
+## 2026-11-19
+- คำสั่ง: `/implement T-14 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `backend/app/roommate_preferences.py`, `backend/tests/test_roommate_preference.py`, `specs/003-roommate-preference/tasks.md`
+- ผล test: targeted T-14 7 passed; backend 47 passed; frontend 57 passed
+- สิ่งที่เกือบต้องเดา: required fields เป็น `room_type` และ `room_occupants`; validator แสดงชื่อฟิลด์ที่ขาดและไม่เรียก storage
+
+## 2026-11-19
+- คำสั่ง: `/implement T-16 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `backend/app/roommate_preferences.py`, `backend/tests/test_roommate_preference.py`, `specs/003-roommate-preference/tasks.md`
+- ผล test: targeted T-16 8 passed; backend 48 passed; frontend 59 passed
+- สิ่งที่เกือบต้องเดา: เพิ่มฟังก์ชัน `save_validated_preference_for_owner()` เป็น wrapper สำหรับบันทึกเฉพาะข้อมูลที่ผ่าน validation และทดสอบค่าขอบเขตห้องแอร์ 4 คนและพัดลม 3 คน
+
+## 2026-11-19
+- คำสั่ง: `/implement T-15 specs/003-roommate-preference/tasks.md`
+- ไฟล์ที่สร้างหรือแก้: `frontend/src/pages/RoommatePreferencePage.jsx`, `frontend/src/__tests__/roommate-preference.test.jsx`, `specs/003-roommate-preference/tasks.md`
+- ผล test: targeted T-15 7 passed; frontend 59 passed; backend 47 passed
+- สิ่งที่เกือบต้องเดา: ปุ่มยืนยันไม่ปิดเมื่อข้อมูลจำเป็นขาดเพื่อให้ผู้ใช้กดยืนยันและเห็นข้อความเตือน; no POST และไม่มี status success เมื่อไม่ผ่าน
+
+## 2026-11-19
+- คำสั่ง: `/testcases specs/003-roommate-preference/ AC-RPS-01`
+- โหมด: ร่าง
+- TC ID ที่เสนอ: TC-RPS-01-1, TC-RPS-01-2, TC-RPS-01-3, TC-RPS-01-4
+- ผล: ตรวจแถวเดิมครบ 4 แถวสำหรับ AC-RPS-01 ทั้งหมดมีสถานะร่าง; ไม่เขียนโค้ด test
+- ส่วน Then ที่ spec ไม่ได้บอก: กรณียังไม่ได้เข้าสู่ระบบและกรณีไม่มีข้อความบนหน้าจอที่ spec ระบุสำหรับการตอบกลับผู้ใช้ยังอยู่ใน TC-RPS-01-3; ให้ทีมตัดสินผ่าน Open Question ก่อนแก้สถานะแถวเป็นใช้ได้
+
+## 2026-11-19
+- คำสั่ง: `/testcases AC-RPS-01 specs/003-roommate-preference/` ตามการแก้แถว line 11
+- โหมด: เขียน test จากแถว TC-RPS-01-2 ที่ทีมเปลี่ยนเป็น “ใช้ได้”
+- TC ID/ชื่อ test: TC-RPS-01-2 / `test_TC_RPS_01_2_shows_options_with_existing_profile`
+- ผล: เปลี่ยนเฉพาะสถานะแถว TC-RPS-01-2 เป็น “ใช้ได้” และเพิ่ม test ต่อท้ายไฟล์ existing `frontend/src/__tests__/roommate-preference.test.jsx`
+
+## 2026-11-19
+- คำสั่ง: `/verify specs/003-roommate-preference/`
+- ผล test: backend `pytest -v` 48 passed; frontend `npm test` 60 passed
+- RTM: สร้าง `specs/003-roommate-preference/rtm.md` ด้วย 18 แถว requirement/constraint
+- สถานะแถว: ครบ 1, ยังไม่ถึง 3, รอ 0, ช่องโหว่ 14
+- F-ID ใหม่: F-01 ถึง F-08
+- ขอบเขต: อ่าน spec, plan, tasks, test-cases, code ทั้ง backend/app และ frontend/src, tests ทั้ง backend/tests และ frontend/src/__tests__; ไม่แก้โค้ด/test/spec
+
+## 2026-11-20 06:20 UTC — แก้ merge conflicts ของ PR #5
+
+- รวมประวัติใน `prompt-log.md` จาก branch 701 และ `main` โดยคงบันทึกของทั้งสองฝั่งไว้
+- ใน `frontend/src/App.jsx` คงทางเข้าการสร้างโปรไฟล์ให้มีปุ่มเดียวในเมนูหลัก หลัง `Sidebar` ของ main ตัดปุ่มซ้ำออก
+- ใน `frontend/src/api/client.js` ปิด `sendChatMessageWithAttachment` ก่อนฟังก์ชัน `saveRoommatePreference` เพื่อให้ API client parse ได้
+- ผลตรวจ: Frontend 132 passed; Backend 145 passed, 3 skipped; `git diff --check` ผ่าน; ไม่พบ conflict markers
+- PR #5 ปิดแล้วและยังไม่ merge; ยังไม่ได้ push หรือ reopen PR

@@ -109,3 +109,15 @@ SLEEP_OTHER_REQUIRES_DESCRIPTION = "อื่น ๆ"
 # NFR-USE-01, AC-RMP-07: จำนวนผู้ทดสอบและอัตราความสำเร็จขั้นต่ำ
 USABILITY_TEST_PARTICIPANTS = 5
 USABILITY_TEST_SUCCESS_RATE = 0.8
+
+# FR-RPS-03, FR-RPS-09, CON-RPS-03, CON-RPS-06: roommate preference fields and validation.
+ROOMMATE_PREFERENCE_CONFIG = {
+    "roomOccupants": {
+        "airConditioned": {"min": 1, "max": 4},
+        "fan": {"min": 1, "max": 3},
+    },
+    "sleepBehaviors": ["กรน", "กัดฟัน", "นอนดิ้น", "ไม่มีพฤติกรรมดังกล่าว"],
+    "cleanliness": ["สะอาดมาก", "ปานกลาง", "ยืดหยุ่น"],
+    "sleepTime": ["ก่อน 22:00", "22:00–00:00", "หลัง 00:00", "ยืดหยุ่น"],
+    "additionalText": {"maxLength": 500},
+}

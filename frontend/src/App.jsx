@@ -312,7 +312,6 @@ function ProfileApp({ initialLoggedIn = true, onLoginRequired = redirectToLogin 
 
       <Sidebar
         isLoggedIn={isLoggedIn}
-        onOpenProfile={openCreateProfile}
         onOpenSearch={() => {
           setFormOpen(false)
           setCurrentView('search-roommate')
@@ -331,6 +330,13 @@ function ProfileApp({ initialLoggedIn = true, onLoginRequired = redirectToLogin 
       )}
 
       <nav aria-label="เมนูเพิ่มเติม" className="mb-6 flex flex-wrap gap-3">
+        <button
+          className="rounded-lg border border-teal-700 bg-white px-5 py-3 font-semibold text-teal-700 hover:bg-teal-50 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
+          onClick={openCreateProfile}
+          type="button"
+        >
+          สร้างโปรไฟล์หาเมท
+        </button>
         <button
           className="rounded-lg border border-teal-700 bg-white px-5 py-3 font-semibold text-teal-700 hover:bg-teal-50 focus:outline-2 focus:outline-offset-2 focus:outline-teal-700"
           onClick={() => {
